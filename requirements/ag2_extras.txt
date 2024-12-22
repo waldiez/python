@@ -1,0 +1,20 @@
+-r main.txt
+autogen[captainagent]==0.6.0; platform_system == "Linux"
+pgvector>=0.3.6
+psycopg[binary]>=3.2.3
+pyautogen[anthropic]==0.6.0
+pyautogen[bedrock]==0.6.0
+pyautogen[gemini]==0.6.0
+pyautogen[groq]==0.6.0
+pyautogen[lmm]==0.6.0
+pyautogen[mistral]==0.6.0
+pyautogen[neo4j]==0.6.0
+pyautogen[retrievechat-mongodb]==0.6.0
+pyautogen[retrievechat-pgvector]==0.6.0
+pyautogen[retrievechat-qdrant]==0.6.0; python_version < "3.13"
+pyautogen[retrievechat]==0.6.0
+pyautogen[together]==0.6.0
+pyautogen[together]==0.6.0
+pyautogen[websurfer]==0.6.0
+pymongo==4.10.1
+qdrant-client[fastembed]; python_version >= "3.13"

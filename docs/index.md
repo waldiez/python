@@ -2,7 +2,8 @@
 
 Translate a Waldiez flow:
 
-![Flow](https://raw.githubusercontent.com/waldiez/python/refs/heads/main/docs/static/images/overview.webp)
+<img fetchpriority="high" alt="Waldiez flow" src="static/images/overview.webp#only-light" />
+<img fetchpriority="high" alt="Waldiez flow" src="static/images/overview_dark.webp#only-dark" />
 
 To a python script or a jupyter notebook with the corresponding [ag2](https://github.com/ag2ai/ag2/) agents and chats.
 
@@ -23,8 +24,21 @@ python -m pip install waldiez
 From the repository:
 
 ```bash
-python -m pip install git+https://github.com/waldiez/python.git
+python -m pip install git+https://github.com/waldiez/waldiez.git
 ```
+
+!!! note
+    `autogen-agentchat` package conflicts with `ag2` / `pyautogen`. Ensure that `autogen-agentchat` is uninstalled before installing `waldiez`. If you have already installed `autogen-agentchat`, you can uninstall it with the following command:
+
+    ```shell
+    pip uninstall autogen-agentchat -y
+    ```
+
+    If already installed waldiez you might need to reinstall it after uninstalling `autogen-agentchat`:
+    
+      ```shell
+      pip install --force --no-cache waldiez pyautogen
+      ```
 
 ## Usage
 
@@ -71,8 +85,10 @@ $CONTAINER_COMMAND run \
 
 ### UI
 
-For creating-only (no exporting or running) waldiez flows, you can use the playground at <https://waldiez.github.io>.
-The repo for the js library is [here](https://github.com/waldiez/react).
+For creating-only (no exporting or running) waldiez flows, you can use the playground at <https://waldiez.github.io>.  
+The repo for the js library is [here](https://github.com/waldiez/react).  
+We are currently working on waldiez-studio to provide a visual interface for creating and running Waldiez flows (you can find more [here](https://github.com/waldiez/studio)).  
+Until then, you can use our [Jupyter](https://github.com/waldiez/jupyter) or the [VSCode](https://github.com/waldiez/vscode) extension to create and run Waldiez flows.
 
 ### As a library
 
@@ -86,7 +102,7 @@ output_path = "/path/to/an/output.py"  # or .ipynb
 exporter = WaldiezExporter.load(flow_path)
 exporter.export(output_path)
 ```
-
+  
 #### Run a flow
 
 ```python
@@ -104,21 +120,3 @@ runner.run(output_path=output_path)
 - [juptytext](https://github.com/mwouts/jupytext)
 - [pydantic](https://github.com/pydantic/pydantic)
 - [typer](https://github.com/fastapi/typer)
-
-## Known Conflicts
-
-- **autogen-agentchat**: This package conflicts with `ag2` / `pyautogen`. Ensure that `autogen-agentchat` is uninstalled before installing `waldiez`. If you have already installed `autogen-agentchat`, you can uninstall it with the following command:
-
-  ```shell
-  pip uninstall autogen-agentchat -y
-  ```
-
-  If already installed waldiez you might need to reinstall it after uninstalling `autogen-agentchat`:
-
-    ```shell
-    pip install --force --no-cache waldiez pyautogen
-    ```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/waldiez/python/blob/main/LICENSE) file for details.
