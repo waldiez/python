@@ -203,7 +203,14 @@ class WaldiezExporter:
                 allow_error=False,
             )
         run_command(
-            ["jupytext", "--to", "notebook", str(py_path)],
+            [
+                sys.executable,
+                "-m",
+                "jupytext",
+                "--to",
+                "notebook",
+                str(py_path),
+            ],
             allow_error=False,
         )
         ipynb_path = str(py_path).replace(".tmp.py", ".tmp.ipynb")

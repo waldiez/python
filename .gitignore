@@ -4,7 +4,7 @@
 build/
 dist/
 site/
-reports/
+coverage/
 waldiez_out/
 **/logs/
 **/tmp/
@@ -24,3 +24,4 @@ dmypy.json
 .coverage
 **/*.coverage*
 **/*.ffs_db
+**/*.lcov

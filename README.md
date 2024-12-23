@@ -117,9 +117,9 @@ runner.run(output_path=output_path)
 
   If already installed waldiez you might need to reinstall it after uninstalling `autogen-agentchat`:
 
-    ```shell
-    pip install --force --no-cache waldiez pyautogen
-    ```
+  ```shell
+  pip install --force --no-cache waldiez pyautogen
+  ```
 
 ## License
 

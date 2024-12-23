@@ -4,7 +4,7 @@ site_description: "Waldiez."
 site_url: https://waldiez.github.io/waldiez/python/
 repo_name: waldiez/waldiez
 repo_url: https://github.com/waldiez/python.git
-edit_uri_template: 'blob/main/docs/{path}'
+edit_uri_template: "blob/main/docs/{path}"
 copyright: "Copyright &copy; 2025 Waldiez"
 theme:
   name: material
@@ -63,7 +63,7 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           # yamllint disable
-          format: !!python/name:pymdownx.superfences.fence_code_format ''
+          format: !!python/name:pymdownx.superfences.fence_code_format ""
           # yamllint enable
   - pymdownx.tabbed:
       alternate_style: true
