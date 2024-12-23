@@ -2,7 +2,7 @@
 site_name: "Waldiez"
 site_description: "Waldiez."
 site_url: https://waldiez.github.io/waldiez/python/
-repo_name: waldiez/waldiez
+repo_name: waldiez/python
 repo_url: https://github.com/waldiez/python.git
 edit_uri_template: "blob/main/docs/{path}"
 copyright: "Copyright &copy; 2025 Waldiez"
