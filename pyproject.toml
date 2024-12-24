@@ -43,10 +43,10 @@ exclude = [ "**/example.py" ]
 
 [project.optional-dependencies]
 studio = [
-    "waldiez_studio==0.2.1",
+    "waldiez_studio==0.2.2",
 ]
 jupyter = [
-    "waldiez_jupyter==0.2.1",
+    "waldiez_jupyter==0.2.2",
     "jupyterlab>=4.3.0",
 ]
 dev = [

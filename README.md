@@ -38,17 +38,17 @@ The repo for the js library is [here](https://github.com/waldiez/react).
 - You also can use the vscode extension:
   - [repo](https://github.com/waldiez/vscode)
   - [marketplace](https://marketplace.visualstudio.com/items?itemName=Waldiez.waldiez-vscode)
-- Finally, you can use [waldiez-studio](https://github.com/waldiez/studio)
+- Finally, you can use [waldiez-studio](https://github.com/waldiez/studio), which includes a FastAPI app to handle the conversion and running of waldiez flows.
 
-<!--
-The jupyterlab extension and studio also provided as extras in the main package.
+The jupyterlab extension and waldiez studio are also provided as extras in the main package.
 
 ```shell
 pip install waldiez[studio]  # or pip install waldiez_studio
 pip install waldiez[jupyter]  # or pip install waldiez_jupyter
 # or both
 pip install waldiez[studio,jupyter]
-``` -->
+```
+
 ### CLI
 
 ```bash

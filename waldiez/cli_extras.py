@@ -4,13 +4,16 @@
 # isort: skip_file
 """Extra typer commands for CLI."""
 
+from typing import Callable
+
 import typer
+from typer.models import CommandInfo
 import subprocess  # nosemgrep # nosec
 
 HAVE_STUDIO = False
 HAVE_JUPYTER = False
 try:
-    from waldiez_studio.cli import app as studio_app
+    from waldiez_studio.cli import run as studio_app
 
     HAVE_STUDIO = True
 except BaseException:
@@ -38,18 +41,17 @@ def add_cli_extras(app: typer.Typer) -> None:
         The app with the extra commands added
     """
     if HAVE_STUDIO:
-        app.add_typer(
-            studio_app,
-            name="studio",
-            help="Start Waldiez Studio.",
-            no_args_is_help=False,
+        app.registered_commands.append(
+            CommandInfo(name="studio", callback=studio_app)
         )
     if HAVE_JUPYTER:
         jupyter_app = get_jupyter_app()
-        app.add_typer(jupyter_app, name="lab")
+        app.registered_commands.append(
+            CommandInfo(name="lab", callback=jupyter_app)
+        )
 
 
-def get_jupyter_app() -> typer.Typer:
+def get_jupyter_app() -> Callable[..., None]:
     """Get the Jupyter Typer app.
 
     Returns
@@ -58,26 +60,22 @@ def get_jupyter_app() -> typer.Typer:
         The Jupyter Typer app
     """
     jupyter_app = typer.Typer(
-        name="lab",
-        help="Start jupyter lab with the waldiez extension.",
+        add_completion=False,
+        no_args_is_help=False,
+        pretty_exceptions_enable=False,
+    )
+
+    @jupyter_app.callback(
+        name="start",
+        help="Start JupyterLab.",
         context_settings={
             "help_option_names": ["-h", "--help"],
             "allow_extra_args": True,
             "ignore_unknown_options": True,
         },
-        add_completion=False,
         no_args_is_help=False,
         invoke_without_command=True,
         add_help_option=True,
-        pretty_exceptions_enable=False,
-        epilog=(
-            "Use `waldiez lab [COMMAND] --help` for command-specific help. "
-        ),
-    )
-
-    @jupyter_app.command(
-        name="start",
-        help="Start JupyterLab.",
     )
     def start(
         port: int = typer.Option(
@@ -92,8 +90,7 @@ def get_jupyter_app() -> typer.Typer:
         ),
         browser: bool = typer.Option(
             False,
-            "--no-browser",
-            help="Don't open the browser.",
+            help="Open the browser after starting JupyterLab.",
         ),
         password: str = typer.Option(
             None,
@@ -111,7 +108,7 @@ def get_jupyter_app() -> typer.Typer:
             "--ServerApp.allow_origin='*'",
             "--ServerApp.disable_check_xsrf=True",
         ]
-        if browser:
+        if not browser:
             command.append("--no-browser")
         if password:
             from jupyter_server.auth import passwd
@@ -120,4 +117,4 @@ def get_jupyter_app() -> typer.Typer:
             command.append(f"--ServerApp.password={hashed_password}")
         subprocess.run(command)
 
-    return jupyter_app
+    return start
