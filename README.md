@@ -30,7 +30,45 @@ python -m pip install git+https://github.com/waldiez/python.git
 
 ## Usage
 
+### UI Options
+
+- For creating-only (no exporting or running) waldiez flows, you can use the playground at <https://waldiez.github.io>.
+The repo for the js library is [here](https://github.com/waldiez/react).
+- There is also a jupyterlab extension [here](https://github.com/waldiez/jupyter)
+- You also can use the vscode extension:
+  - [repo](https://github.com/waldiez/vscode)
+  - [marketplace](https://marketplace.visualstudio.com/items?itemName=Waldiez.waldiez-vscode)
+<!-- - Finally, you can use [waldiez-studio](https://github.com/waldiez/studio)
+
+The jupyterlab extension and studio also provided as extras in the main package.
+
+```shell
+pip install waldiez[studio]  # or pip install waldiez_studio
+pip install waldiez[jupyter]  # or pip install waldiez_jupyter
+# or both
+pip install waldiez[studio,jupyter]
+``` -->
 ### CLI
+
+<!--markdownlint-disable MD033-->
+<div style="background-color: #1e1e1e; color: #f8f8f2; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 1.2em; line-height: 1.5em;" width: 100%;>
+$ waldiez --help
+
+<b> </b><font color="#FF0"><b>Usage: </b></font><b>waldiez [OPTIONS] COMMAND [ARGS]...</b>
+<b>                                                     </b>
+<font color="#A5A5A1">╭─ Options ───────────────────────────────────────────────────────╮</font>
+<font color="#A5A5A1">│ </font><font color="#A1EFE4"><b>--version </b></font><font color="#54ff54"><b> -v</b></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show the version of the package.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#A5A5A1">│</font>
+<font color="#A5A5A1">│ </font><font color="#A1EFE4"><b>--help</b></font><font color="#54ff54"><b> -h</b></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show this message and exit.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#A5A5A1">│</font>
+<font color="#A5A5A1">╰─────────────────────────────────────────────────────────────────╯</font>
+<font color="#A5A5A1">╭─ Commands ──────────────────────────────────────────────────────╮</font>
+<font color="#A5A5A1">│ </font><font color="#A1EFE4"><b>check </b></font>&nbsp;&nbsp;&nbsp;&nbsp;Validate a Waldiez flow.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#A5A5A1">│</font>
+<font color="#A5A5A1">│ </font><font color="#A1EFE4"><b>convert </b></font>&nbsp;&nbsp;Convert a Waldiez flow to&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#A5A5A1">│</font>
+<font color="#A5A5A1">│</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a python script or a jupyter notebook&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#A5A5A1">│</font>
+<font color="#A5A5A1">│ </font><font color="#A1EFE4"><b>run </b></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run a Waldiez flow.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#A5A5A1">│</font>
+<font color="#A5A5A1">╰─────────────────────────────────────────────────────────────────╯</font>
+
+Use `waldiez [COMMAND] --help` for command-specific help.
+</div>
 
 ```bash
 # Convert a Waldiez flow to a python script or a jupyter notebook
@@ -70,11 +108,6 @@ $CONTAINER_COMMAND run \
   -v /path/to/an/output:/output \
   waldiez/waldiez run --file /flow.waldiez --output /output/output[.py]
 ```
-
-### UI
-
-For creating-only (no exporting or running) waldiez flows, you can use the playground at <https://waldiez.github.io>.
-The repo for the js library is [here](https://github.com/waldiez/react).
 
 ### As a library
 

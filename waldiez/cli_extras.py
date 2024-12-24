@@ -38,7 +38,12 @@ def add_cli_extras(app: typer.Typer) -> None:
         The app with the extra commands added
     """
     if HAVE_STUDIO:
-        app.add_typer(studio_app, name="studio", help="Start Waldiez Studio.")
+        app.add_typer(
+            studio_app,
+            name="studio",
+            help="Start Waldiez Studio.",
+            no_args_is_help=False,
+        )
     if HAVE_JUPYTER:
         jupyter_app = get_jupyter_app()
         app.add_typer(jupyter_app, name="lab")

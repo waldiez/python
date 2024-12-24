@@ -30,8 +30,8 @@ dependencies =[
 ]
 
 [project.urls]
-homepage = 'https://waldiez.github.io/waldiez/waldiez'
-repository = 'https://github.com/waldiez/waldiez.git'
+homepage = 'https://waldiez.github.io/waldiez/python'
+repository = 'https://github.com/waldiez/python.git'
 
 [tool.hatch.build.targets.sdist]
 packages = ["waldiez", "waldiez.*"]
@@ -58,7 +58,7 @@ dev = [
     'mypy==1.14.0',
     'pre-commit==4.0.1',
     'pydocstyle==6.3.0',
-    'pylint==3.3.2',
+    'pylint==3.3.3',
     'python-dotenv==1.0.1',
     'ruff==0.8.4',
     'types-PyYAML==6.0.12.20240917',
