@@ -5,8 +5,5 @@ rules:
   line-length:
     max: 200
     level: warning
-ignore:
-  - .venv
-  - .local
-  - .github
-  - .git
+
+ignore-from-file: .gitignore
