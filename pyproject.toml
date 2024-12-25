@@ -337,6 +337,7 @@ addopts = """
 [tool.coverage.run]
 omit = [
   "example.py",
+  "cli_extras.py"
 ]
 [tool.coverage.report]
 exclude_lines = [
