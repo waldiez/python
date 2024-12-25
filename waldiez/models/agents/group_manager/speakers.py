@@ -199,7 +199,7 @@ class WaldiezGroupManagerSpeakers(WaldiezBase):
             is_valid, error_or_body = check_function(
                 code_string=self.selection_custom_method,
                 function_name=CUSTOM_SPEAKER_SELECTION,
-                method_args=CUSTOM_SPEAKER_SELECTION_ARGS,
+                function_args=CUSTOM_SPEAKER_SELECTION_ARGS,
                 type_hints=CUSTOM_SPEAKER_SELECTION_HINTS,
             )
             if not is_valid or not error_or_body:

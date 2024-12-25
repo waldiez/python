@@ -20,13 +20,13 @@ from waldiez.models.chat.chat_message import RAG_METHOD_WITH_CARRYOVER
 nested_chat_common_args: Dict[str, Any] = {
     "function_name": "nested_chat_message",
     "function_args": ["recipient", "messages", "sender", "config"],
-    "function_type_hints": "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]",  # noqa: E501
+    "type_hints": "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]",  # noqa: E501
 }
 
 callable_message_common_args: Dict[str, Any] = {
     "function_name": "callable_message",
     "function_args": ["sender", "recipient", "context"],
-    "function_type_hints": "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]",  # noqa: E501
+    "type_hints": "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]",  # noqa: E501
 }
 
 

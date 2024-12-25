@@ -213,7 +213,7 @@ class WaldiezChatData(WaldiezBase):
                     },
                     function_name=CALLABLE_MESSAGE,
                     function_args=CALLABLE_MESSAGE_ARGS,
-                    function_type_hints=CALLABLE_MESSAGE_HINTS,
+                    type_hints=CALLABLE_MESSAGE_HINTS,
                     skip_definition=True,
                 ).content
         return self
@@ -251,7 +251,7 @@ class WaldiezChatData(WaldiezBase):
                 value,
                 function_name=CALLABLE_MESSAGE,
                 function_args=CALLABLE_MESSAGE_ARGS,
-                function_type_hints=CALLABLE_MESSAGE_HINTS,
+                type_hints=CALLABLE_MESSAGE_HINTS,
             )
         if isinstance(value, WaldiezChatMessage):
             return validate_message_dict(
@@ -263,7 +263,7 @@ class WaldiezChatData(WaldiezBase):
                 },
                 function_name=CALLABLE_MESSAGE,
                 function_args=CALLABLE_MESSAGE_ARGS,
-                function_type_hints=CALLABLE_MESSAGE_HINTS,
+                type_hints=CALLABLE_MESSAGE_HINTS,
             )
         return WaldiezChatMessage(
             type="none", use_carryover=False, content=None, context={}

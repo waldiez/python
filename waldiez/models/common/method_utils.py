@@ -34,7 +34,7 @@ def parse_code_string(
 def check_function(
     code_string: str,
     function_name: str,
-    method_args: List[str],
+    function_args: List[str],
     type_hints: Optional[str] = None,
 ) -> Tuple[bool, str]:
     """Check the function.
@@ -44,8 +44,8 @@ def check_function(
     code_string : str
         The code string.
     function_name : str
-        The expected function name.
-    method_args : List[str]
+        The expected method name.
+    function_args : List[str]
         The expected method arguments.
     type_hints : Optional[str], optional
         The type hints to include, by default None
@@ -63,7 +63,7 @@ def check_function(
         tree,
         code_string,
         function_name,
-        method_args,
+        function_args,
         type_hints=type_hints,
     )
 
@@ -72,7 +72,7 @@ def _get_function_body(
     tree: ast.Module,
     code_string: str,
     function_name: str,
-    method_args: List[str],
+    function_args: List[str],
     type_hints: Optional[str] = None,
 ) -> Tuple[bool, str]:
     """Get the function body.
@@ -84,8 +84,8 @@ def _get_function_body(
     code_string : str
         The code string.
     function_name : str
-        The expected function name.
-    method_args : List[str]
+        The expected method name.
+    function_args : List[str]
         The expected method arguments.
     type_hints : Optional[str], optional
         The type hints to include, by default None
@@ -100,12 +100,12 @@ def _get_function_body(
         if isinstance(node, ast.FunctionDef):
             if node.name != function_name:
                 continue
-            if len(node.args.args) != len(method_args):
+            if len(node.args.args) != len(function_args):
                 return (
                     False,
                     f"Invalid number of arguments in function {node.name}",
                 )
-            for arg, expected_arg in zip(node.args.args, method_args):
+            for arg, expected_arg in zip(node.args.args, function_args):
                 if arg.arg != expected_arg:
                     return (
                         False,
@@ -120,7 +120,7 @@ def _get_function_body(
                 function_body = f"    {type_hints}\n{function_body}"
             return True, function_body
     error_msg = (
-        f"No function with name `{function_name}`"
-        f" and arguments `{method_args}` found"
+        f"No method with name `{function_name}`"
+        f" and arguments `{function_args}` found"
     )
     return False, error_msg

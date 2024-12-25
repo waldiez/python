@@ -531,7 +531,7 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
             valid, error_or_content = check_function(
                 code_string=self.embedding_function,
                 function_name=CUSTOM_EMBEDDING_FUNCTION,
-                method_args=CUSTOM_EMBEDDING_FUNCTION_ARGS,
+                function_args=CUSTOM_EMBEDDING_FUNCTION_ARGS,
                 type_hints=CUSTOM_EMBEDDING_FUNCTION_HINTS,
             )
             if not valid:
@@ -555,7 +555,7 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
             valid, error_or_content = check_function(
                 code_string=self.custom_token_count_function,
                 function_name=CUSTOM_TOKEN_COUNT_FUNCTION,
-                method_args=CUSTOM_TOKEN_COUNT_FUNCTION_ARGS,
+                function_args=CUSTOM_TOKEN_COUNT_FUNCTION_ARGS,
                 type_hints=CUSTOM_TOKEN_COUNT_FUNCTION_HINTS,
             )
             if not valid:
@@ -579,7 +579,7 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
             valid, error_or_content = check_function(
                 code_string=self.custom_text_split_function,
                 function_name=CUSTOM_TEXT_SPLIT_FUNCTION,
-                method_args=CUSTOM_TEXT_SPLIT_FUNCTION_ARGS,
+                function_args=CUSTOM_TEXT_SPLIT_FUNCTION_ARGS,
                 type_hints=CUSTOM_TEXT_SPLIT_FUNCTION_HINTS,
             )
             if not valid:

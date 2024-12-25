@@ -7,12 +7,12 @@ from waldiez.models import WaldiezMethodName
 def test_get_method_string() -> None:
     """Test get_method_string."""
     # Given
-    method_name: WaldiezMethodName = WaldiezMethodName.CALLABLE_MESSAGE
-    renamed_method_name = "callable_message_agent1"
+    function_name: WaldiezMethodName = WaldiezMethodName.CALLABLE_MESSAGE
+    renamed_function_name = "callable_message_agent1"
     # When
     result = get_method_string(
-        method_name=method_name,
-        renamed_method_name=renamed_method_name,
+        function_name=function_name,
+        renamed_function_name=renamed_function_name,
         method_body="    return 'callable_message'",
     )
     # Then
@@ -25,12 +25,12 @@ def test_get_method_string() -> None:
         "    return 'callable_message'"
     )
     # Given
-    method_name = WaldiezMethodName.CUSTOM_EMBEDDING_FUNCTION
-    renamed_method_name = "custom_embedding_function_agent1"
+    function_name = WaldiezMethodName.CUSTOM_EMBEDDING_FUNCTION
+    renamed_function_name = "custom_embedding_function_agent1"
     # When
     result = get_method_string(
-        method_name=method_name,
-        renamed_method_name=renamed_method_name,
+        function_name=function_name,
+        renamed_function_name=renamed_function_name,
         method_body="    return lambda x: x",
     )
     # Then

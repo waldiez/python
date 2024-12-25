@@ -177,10 +177,10 @@ def get_chat_nested_string(
     if message.type == "string":
         return get_escaped_string(message.content), None
     chat_name = chat_names[chat.id]
-    method_args = "recipient, messages, sender, config"
+    function_args = "recipient, messages, sender, config"
     function_name = "nested_chat_reply" if is_reply else "nested_chat_message"
     new_function_name = f"{function_name}_{chat_name}"
-    function_def = f"\ndef {new_function_name}({method_args}):"
+    function_def = f"\ndef {new_function_name}({function_args}):"
     attribute_name = "reply_content" if is_reply else "message_content"
     function_content = getattr(chat.data.nested_chat, attribute_name)
     return new_function_name, function_def + "\n" + function_content + "\n"

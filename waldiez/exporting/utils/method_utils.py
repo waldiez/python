@@ -6,17 +6,17 @@ from waldiez.models import WaldiezMethodArgs, WaldiezMethodName
 
 
 def get_method_string(
-    method_name: Union[str, WaldiezMethodName],
-    renamed_method_name: str,
+    function_name: Union[str, WaldiezMethodName],
+    renamed_function_name: str,
     method_body: str,
 ) -> str:
     """Get a function string.
 
     Parameters
     ----------
-    method_name : WaldiezMethodName
+    function_name : WaldiezMethodName
         The method name.
-    renamed_method_name : str
+    renamed_function_name : str
         The renamed method name.
     method_body : str
         The method body.
@@ -26,16 +26,16 @@ def get_method_string(
     str
         The function string having the definition, type hints and body.
     """
-    if isinstance(method_name, str):
-        method_name = WaldiezMethodName(method_name.lower())
+    if isinstance(function_name, str):
+        function_name = WaldiezMethodName(function_name.lower())
 
-    method_args = WaldiezMethodArgs[method_name]
-    content = f"def {renamed_method_name}("
-    if len(method_args) == 0:
+    function_args = WaldiezMethodArgs[function_name]
+    content = f"def {renamed_function_name}("
+    if len(function_args) == 0:
         content += "):"
     else:
         content += "\n"
-        for arg in method_args:
+        for arg in function_args:
             content += f"    {arg},\n"
         content += "):"
     content += f"\n{method_body}"

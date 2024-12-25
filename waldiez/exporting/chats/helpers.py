@@ -246,9 +246,9 @@ def _get_chat_message_string(
         return get_escaped_string(chat.message.content), None
     chat_name = chat_names[chat.id]
     original_function_name = "callable_message"
-    method_args = "sender, recipient, context"
+    function_args = "sender, recipient, context"
     function_name = f"{original_function_name}_{chat_name}"
-    function_def = f"def {function_name}({method_args}):"
+    function_def = f"def {function_name}({function_args}):"
     return function_name, function_def + "\n" + chat.message_content + "\n"
 
 

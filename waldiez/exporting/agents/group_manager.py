@@ -88,17 +88,17 @@ def _get_group_manager_extras(
         group_chat_string += f"    max_round={agent.data.max_round}," + "\n"
     if agent.data.admin_name:
         group_chat_string += f'    admin_name="{agent.data.admin_name}",' + "\n"
-    extra_group_chat_string, method_name_and_content = (
+    extra_group_chat_string, function_name_and_content = (
         _get_group_chat_speakers_string(agent, agent_names)
     )
     custom_selection_method: Optional[str] = None
     group_chat_string += extra_group_chat_string
     group_chat_string += ")\n\n"
-    if method_name_and_content:
-        method_name, method_content = method_name_and_content
+    if function_name_and_content:
+        function_name, method_content = function_name_and_content
         custom_selection_method = get_method_string(
             WaldiezMethodName.CUSTOM_SPEAKER_SELECTION,
-            method_name,
+            function_name,
             method_content,
         )
     return group_chat_string, group_chat_name, custom_selection_method
@@ -124,7 +124,7 @@ def _get_group_chat_speakers_string(
         The custom selection method name and content if any.
     """
     speakers_string = ""
-    method_name_and_content: Optional[Tuple[str, str]] = None
+    function_name_and_content: Optional[Tuple[str, str]] = None
     if agent.data.speakers.max_retries_for_selecting is not None:
         speakers_string += (
             "    max_retries_for_selecting_speaker="
@@ -139,12 +139,12 @@ def _get_group_chat_speakers_string(
         )
     else:
         agent_name = agent_names[agent.id]
-        method_name = f"custom_speaker_selection_method_{agent_name}"
-        method_name_and_content = (
-            method_name,
+        function_name = f"custom_speaker_selection_method_{agent_name}"
+        function_name_and_content = (
+            function_name,
             agent.data.speakers.custom_method_string or "",
         )
-        speakers_string += f"    speaker_selection_method={method_name}," "\n"
+        speakers_string += f"    speaker_selection_method={function_name}," "\n"
     # selection_mode == "repeat":
     if agent.data.speakers.selection_mode == "repeat":
         speakers_string += _get_speakers_selection_repeat_string(
@@ -159,7 +159,7 @@ def _get_group_chat_speakers_string(
             agent, agent_names
         )
     speakers_string = speakers_string.replace('"None"', "None")
-    return speakers_string, method_name_and_content
+    return speakers_string, function_name_and_content
 
 
 def _get_speakers_selection_repeat_string(

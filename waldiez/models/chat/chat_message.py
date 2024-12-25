@@ -92,7 +92,7 @@ def validate_message_dict(
     ],
     function_name: str,
     function_args: List[str],
-    function_type_hints: str,
+    type_hints: str,
     skip_definition: bool = False,
 ) -> WaldiezChatMessage:
     """Validate a message dict.
@@ -106,10 +106,10 @@ def validate_message_dict(
     value : dict
         The message dict.
     function_name : str
-        The function name.
+        The method name.
     function_args : List[str]
-        The expected function arguments.
-    function_type_hints : str
+        The expected method arguments.
+    type_hints : str
         The type hints to include.
     skip_definition : bool, optional
         Skip the function definition in the content, by default False
@@ -159,8 +159,8 @@ def validate_message_dict(
         valid, error_or_content = check_function(
             code_string=content,
             function_name=function_name,
-            method_args=function_args,
-            type_hints=function_type_hints,
+            function_args=function_args,
+            type_hints=type_hints,
         )
         if not valid:
             raise ValueError(error_or_content)
