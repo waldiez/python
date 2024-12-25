@@ -23,7 +23,7 @@ def get_agent_teachability_string(
     str
         The teachability string
     """
-    if not agent.data.teachability.enabled:
+    if not agent.data.teachability or not agent.data.teachability.enabled:
         return ""
     agent_name = agent_names[agent.id]
     teachability = agent.data.teachability
