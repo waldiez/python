@@ -19,7 +19,9 @@ help:
 	@echo " requirements	 Generate requirements/*.txt files"
 	@echo " test             Run the tests"
 	@echo " test_models      Run tests on the 'models' directory"
+	@echo " test-models      Alias for 'make test_models'"
 	@echo " test_exporting   Run tests on the 'exporting' directory"
+	@echo " test-exporting   Alias for 'make test_exporting'"
 	@echo " docs             Generate the documentation"
 	@echo " docs-live        Generate the documentation in 'live' mode"
 	@echo " clean            Remove unneeded files (__pycache__, .mypy_cache, etc.)"
@@ -93,6 +95,9 @@ test_models: .before_test
 		--cov=${.PACKAGE_NAME}/models \
 		${.TESTS_DIR}/models
 
+.PHONY: test-models
+test-models: test_models
+
 .PHONY: test_exporting
 test_exporting: .before_test
 	python -m pytest \
@@ -100,6 +105,9 @@ test_exporting: .before_test
 		--cov-report=term-missing:skip-covered \
 		--cov=${.PACKAGE_NAME}/exporting \
 		${.TESTS_DIR}/exporting
+
+.PHONY: test-exporting
+test-exporting: test_exporting
 
 .PHONY: docs
 docs:
