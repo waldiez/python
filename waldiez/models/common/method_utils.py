@@ -1,6 +1,5 @@
 """Function related utilities."""
 
-# flake8: noqa E501
 import ast
 from typing import List, Optional, Tuple
 
