@@ -10,6 +10,7 @@ on:
 
 jobs:
   lint:
+    name: Lint
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -46,6 +47,7 @@ jobs:
       - name: ruff
         run: ruff check --config pyproject.toml .
   test:
+    name: Test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
