@@ -1,6 +1,9 @@
 """Agent models."""
 
 from .agent import (
+    IS_TERMINATION_MESSAGE,
+    IS_TERMINATION_MESSAGE_ARGS,
+    IS_TERMINATION_MESSAGE_HINTS,
     WaldiezAgent,
     WaldiezAgentCodeExecutionConfig,
     WaldiezAgentData,
@@ -14,6 +17,9 @@ from .agent import (
 from .agents import WaldiezAgents
 from .assistant import WaldiezAssistant, WaldiezAssistantData
 from .group_manager import (
+    CUSTOM_SPEAKER_SELECTION,
+    CUSTOM_SPEAKER_SELECTION_ARGS,
+    CUSTOM_SPEAKER_SELECTION_HINTS,
     WaldiezGroupManager,
     WaldiezGroupManagerData,
     WaldiezGroupManagerSpeakers,
@@ -22,6 +28,15 @@ from .group_manager import (
     WaldiezGroupManagerSpeakersTransitionsType,
 )
 from .rag_user import (
+    CUSTOM_EMBEDDING_FUNCTION,
+    CUSTOM_EMBEDDING_FUNCTION_ARGS,
+    CUSTOM_EMBEDDING_FUNCTION_HINTS,
+    CUSTOM_TEXT_SPLIT_FUNCTION,
+    CUSTOM_TEXT_SPLIT_FUNCTION_ARGS,
+    CUSTOM_TEXT_SPLIT_FUNCTION_HINTS,
+    CUSTOM_TOKEN_COUNT_FUNCTION,
+    CUSTOM_TOKEN_COUNT_FUNCTION_ARGS,
+    CUSTOM_TOKEN_COUNT_FUNCTION_HINTS,
     WaldiezRagUser,
     WaldiezRagUserChunkMode,
     WaldiezRagUserData,
@@ -34,6 +49,21 @@ from .rag_user import (
 from .user_proxy import WaldiezUserProxy, WaldiezUserProxyData
 
 __all__ = [
+    "IS_TERMINATION_MESSAGE",
+    "IS_TERMINATION_MESSAGE_ARGS",
+    "IS_TERMINATION_MESSAGE_HINTS",
+    "CUSTOM_SPEAKER_SELECTION",
+    "CUSTOM_SPEAKER_SELECTION_ARGS",
+    "CUSTOM_SPEAKER_SELECTION_HINTS",
+    "CUSTOM_EMBEDDING_FUNCTION",
+    "CUSTOM_EMBEDDING_FUNCTION_ARGS",
+    "CUSTOM_EMBEDDING_FUNCTION_HINTS",
+    "CUSTOM_TEXT_SPLIT_FUNCTION",
+    "CUSTOM_TEXT_SPLIT_FUNCTION_ARGS",
+    "CUSTOM_TEXT_SPLIT_FUNCTION_HINTS",
+    "CUSTOM_TOKEN_COUNT_FUNCTION",
+    "CUSTOM_TOKEN_COUNT_FUNCTION_ARGS",
+    "CUSTOM_TOKEN_COUNT_FUNCTION_HINTS",
     "WaldiezAgent",
     "WaldiezAgentType",
     "WaldiezAgents",

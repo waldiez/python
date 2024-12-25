@@ -45,7 +45,7 @@ class WaldiezRagUserVectorDbConfig(WaldiezBase):
     """
 
     model_config = ConfigDict(
-        extra="forbid",
+        extra="ignore",
         alias_generator=to_camel,
         populate_by_name=True,
         frozen=False,

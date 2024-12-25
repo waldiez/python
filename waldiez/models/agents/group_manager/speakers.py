@@ -2,11 +2,10 @@
 
 from typing import Dict, List, Optional, Union
 
-from pydantic import ConfigDict, Field, model_validator
-from pydantic.alias_generators import to_camel
+from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, WaldiezMethodName, check_function
+from ...common import WaldiezBase, check_function
 
 WaldiezGroupManagerSpeakersSelectionMethod = Literal[
     "auto",
@@ -17,6 +16,12 @@ WaldiezGroupManagerSpeakersSelectionMethod = Literal[
 ]
 WaldiezGroupManagerSpeakersSelectionMode = Literal["repeat", "transition"]
 WaldiezGroupManagerSpeakersTransitionsType = Literal["allowed", "disallowed"]
+
+CUSTOM_SPEAKER_SELECTION = "custom_speaker_selection"
+CUSTOM_SPEAKER_SELECTION_ARGS = ["last_speaker", "groupchat"]
+CUSTOM_SPEAKER_SELECTION_HINTS = (
+    "# type: (ConversableAgent, GroupChat) -> Union[Agent, str, None]"
+)
 
 
 class WaldiezGroupManagerSpeakers(WaldiezBase):
@@ -71,13 +76,6 @@ class WaldiezGroupManagerSpeakers(WaldiezBase):
     validate_group_speakers_config()
         Validate the speakers config.
     """
-
-    model_config = ConfigDict(
-        extra="forbid",
-        alias_generator=to_camel,
-        populate_by_name=True,
-        frozen=False,
-    )
 
     selection_method: Annotated[
         WaldiezGroupManagerSpeakersSelectionMethod,
@@ -198,9 +196,11 @@ class WaldiezGroupManagerSpeakers(WaldiezBase):
         if self.selection_method == "custom":
             if not self.selection_custom_method:
                 raise ValueError("No custom method provided.")
-            function_name: WaldiezMethodName = "custom_speaker_selection"
             is_valid, error_or_body = check_function(
-                self.selection_custom_method, function_name=function_name
+                code_string=self.selection_custom_method,
+                function_name=CUSTOM_SPEAKER_SELECTION,
+                method_args=CUSTOM_SPEAKER_SELECTION_ARGS,
+                type_hints=CUSTOM_SPEAKER_SELECTION_HINTS,
             )
             if not is_valid or not error_or_body:
                 # pylint: disable=inconsistent-quotes

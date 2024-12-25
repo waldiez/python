@@ -15,6 +15,20 @@ from waldiez.models.chat import (
 )
 from waldiez.models.chat.chat_message import RAG_METHOD_WITH_CARRYOVER
 
+# pylint: disable=line-too-long
+
+nested_chat_common_args: Dict[str, Any] = {
+    "function_name": "nested_chat_message",
+    "function_args": ["recipient", "messages", "sender", "config"],
+    "function_type_hints": "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]",  # noqa: E501
+}
+
+callable_message_common_args: Dict[str, Any] = {
+    "function_name": "callable_message",
+    "function_args": ["sender", "recipient", "context"],
+    "function_type_hints": "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]",  # noqa: E501
+}
+
 
 def test_waldiez_chat_message() -> None:
     """Test WaldiezChatMessage."""
@@ -68,7 +82,10 @@ def nested_chat_message(recipient, messages, sender, config):
         "content": message_content,
     }
     # When
-    message = validate_message_dict(message_dict, "nested_chat_message")
+    message = validate_message_dict(
+        message_dict,
+        **nested_chat_common_args,
+    )
     # Then
     assert message.type == "string"
     assert message.content == message_content
@@ -80,7 +97,10 @@ def nested_chat_message(recipient, messages, sender, config):
         "use_carryover": True,
     }
     # Then
-    message = validate_message_dict(message_dict, "callable_message")
+    message = validate_message_dict(
+        message_dict,
+        **callable_message_common_args,
+    )
     assert message.type == "method"
     assert (
         message.content
@@ -120,7 +140,10 @@ def callable_message(sender, recipient, context):
         "use_carryover": True,
     }
     # Then
-    message = validate_message_dict(message_dict, "callable_message")
+    message = validate_message_dict(
+        message_dict,
+        **callable_message_common_args,
+    )
     assert message.type == "method"
     assert (
         message.content
@@ -158,7 +181,10 @@ def callable_message(sender, recipient, context):
         "use_carryover": True,
     }
     # Then
-    message = validate_message_dict(message_dict, "callable_message")
+    message = validate_message_dict(
+        message_dict,
+        **callable_message_common_args,
+    )
     assert message.type == "method"
     assert message.content == RAG_METHOD_WITH_CARRYOVER
 
@@ -170,7 +196,10 @@ def callable_message(sender, recipient, context):
     }
     # Then
     with pytest.raises(ValueError):
-        validate_message_dict(message_dict, "nested_chat_message")
+        validate_message_dict(
+            message_dict,
+            **nested_chat_common_args,
+        )
 
     # Given
     message_dict = {
@@ -178,7 +207,10 @@ def callable_message(sender, recipient, context):
         "content": None,
     }
     # When
-    message = validate_message_dict(message_dict, "nested_chat_message")
+    message = validate_message_dict(
+        message_dict,
+        **nested_chat_common_args,
+    )
     # Then
     assert message.type == "none"
     assert message.content is None
@@ -190,7 +222,10 @@ def callable_message(sender, recipient, context):
     }
     # Then
     with pytest.raises(ValueError):
-        validate_message_dict(message_dict, "nested_chat_message")
+        validate_message_dict(
+            message_dict,
+            **nested_chat_common_args,
+        )
 
     # Given
     message_dict = {
@@ -199,7 +234,10 @@ def callable_message(sender, recipient, context):
     }
     # Then
     with pytest.raises(ValueError):
-        validate_message_dict(message_dict, "nested_chat_message")
+        validate_message_dict(
+            message_dict,
+            **nested_chat_common_args,
+        )
 
     # Given
     message_dict = {
@@ -208,7 +246,10 @@ def callable_message(sender, recipient, context):
         "context": {},
     }
     with pytest.raises(ValueError):
-        validate_message_dict(message_dict, "nested_chat_message")
+        validate_message_dict(
+            message_dict,
+            **nested_chat_common_args,
+        )
 
 
 def test_rag_message_generator_message() -> None:
@@ -224,7 +265,10 @@ def test_rag_message_generator_message() -> None:
         "context": {},
     }
     # When
-    message = validate_message_dict(message_dict, "callable_message")
+    message = validate_message_dict(
+        message_dict,
+        **callable_message_common_args,
+    )
     # Then
     assert message.type == "rag_message_generator"
     assert message.content is None
@@ -237,7 +281,10 @@ def test_rag_message_generator_message() -> None:
         "context": {},
     }
     # When
-    message = validate_message_dict(message_dict, "callable_message")
+    message = validate_message_dict(
+        message_dict,
+        **callable_message_common_args,
+    )
     # Then
     assert message.type == "rag_message_generator"
     assert message.content is None
@@ -252,7 +299,10 @@ def test_rag_message_generator_message() -> None:
         },
     }
     # When
-    message = validate_message_dict(message_dict, "callable_message")
+    message = validate_message_dict(
+        message_dict,
+        **callable_message_common_args,
+    )
     # Then
     assert message.type == "rag_message_generator"
     assert message.content is None
@@ -267,7 +317,9 @@ def test_rag_message_generator_message() -> None:
         },
     }
     # When
-    message = validate_message_dict(message_dict, "callable_message")
+    message = validate_message_dict(
+        message_dict, **callable_message_common_args
+    )
     # Then
     assert message.type == "rag_message_generator"
     assert message.content is None
@@ -330,7 +382,10 @@ def test_rag_message_generator_message() -> None:
     }
     # Then
     with pytest.raises(ValueError):
-        validate_message_dict(message_dict, "callable_message")
+        validate_message_dict(
+            message_dict,
+            **callable_message_common_args,
+        )
 
     # Given
     message_dict = {
@@ -342,6 +397,9 @@ def test_rag_message_generator_message() -> None:
         },
     }
     # Then
-    message = validate_message_dict(message_dict, "callable_message")
+    message = validate_message_dict(
+        message_dict,
+        **callable_message_common_args,
+    )
     assert message.type == "rag_message_generator"
     assert message.content is None

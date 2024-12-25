@@ -2,14 +2,19 @@
 
 from typing import Any, Dict, Optional, Union
 
-from pydantic import ConfigDict, Field, field_validator, model_validator
-from pydantic.alias_generators import to_camel
+from pydantic import Field, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
 from ..common import WaldiezBase
 from .chat_message import WaldiezChatMessage, validate_message_dict
 from .chat_nested import WaldiezChatNested
 from .chat_summary import WaldiezChatSummary
+
+CALLABLE_MESSAGE = "callable_message"
+CALLABLE_MESSAGE_ARGS = ["sender", "recipient", "context"]
+CALLABLE_MESSAGE_HINTS = (
+    "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]"
+)
 
 
 class WaldiezChatData(WaldiezBase):
@@ -59,13 +64,6 @@ class WaldiezChatData(WaldiezBase):
     get_chat_args()
         Get the chat arguments to use in autogen.
     """
-
-    model_config = ConfigDict(
-        extra="forbid",
-        alias_generator=to_camel,
-        populate_by_name=True,
-        frozen=False,
-    )
 
     name: Annotated[
         str, Field(..., title="Name", description="The name of the chat.")
@@ -213,7 +211,9 @@ class WaldiezChatData(WaldiezBase):
                         "content": self.message.content,
                         "use_carryover": self.message.use_carryover,
                     },
-                    function_name="callable_message",
+                    function_name=CALLABLE_MESSAGE,
+                    function_args=CALLABLE_MESSAGE_ARGS,
+                    function_type_hints=CALLABLE_MESSAGE_HINTS,
                     skip_definition=True,
                 ).content
         return self
@@ -248,7 +248,10 @@ class WaldiezChatData(WaldiezBase):
             )
         if isinstance(value, dict):
             return validate_message_dict(
-                value, function_name="callable_message"
+                value,
+                function_name=CALLABLE_MESSAGE,
+                function_args=CALLABLE_MESSAGE_ARGS,
+                function_type_hints=CALLABLE_MESSAGE_HINTS,
             )
         if isinstance(value, WaldiezChatMessage):
             return validate_message_dict(
@@ -258,7 +261,9 @@ class WaldiezChatData(WaldiezBase):
                     "content": value.content,
                     "context": value.context,
                 },
-                function_name="callable_message",
+                function_name=CALLABLE_MESSAGE,
+                function_args=CALLABLE_MESSAGE_ARGS,
+                function_type_hints=CALLABLE_MESSAGE_HINTS,
             )
         return WaldiezChatMessage(
             type="none", use_carryover=False, content=None, context={}

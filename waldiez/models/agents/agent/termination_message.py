@@ -2,11 +2,14 @@
 
 from typing import List, Optional
 
-from pydantic import ConfigDict, Field, model_validator
-from pydantic.alias_generators import to_camel
+from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, WaldiezMethodName, check_function
+from ...common import WaldiezBase, check_function
+
+IS_TERMINATION_MESSAGE = "is_termination_message"
+IS_TERMINATION_MESSAGE_ARGS = ["message"]
+IS_TERMINATION_MESSAGE_HINTS = "# type: (dict) -> bool"
 
 
 class WaldiezAgentTerminationMessage(WaldiezBase):
@@ -33,13 +36,6 @@ class WaldiezAgentTerminationMessage(WaldiezBase):
     validate_termination_message() -> Self
         Validate the termination message configuration.
     """
-
-    model_config = ConfigDict(
-        extra="forbid",
-        alias_generator=to_camel,
-        populate_by_name=True,
-        frozen=False,
-    )
 
     type: Annotated[
         Literal["none", "keyword", "method"],
@@ -112,9 +108,11 @@ class WaldiezAgentTerminationMessage(WaldiezBase):
             raise ValueError(
                 "Method content is required for method termination."
             )
-        expected_function_name: WaldiezMethodName = "is_termination_message"
         valid, error_or_content = check_function(
-            self.method_content, expected_function_name
+            self.method_content,
+            function_name=IS_TERMINATION_MESSAGE,
+            method_args=IS_TERMINATION_MESSAGE_ARGS,
+            type_hints=IS_TERMINATION_MESSAGE_HINTS,
         )
         if not valid:
             raise ValueError(error_or_content)

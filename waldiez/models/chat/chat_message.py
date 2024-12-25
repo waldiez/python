@@ -1,11 +1,11 @@
 """Waldiez Message Model."""
 
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pydantic import Field
 from typing_extensions import Annotated, Literal
 
-from ..common import WaldiezBase, WaldiezMethodName, check_function
+from ..common import WaldiezBase, check_function
 
 WaldiezChatMessageType = Literal[
     "string", "method", "rag_message_generator", "none"
@@ -90,7 +90,9 @@ def validate_message_dict(
         Literal["type", "use_carryover", "content", "context"],
         Union[Optional[str], Optional[bool], Optional[Dict[str, Any]]],
     ],
-    function_name: WaldiezMethodName,
+    function_name: str,
+    function_args: List[str],
+    function_type_hints: str,
     skip_definition: bool = False,
 ) -> WaldiezChatMessage:
     """Validate a message dict.
@@ -103,8 +105,12 @@ def validate_message_dict(
     ----------
     value : dict
         The message dict.
-    function_name : str (WaldiezMethodName)
+    function_name : str
         The function name.
+    function_args : List[str]
+        The expected function arguments.
+    function_type_hints : str
+        The type hints to include.
     skip_definition : bool, optional
         Skip the function definition in the content, by default False
 
@@ -151,7 +157,10 @@ def validate_message_dict(
                 "The message content is required for the method type"
             )
         valid, error_or_content = check_function(
-            content, function_name, skip_type_hints=use_carryover
+            code_string=content,
+            function_name=function_name,
+            method_args=function_args,
+            type_hints=function_type_hints,
         )
         if not valid:
             raise ValueError(error_or_content)

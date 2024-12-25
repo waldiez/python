@@ -1,6 +1,5 @@
 """Test waldiez.exporting.utils.method_utils.*."""
 
-# pylint: disable=line-too-long
 from waldiez.exporting.utils.method_utils import get_method_string
 from waldiez.models import WaldiezMethodName
 
@@ -8,7 +7,7 @@ from waldiez.models import WaldiezMethodName
 def test_get_method_string() -> None:
     """Test get_method_string."""
     # Given
-    method_name: WaldiezMethodName = "callable_message"
+    method_name: WaldiezMethodName = WaldiezMethodName.CALLABLE_MESSAGE
     renamed_method_name = "callable_message_agent1"
     # When
     result = get_method_string(
@@ -26,7 +25,7 @@ def test_get_method_string() -> None:
         "    return 'callable_message'"
     )
     # Given
-    method_name = "custom_embedding_function"
+    method_name = WaldiezMethodName.CUSTOM_EMBEDDING_FUNCTION
     renamed_method_name = "custom_embedding_function_agent1"
     # When
     result = get_method_string(
