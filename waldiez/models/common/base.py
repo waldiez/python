@@ -19,7 +19,7 @@ class WaldiezBase(BaseModel):
         alias_generator=to_camel,
         # allow passing either `skill_id` or `skillId`
         populate_by_name=True,
-        frozen=True,
+        frozen=False,
     )
 
     def model_dump(self, **kwargs: Any) -> Dict[str, Any]:

@@ -2,11 +2,10 @@
 
 from typing import Dict, List, Optional, Union
 
-from pydantic import ConfigDict, Field, model_validator
-from pydantic.alias_generators import to_camel
+from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, WaldiezMethodName, check_function
+from ...common import WaldiezBase, check_function
 from .vector_db_config import WaldiezRagUserVectorDbConfig
 
 WaldiezRagUserTask = Literal["code", "qa", "default"]
@@ -18,6 +17,26 @@ WaldiezRagUserModels: Dict[WaldiezRagUserVectorDb, str] = {
     "pgvector": "all-MiniLM-L6-v2",
     "qdrant": "BAAI/bge-small-en-v1.5",
 }
+
+CUSTOM_EMBEDDING_FUNCTION = "custom_embedding_function"
+CUSTOM_EMBEDDING_FUNCTION_ARGS: List[str] = []
+CUSTOM_EMBEDDING_FUNCTION_HINTS = "# type: () -> Callable[..., Any]"
+
+CUSTOM_TOKEN_COUNT_FUNCTION = "custom_token_count_function"  # nosec
+CUSTOM_TOKEN_COUNT_FUNCTION_ARGS = ["text", "model"]  # nosec
+CUSTOM_TOKEN_COUNT_FUNCTION_HINTS = "# type: (str, str) -> int"  # nosec
+
+CUSTOM_TEXT_SPLIT_FUNCTION = "custom_text_split_function"
+CUSTOM_TEXT_SPLIT_FUNCTION_ARGS = [
+    "text",
+    "max_tokens",
+    "chunk_mode",
+    "must_break_at_empty_line",
+    "overlap",
+]
+CUSTOM_TEXT_SPLIT_FUNCTION_HINTS = (
+    "# type: (str, int, str, bool, int) -> List[str]"
+)
 
 
 class WaldiezRagUserRetrieveConfig(WaldiezBase):
@@ -139,13 +158,6 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
     validate_rag_user_data
         Validate the RAG user data.
     """
-
-    model_config = ConfigDict(
-        extra="forbid",
-        alias_generator=to_camel,
-        populate_by_name=True,
-        frozen=False,
-    )
 
     task: Annotated[
         WaldiezRagUserTask,
@@ -516,9 +528,11 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
                     "The embedding_function is required "
                     "if use_custom_embedding is True."
                 )
-            function_name: WaldiezMethodName = "custom_embedding_function"
             valid, error_or_content = check_function(
-                self.embedding_function, function_name
+                code_string=self.embedding_function,
+                function_name=CUSTOM_EMBEDDING_FUNCTION,
+                method_args=CUSTOM_EMBEDDING_FUNCTION_ARGS,
+                type_hints=CUSTOM_EMBEDDING_FUNCTION_HINTS,
             )
             if not valid:
                 raise ValueError(error_or_content)
@@ -538,9 +552,11 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
                     "The custom_token_count_function is required "
                     "if use_custom_token_count is True."
                 )
-            function_name: WaldiezMethodName = "custom_token_count_function"
             valid, error_or_content = check_function(
-                self.custom_token_count_function, function_name
+                code_string=self.custom_token_count_function,
+                function_name=CUSTOM_TOKEN_COUNT_FUNCTION,
+                method_args=CUSTOM_TOKEN_COUNT_FUNCTION_ARGS,
+                type_hints=CUSTOM_TOKEN_COUNT_FUNCTION_HINTS,
             )
             if not valid:
                 raise ValueError(error_or_content)
@@ -560,9 +576,11 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
                     "The custom_text_split_function is required "
                     "if use_custom_text_split is True."
                 )
-            function_name: WaldiezMethodName = "custom_text_split_function"
             valid, error_or_content = check_function(
-                self.custom_text_split_function, function_name
+                code_string=self.custom_text_split_function,
+                function_name=CUSTOM_TEXT_SPLIT_FUNCTION,
+                method_args=CUSTOM_TEXT_SPLIT_FUNCTION_ARGS,
+                type_hints=CUSTOM_TEXT_SPLIT_FUNCTION_HINTS,
             )
             if not valid:
                 raise ValueError(error_or_content)

@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Tuple
 
-from waldiez.models import WaldiezAgent, WaldiezGroupManager
+from waldiez.models import WaldiezAgent, WaldiezGroupManager, WaldiezMethodName
 
 from ..utils import get_method_string, get_object_string
 
@@ -97,7 +97,7 @@ def _get_group_manager_extras(
     if method_name_and_content:
         method_name, method_content = method_name_and_content
         custom_selection_method = get_method_string(
-            "custom_speaker_selection",
+            WaldiezMethodName.CUSTOM_SPEAKER_SELECTION,
             method_name,
             method_content,
         )

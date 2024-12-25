@@ -2,10 +2,11 @@
 
 import ast
 
-from waldiez.models.common.method_utils import (
+from waldiez.models.common.method_utils import check_function, parse_code_string
+from waldiez.models.methods import (
+    WaldiezMethodArgs,
+    WaldiezMethodHints,
     WaldiezMethodName,
-    check_function,
-    parse_code_string,
 )
 
 
@@ -36,9 +37,14 @@ def test_check_function() -> None:
 def callable_message(sender, recipient, context):
     return "Hello"
     """
-    function_name: WaldiezMethodName = "callable_message"
+    function_name: WaldiezMethodName = WaldiezMethodName.CALLABLE_MESSAGE
     # When
-    valid, body = check_function(code_string, function_name)
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        method_args=WaldiezMethodArgs[function_name],
+        type_hints=WaldiezMethodHints[function_name],
+    )
     # Then
     assert valid
     assert body == (
@@ -53,19 +59,29 @@ def callable_message(sender, recipient, context):
     """
     function_name = "invalid_function"  # type: ignore[assignment]
     # When
-    valid, body = check_function(code_string, function_name)
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        method_args=[],
+        type_hints="",
+    )
     # Then
     assert not valid
-    assert "Invalid function name" in body
+    assert "No function with name" in body
 
     # Given
     code_string = """
 def callable_message(other, context):
     return "Hello"
     """
-    function_name = "callable_message"
+    function_name = WaldiezMethodName.CALLABLE_MESSAGE
     # When
-    valid, body = check_function(code_string, function_name)
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        method_args=WaldiezMethodArgs[function_name],
+        type_hints=WaldiezMethodHints[function_name],
+    )
     # Then
     assert not valid
     assert "Invalid number of arguments" in body
@@ -74,9 +90,14 @@ def callable_message(other, context):
 def is_termination_message(x):
     return True
     """
-    function_name = "is_termination_message"
+    function_name = WaldiezMethodName.IS_TERMINATION_MESSAGE
     # When
-    valid, body = check_function(code_string, function_name)
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        method_args=WaldiezMethodArgs[function_name],
+        type_hints=WaldiezMethodHints[function_name],
+    )
     # Then
     assert not valid
     assert "Invalid argument name" in body
@@ -86,9 +107,14 @@ def is_termination_message(x):
 def is_termination_message(4):
     return True
     """
-    function_name = "is_termination_message"
+    function_name = WaldiezMethodName.IS_TERMINATION_MESSAGE
     # When
-    valid, body = check_function(code_string, function_name)
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        method_args=WaldiezMethodArgs[function_name],
+        type_hints=WaldiezMethodHints[function_name],
+    )
     # Then
     assert not valid
     assert "SyntaxError" in body
@@ -101,24 +127,36 @@ def some_other_function(sender, recipient, context):
 def nested_chat_reply(recipient, messages, sender, config):
     return "Hello"
     """
-    function_name = "nested_chat_reply"
+    function_name = WaldiezMethodName.NESTED_CHAT_REPLY
     # When
-    valid, body = check_function(code_string, function_name)
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        method_args=WaldiezMethodArgs[function_name],
+        type_hints=WaldiezMethodHints[function_name],
+    )
     # Then
     assert valid
+    # pylint: disable=line-too-long
+    # fmt: off
     assert body == (
-        "    # type: (ConversableAgent, list[dict], ConversableAgent, dict) -> "
-        'Union[dict, str]\n    return "Hello"'
+        '    # type: (ConversableAgent, list[dict], ConversableAgent, dict) -> Union[dict, str]\n    return "Hello"'  # noqa: E501
     )
+    # fmt: on
 
     # Given
     code_string = """
 def nested_chat_reply_(recipient, messages, sender, config):
     return "Hello"
     """
-    function_name = "nested_chat_reply"
+    function_name = WaldiezMethodName.NESTED_CHAT_REPLY
     # When
-    valid, body = check_function(code_string, function_name)
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        method_args=WaldiezMethodArgs[function_name],
+        type_hints=WaldiezMethodHints[function_name],
+    )
     # Then
     assert not valid
     assert "No function with name" in body

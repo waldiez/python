@@ -1,5 +1,4 @@
 # type: ignore
-# flake8: noqa
 # pylint: skip-file
 # isort: skip_file
 """Extra typer commands for CLI."""
@@ -20,7 +19,7 @@ except BaseException:
     pass
 
 try:
-    import waldiez_jupyter
+    import waldiez_jupyter  # noqa: F401
 
     HAVE_JUPYTER = True
 except BaseException:

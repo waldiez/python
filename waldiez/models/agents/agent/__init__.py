@@ -6,9 +6,17 @@ from .code_execution import WaldiezAgentCodeExecutionConfig
 from .linked_skill import WaldiezAgentLinkedSkill
 from .nested_chat import WaldiezAgentNestedChat, WaldiezAgentNestedChatMessage
 from .teachability import WaldiezAgentTeachability
-from .termination_message import WaldiezAgentTerminationMessage
+from .termination_message import (
+    IS_TERMINATION_MESSAGE,
+    IS_TERMINATION_MESSAGE_ARGS,
+    IS_TERMINATION_MESSAGE_HINTS,
+    WaldiezAgentTerminationMessage,
+)
 
 __all__ = [
+    "IS_TERMINATION_MESSAGE",
+    "IS_TERMINATION_MESSAGE_ARGS",
+    "IS_TERMINATION_MESSAGE_HINTS",
     "WaldiezAgent",
     "WaldiezAgentCodeExecutionConfig",
     "WaldiezAgentData",

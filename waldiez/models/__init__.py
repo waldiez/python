@@ -45,8 +45,8 @@ from .chat import (
     WaldiezChatSummary,
     WaldiezChatSummaryMethod,
 )
-from .common import METHOD_ARGS, METHOD_TYPE_HINTS, WaldiezMethodName
 from .flow import WaldiezFlow, WaldiezFlowData
+from .methods import WaldiezMethodArgs, WaldiezMethodHints, WaldiezMethodName
 from .model import (
     WaldiezModel,
     WaldiezModelAPIType,
@@ -58,9 +58,6 @@ from .waldiez import Waldiez
 
 # pylint: disable=duplicate-code
 __all__ = [
-    "METHOD_ARGS",
-    "METHOD_TYPE_HINTS",
-    "WaldiezMethodName",
     "Waldiez",
     "WaldiezAgent",
     "WaldiezAgentCodeExecutionConfig",
@@ -88,6 +85,9 @@ __all__ = [
     "WaldiezGroupManagerSpeakersSelectionMode",
     "WaldiezGroupManagerSpeakersTransitionsType",
     "WaldiezChatMessage",
+    "WaldiezMethodName",
+    "WaldiezMethodArgs",
+    "WaldiezMethodHints",
     "WaldiezModel",
     "WaldiezModelAPIType",
     "WaldiezModelData",

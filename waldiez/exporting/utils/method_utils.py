@@ -1,10 +1,14 @@
 """Method related string generation utilities."""
 
-from waldiez.models import METHOD_ARGS, WaldiezMethodName
+from typing import Union
+
+from waldiez.models import WaldiezMethodArgs, WaldiezMethodName
 
 
 def get_method_string(
-    method_name: WaldiezMethodName, renamed_method_name: str, method_body: str
+    method_name: Union[str, WaldiezMethodName],
+    renamed_method_name: str,
+    method_body: str,
 ) -> str:
     """Get a function string.
 
@@ -22,7 +26,10 @@ def get_method_string(
     str
         The function string having the definition, type hints and body.
     """
-    method_args = METHOD_ARGS[method_name]
+    if isinstance(method_name, str):
+        method_name = WaldiezMethodName(method_name.lower())
+
+    method_args = WaldiezMethodArgs[method_name]
     content = f"def {renamed_method_name}("
     if len(method_args) == 0:
         content += "):"
