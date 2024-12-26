@@ -1,7 +1,7 @@
 """Test waldiez.exporting.chats.helpers.*."""
 
 # flake8: noqa E501
-from waldiez.exporting.chats.helpers import (
+from waldiez.exporting.chats.chats import (
     export_multiple_chats_string,
     export_single_chat_string,
 )
