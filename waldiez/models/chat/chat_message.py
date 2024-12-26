@@ -229,8 +229,6 @@ def _get_message_args_from_dict(
     context_value = value.get("context")
     if isinstance(context_value, dict):
         context = context_value
-    if not isinstance(context, dict):  # pragma: no cover
-        context = {}
     return message_type, use_carryover, content, context
 
 
@@ -269,6 +267,11 @@ def callable_message(sender, recipient, context):
     if isinstance(carryover, list):
         carryover = carryover[-1]
     if not isinstance(carryover, str):
+        if isinstance(carryover, list):
+            carryover = carryover[-1]
+        elif isinstance(carryover, dict):
+            carryover = carryover.get("content", "")
+    if not isinstance(carryover, str):
         carryover = ""'''
     if text_content:
         method_content += f"""
@@ -304,6 +307,11 @@ def callable_message(sender, recipient, context):
     carryover = context.get("carryover", "")
     if isinstance(carryover, list):
         carryover = carryover[-1]
+    if not isinstance(carryover, str):
+        if isinstance(carryover, list):
+            carryover = carryover[-1]
+        elif isinstance(carryover, dict):
+            carryover = carryover.get("content", "")
     if not isinstance(carryover, str):
         carryover = ""
     message = sender.message_generator(sender, recipient, context)
