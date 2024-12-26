@@ -7,6 +7,8 @@ agent doesn’t suggest a tool call or a handoff.
 
 # pylint: disable=line-too-long
 
+from typing import Dict
+
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
@@ -29,9 +31,10 @@ class WaldiezSwarmAfterWork(WaldiezBase):
     Attributes
     ----------
     recipient : str
-        The agent to hand off to or the after work option.
-        Can be a SwarmAgent, a string name of a SwarmAgent,
-        an AfterWorkOption, or a Callable.
+        The agent_id to hand off to, an AfterWork option,
+        or the custom after work method.
+        If it is an AfterWork option, it can be one of
+        ('TERMINATE', 'REVERT_TO_USER', 'STAY')
 
     recipient_type : WaldiezSwarmAfterWorkRecipientType
         The type of recipient.
@@ -51,19 +54,20 @@ class WaldiezSwarmAfterWork(WaldiezBase):
     recipient: Annotated[
         str,
         Field(
-            ...,
-            title="Agent",
+            "TERMINATE",
+            title="Recipient",
             description=(
-                "The agent to hand off to or the after work option. "
-                "Can be a SwarmAgent, a string name of a SwarmAgent, "
-                "an AfterWorkOption, or a Callable."
+                "The agent_id to hand off to, an AfterWork option, "
+                "or the custom after work method. "
+                "If it is an AfterWork option, it can be one of "
+                "('TERMINATE', 'REVERT_TO_USER', 'STAY')"
             ),
         ),
     ]
     recipient_type: Annotated[
         WaldiezSwarmAfterWorkRecipientType,
         Field(
-            "agent",
+            "option",
             title="Recipient Type",
             description=(
                 "The type of recipient. "
@@ -83,16 +87,37 @@ class WaldiezSwarmAfterWork(WaldiezBase):
 
     _recipient_string: str = ""
 
-    @property
-    def recipient_string(self) -> str:
-        """Return the recipient as a string.
+    def get_recipient_string(
+        self,
+        agent_names: Dict[str, str],
+        function_name: str = "custom_after_work",
+    ) -> str:
+        """Get the recipient string.
+
+        Parameters
+        ----------
+        agent_names : Dict[str, str]
+            A mapping of agent id to agent name.
+        function_name : str, optional
+            The function name to use, by default "custom_after_work".
 
         Returns
         -------
         str
-            The recipient as a string.
+            The recipient string.
         """
-        return self._recipient_string
+        if self.recipient_type == "option":
+            return f"AFTER_WORK(AfterWorkOption.{self.recipient})"
+        if self.recipient_type == "agent":
+            # the the recipient is passed as the agent name
+            # (and not its id), care should be taken to ensure
+            # the all the agents in the flow have unique names
+            agent_instance = agent_names.get(self.recipient, self.recipient)
+            return f"AFTER_WORK({agent_instance})"
+        return (
+            f"def {function_name}(last_speaker, messages, groupchat):\n"
+            f"{self._recipient_string}"
+        )
 
     @model_validator(mode="after")
     def validate_recipient(self) -> Self:
