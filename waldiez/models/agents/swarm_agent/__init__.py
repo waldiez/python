@@ -14,6 +14,7 @@ from .on_condition import (
     CUSTOM_ON_CONDITION_AVAILABLE_HINTS,
     WaldiezSwarmOnCondition,
 )
+from .swarm_agent import WaldiezSwarmAgent
 from .swarm_agent_data import WaldiezSwarmAgentData
 from .update_system_message import (
     CUSTOM_UPDATE_SYSTEM_MESSAGE,
@@ -34,6 +35,7 @@ __all__ = [
     "CUSTOM_UPDATE_SYSTEM_MESSAGE_HINTS",
     "WaldiezSwarmAfterWork",
     "WaldiezSwarmAfterWorkOption",
+    "WaldiezSwarmAgent",
     "WaldiezSwarmAgentData",
     "WaldiezSwarmAfterWorkRecipientType",
     "WaldiezSwarmOnCondition",
