@@ -25,7 +25,7 @@ def export_chats(
     Parameters
     ----------
     main_chats : List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]]
-        The main flow chats.
+        The main flow chat elements (chat, sender, recipient).
     agent_names : Dict[str, str]
         A mapping of agent id to agent name.
     chat_names : Dict[str, str]
@@ -40,7 +40,7 @@ def export_chats(
     """
     if len(main_chats) == 1:
         return export_single_chat_string(
-            flow=main_chats[0],
+            main_chat=main_chats[0],
             agent_names=agent_names,
             chat_names=chat_names,
             tabs=tabs,
@@ -55,7 +55,7 @@ def export_chats(
 
 # pylint: disable=line-too-long
 def export_single_chat_string(
-    flow: Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent],
+    main_chat: Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent],
     agent_names: Dict[str, str],
     chat_names: Dict[str, str],
     tabs: int,
@@ -64,8 +64,8 @@ def export_single_chat_string(
 
     Parameters
     ----------
-    flow : Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]
-        The chat flow.
+    main_chat : Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]
+        The main chat flow (chat, sender, recipient).
     agent_names : Dict[str, str]
         A mapping of agent id to agent name.
     chat_names : Dict[str, str]
@@ -107,7 +107,7 @@ def export_single_chat_string(
     ```
     """
     tab = "    " * tabs
-    chat, sender, recipient = flow
+    chat, sender, recipient = main_chat
     chat_args = chat.get_chat_args(sender=sender)
     chat_args = escape_summary_args_quotes(chat_args)
     if not chat_args:

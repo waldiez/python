@@ -69,7 +69,7 @@ def test_export_empty_single_chat_string() -> None:
     agent_names = {"wa-1": "agent1", "wa-2": "agent2"}
     # When
     result = export_single_chat_string(
-        flow=(chat1, agent1, agent2),
+        main_chat=(chat1, agent1, agent2),
         chat_names=chat_names,
         agent_names=agent_names,
         tabs=0,
@@ -137,7 +137,7 @@ def test_export_single_chat_string() -> None:
     agent_names = {"wa-1": "agent1", "wa-2": "agent2"}
     # When
     result = export_single_chat_string(
-        flow=(chat1, agent1, agent2),
+        main_chat=(chat1, agent1, agent2),
         chat_names=chat_names,
         agent_names=agent_names,
         tabs=0,
@@ -195,7 +195,7 @@ def test_export_single_chat_string() -> None:
     agent_names = {"wa-1": "agent1", "wa-2": "agent2"}
     # When
     result = export_single_chat_string(
-        flow=(chat2, agent2, agent1),
+        main_chat=(chat2, agent2, agent1),
         chat_names=chat_names,
         agent_names=agent_names,
         tabs=1,
@@ -251,7 +251,7 @@ def test_export_single_chat_string() -> None:
     agent_names = {"wa-1": "agent1", "wa-2": "agent2"}
     # When
     result = export_single_chat_string(
-        flow=(chat3, agent2, agent1),
+        main_chat=(chat3, agent2, agent1),
         chat_names=chat_names,
         agent_names=agent_names,
         tabs=1,
@@ -521,7 +521,7 @@ def test_chat_with_rag_user() -> None:
     agent_names = {"wa-1": "agent1", "wa-2": "agent2"}
     # When
     result, _ = export_single_chat_string(
-        flow=(chat1, agent1, agent2),
+        main_chat=(chat1, agent1, agent2),
         chat_names=chat_names,
         agent_names=agent_names,
         tabs=0,
