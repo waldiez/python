@@ -168,7 +168,7 @@ def _combine_strings(
         content += get_comment("nested", notebook) + "\n"
     content += nested_chats_string
     chats_content, additional_methods = export_chats(
-        main_chats=waldiez.chats,
+        waldiez=waldiez,
         agent_names=agent_names,
         chat_names=chat_names,
         tabs=0 if notebook else 1,

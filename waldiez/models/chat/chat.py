@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 from pydantic import Field
 from typing_extensions import Annotated
 
-from ..agents import WaldiezAgent, WaldiezRagUser
+from ..agents import WaldiezAgent, WaldiezRagUser, WaldiezSwarmAfterWork
 from ..common import WaldiezBase
 from .chat_data import WaldiezChatData
 from .chat_message import WaldiezChatMessage
@@ -100,6 +100,25 @@ class WaldiezChat(WaldiezBase):
     def message_content(self) -> Optional[str]:
         """Get the message content."""
         return self.data.message_content
+
+    @property
+    def context_variables(self) -> Dict[str, Any]:
+        """Get the context variables."""
+        if isinstance(self.data.message, str):  # pragma: no cover
+            # it can never be a string (just for the linter)
+            # we manage this on the validation part in the model
+            return {}
+        return self.data.message.context
+
+    @property
+    def max_rounds(self) -> int:
+        """Get the max rounds for swarm chat."""
+        return self.data.max_rounds
+
+    @property
+    def after_work(self) -> Optional[WaldiezSwarmAfterWork]:
+        """Get the after work."""
+        return self.data.after_work
 
     def get_chat_args(
         self,

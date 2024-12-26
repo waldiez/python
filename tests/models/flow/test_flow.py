@@ -227,6 +227,7 @@ def test_waldiez_flow() -> None:
         assistants=[assistant],
         managers=[manager],
         rag_users=[rag_user],
+        swarm_agents=[],
     )
     chats = [
         WaldiezChat(
@@ -479,6 +480,7 @@ def test_waldiez_flow() -> None:
         assistants=[assistant, assistant2],
         managers=[manager],
         rag_users=[rag_user],
+        swarm_agents=[],
     )
     with pytest.raises(ValueError):
         # agents do not connect to any other node
@@ -509,6 +511,7 @@ def test_waldiez_flow() -> None:
         assistants=[assistant],
         managers=[],
         rag_users=[],
+        swarm_agents=[],
     )
     chats2 = [
         WaldiezChat(
@@ -556,3 +559,7 @@ def test_waldiez_flow() -> None:
         ),
     )
     assert flow.ordered_flow == [(chats2[0], user, assistant)]
+
+    swarm_members, swarm_user = flow.get_swarm_chat_members(user.id)
+    assert swarm_members == []
+    assert swarm_user is None

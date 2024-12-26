@@ -490,6 +490,7 @@ def get_flow() -> WaldiezFlow:
         assistants=[assistant],
         managers=[manager],
         rag_users=[rag_user],
+        swarm_agents=[],
     )
     flow = WaldiezFlow(
         id="wf-1",

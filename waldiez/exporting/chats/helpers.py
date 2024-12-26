@@ -15,6 +15,7 @@ from waldiez.models import (
     WaldiezAgent,
     WaldiezChat,
     WaldiezChatMessage,
+    WaldiezFlow,
     WaldiezRagUser,
 )
 
@@ -257,6 +258,112 @@ def get_simple_chat_string(
     chat_string += message_arg
     chat_string += f"\n{tab})"
     return chat_string, additional_methods_string
+
+
+def get_swarm_agents_strings(
+    flow: WaldiezFlow,
+    initial_agent: WaldiezAgent,
+    sender: WaldiezAgent,
+    recipient: WaldiezAgent,
+    agent_names: Dict[str, str],
+    user_agent: Optional[WaldiezAgent],
+) -> Tuple[str, str]:
+    """Get the swarm agent strings to use in `initiate_swarm_chat`.
+
+    Parameters
+    ----------
+    flow : WaldiezFlow
+        The flow.
+    initial_agent : WaldiezAgent
+        The initial agent.
+    sender : WaldiezAgent
+        The chat initiator.
+    recipient : WaldiezAgent
+        The chat recipient.
+    agent_names : Dict[str, str]
+        A mapping of agent id to agent name.
+    user_agent : Optional[WaldiezAgent]
+        The user agent.
+    Returns
+    -------
+    Tuple[str, str]
+        The swarm agents string and the user agent string.
+    """
+    swarm_agents, user_member = flow.get_swarm_chat_members(initial_agent.id)
+    if user_agent is None and user_member is not None:
+        user_agent = user_member
+    if user_agent is None:  # pragma: no cover
+        if sender.agent_type in ("user", "rag_user"):
+            user_agent = sender
+        elif recipient.agent_type in ("user", "rag_user"):
+            user_agent = recipient
+    agents_string = ", ".join(
+        [f"{agent_names[agent.id]}" for agent in swarm_agents]
+    )
+    user_agent_string = "None"
+    if user_agent:
+        user_agent_string = agent_names[user_agent.id]
+    return agents_string, user_agent_string
+
+
+def get_swarm_messages_string(
+    chat: WaldiezChat,
+) -> str:
+    """Get the swarm chat messages string to use in `initiate_swarm_chat`.
+
+    Parameters
+    ----------
+    chat : WaldiezChat
+        The chat.
+
+    Returns
+    -------
+    str
+        The swarm chat messages string.
+    """
+    chat_message = chat.message
+    if chat.message.type == "string" and chat_message.content:
+        messages_string = '[{"role": "user", "content": '
+        escaped_message = get_escaped_string(chat_message.content)
+        messages_string += f'"{escaped_message}"'
+        messages_string += "}]"
+    else:
+        messages_string = ""
+    return messages_string
+
+
+def get_swarm_after_work_string(
+    chat: WaldiezChat,
+    chat_names: Dict[str, str],
+    agent_names: Dict[str, str],
+) -> Tuple[str, str]:
+    """Get the swarm after work string.
+
+    Parameters
+    ----------
+    chat : WaldiezChat
+        The chat.
+    chat_names : Dict[str, str]
+        A mapping of chat id to chat name.
+    agent_names : Dict[str, str]
+        A mapping of agent id to agent name.
+    Returns
+    -------
+    Tuple[str, str]
+        The after work string and the additional methods string.
+    """
+    if not chat.after_work:
+        return "AFTER_WORK(AfterWorkOption.TERMINATE)", ""
+    additional_methods = ""
+    chat_name = chat_names[chat.id]
+    function_name = f"custom_after_work_{chat_name}"
+    after_work_string = chat.after_work.get_recipient_string(
+        agent_names=agent_names, function_name=function_name
+    )
+    if chat.after_work.recipient_type == "callable":
+        additional_methods = f"\n{after_work_string}"
+        after_work_string = f"{function_name}"
+    return after_work_string, additional_methods
 
 
 def _get_chat_message(

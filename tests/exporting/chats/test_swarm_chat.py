@@ -1,0 +1,357 @@
+"""Test exporting a swarm chat."""
+
+import pytest
+
+from waldiez.exporting.chats.chats import (
+    export_chats,
+    export_swarm_message_string,
+)
+from waldiez.exporting.chats.helpers import (
+    get_swarm_after_work_string,
+    get_swarm_agents_strings,
+    get_swarm_messages_string,
+)
+from waldiez.models import (
+    Waldiez,
+    WaldiezAgent,
+    WaldiezAgents,
+    WaldiezChat,
+    WaldiezChatData,
+    WaldiezChatMessage,
+    WaldiezChatNested,
+    WaldiezChatSummary,
+    WaldiezFlow,
+    WaldiezFlowData,
+    WaldiezSwarmAfterWork,
+)
+
+
+# pylint: disable=too-many-locals
+def test_export_chats() -> None:
+    """Test export_chats()."""
+    # Given
+    agent1 = WaldiezAgent(  # type: ignore
+        id="wa-1",
+        name="agent1",
+        agent_type="user",
+    )
+    agent2 = WaldiezAgent(  # type: ignore
+        id="wa-2",
+        name="agent2",
+        agent_type="swarm",
+    )
+    agent3 = WaldiezAgent(  # type: ignore
+        id="wa-3",
+        name="agent3",
+        agent_type="swarm",
+    )
+    agent4 = WaldiezAgent(  # type: ignore
+        id="wa-4",
+        name="agent4",
+        agent_type="swarm",
+    )
+    agent5 = WaldiezAgent(  # type: ignore
+        id="wa-5",
+        name="agent5",
+        agent_type="assistant",
+    )
+    chat1 = WaldiezChat(
+        id="wc-1",
+        data=WaldiezChatData(
+            name="chat1",
+            description="A simple swarm chat.",
+            source="wa-1",
+            target="wa-2",
+            position=1,
+            order=1,
+            clear_history=False,
+            message=WaldiezChatMessage(
+                type="string",
+                use_carryover=False,
+                content="Hello wa-2 from wa-1!",
+                context={"variable1": "value1"},
+            ),
+            summary=WaldiezChatSummary(
+                method=None,
+                prompt="",
+                args={},
+            ),
+            nested_chat=WaldiezChatNested(
+                message=None,
+                reply=None,
+            ),
+            silent=False,
+            real_source=None,
+            real_target=None,
+            max_turns=1,
+            max_rounds=10,
+            after_work=WaldiezSwarmAfterWork(
+                recipient="REVERT_TO_USER",
+                recipient_type="option",
+            ),
+        ),
+    )
+    after_work_callable = """
+def custom_after_work(last_speaker, messages, groupchat):
+    return "TERMINATE"
+"""
+    chat2 = WaldiezChat(
+        id="wc-2",
+        data=WaldiezChatData(
+            name="chat2",
+            description="A chat.",
+            source="wa-2",
+            target="wa-3",
+            position=-1,
+            order=-1,
+            clear_history=False,
+            message=WaldiezChatMessage(
+                type="string",
+                use_carryover=False,
+                content="Hello wa-3 from wa-2!",
+                context={},
+            ),
+            summary=WaldiezChatSummary(
+                method=None,
+                prompt="",
+                args={},
+            ),
+            nested_chat=WaldiezChatNested(
+                message=None,
+                reply=None,
+            ),
+            silent=False,
+            real_source=None,
+            real_target=None,
+            max_turns=2,
+            max_rounds=5,
+            after_work=WaldiezSwarmAfterWork(
+                recipient=after_work_callable,
+                recipient_type="callable",
+            ),
+        ),
+    )
+    chat3 = WaldiezChat(
+        id="wc-3",
+        data=WaldiezChatData(
+            name="chat3",
+            description="A simple chat.",
+            source="wa-2",
+            target="wa-4",
+            position=-1,
+            order=-1,
+            clear_history=False,
+            message=WaldiezChatMessage(
+                type="string",
+                use_carryover=False,
+                content="Hello wa-4 from wa-2!",
+                context={},
+            ),
+            summary=WaldiezChatSummary(
+                method=None,
+                prompt="",
+                args={},
+            ),
+            nested_chat=WaldiezChatNested(
+                message=None,
+                reply=None,
+            ),
+            silent=False,
+            real_source=None,
+            real_target=None,
+            max_turns=3,
+            max_rounds=2,
+            after_work=WaldiezSwarmAfterWork(
+                recipient="wa-4",
+                recipient_type="agent",
+            ),
+        ),
+    )
+    callable_message = """
+def callable_message(sender, recipient, context):
+    return "hello" + context.get("name", "")
+"""
+    chat4 = WaldiezChat(
+        id="wc-4",
+        data=WaldiezChatData(
+            name="chat4",
+            description="A chat.",
+            source="wa-5",
+            target="wa-1",
+            position=-1,
+            order=-1,
+            clear_history=False,
+            message=WaldiezChatMessage(
+                type="method",
+                use_carryover=False,
+                content=callable_message,
+                context={
+                    "name": "world",
+                },
+            ),
+            summary=WaldiezChatSummary(
+                method=None,
+                prompt="",
+                args={},
+            ),
+            nested_chat=WaldiezChatNested(
+                message=None,
+                reply=None,
+            ),
+            silent=False,
+            real_source=None,
+            real_target=None,
+            max_turns=4,
+            max_rounds=3,
+            after_work=None,
+        ),
+    )
+    agents = WaldiezAgents(
+        users=[agent1.model_dump()],  # type: ignore
+        assistants=[agent5.model_dump()],  # type: ignore
+        managers=[],
+        rag_users=[],
+        swarm_agents=[
+            agent2.model_dump(),  # type: ignore
+            agent3.model_dump(),  # type: ignore
+            agent4.model_dump(),  # type: ignore
+        ],
+    )
+    all_chats = [chat1, chat2, chat3, chat4]
+    flow = WaldiezFlow(
+        id="wf-1",
+        name="flow1",
+        description="A flow.",
+        tags=[],
+        requirements=[],
+        data=WaldiezFlowData(
+            agents=agents,
+            chats=[chat.model_dump() for chat in all_chats],  # type: ignore
+        ),
+    )
+    waldiez = Waldiez(
+        flow=flow,
+    )
+    all_agents = [agent1, agent2, agent3, agent4, agent5]
+    agent_names = {agent.id: agent.name for agent in all_agents}
+    chat_names = {chat.id: chat.name for chat in all_chats}
+    # When
+    exported, _ = export_chats(
+        waldiez=waldiez, agent_names=agent_names, chat_names=chat_names, tabs=1
+    )
+    # Then
+    expected = """initiate_swarm_chat(
+        initial_agent=agent2,
+        agents=[agent2, agent3, agent4],
+        messages=[{"role": "user", "content": "Hello wa-2 from wa-1!"}],
+        context_variables={
+            "variable1": "value1"
+        },
+        user_agent=agent1,
+        after_work=AFTER_WORK(AfterWorkOption.REVERT_TO_USER),
+        max_rounds=10,
+    )"""
+    assert expected == exported
+    with pytest.raises(ValueError):
+        # no swarm agent in chat
+        export_swarm_message_string(
+            flow=waldiez.flow,
+            chat=chat4,
+            sender=agent5,
+            recipient=agent1,
+            agent_names=agent_names,
+            chat_names=chat_names,
+            tabs=1,
+        )
+
+    # When
+    after_work_string, _ = get_swarm_after_work_string(
+        chat=chat3,
+        agent_names=agent_names,
+        chat_names=chat_names,
+    )
+    # Then
+    assert after_work_string == "AFTER_WORK(agent4)"
+    # When
+    after_work_string, _ = get_swarm_after_work_string(
+        chat=chat4,
+        agent_names=agent_names,
+        chat_names=chat_names,
+    )
+    # Then
+    assert after_work_string == "AFTER_WORK(AfterWorkOption.TERMINATE)"
+    # When
+    after_work_string, additional_method_string = get_swarm_after_work_string(
+        chat=chat2,
+        agent_names=agent_names,
+        chat_names=chat_names,
+    )
+    # Then
+    assert after_work_string == f"custom_after_work_{chat_names[chat2.id]}"
+    # pylint: disable=line-too-long,inconsistent-quotes
+    expected = (
+        f"\ndef {after_work_string}(last_speaker, messages, groupchat):\n"
+        "    # type: (SwarmAgent, List[dict], GroupChat) -> Union[AfterWorkOption, SwarmAgent, str]\n"  # noqa E501
+        '    return "TERMINATE"'
+    )
+    assert expected == additional_method_string
+    # When
+    messages_string = get_swarm_messages_string(chat=chat4)
+    # Then
+    assert messages_string == ""
+    # When
+    agents_string, user_string = get_swarm_agents_strings(
+        flow=waldiez.flow,
+        initial_agent=agent2,
+        sender=agent1,
+        recipient=agent2,
+        agent_names=agent_names,
+        user_agent=None,
+    )
+    # Then
+    assert agents_string == "agent2, agent3, agent4"
+    assert user_string == "agent1"
+    # When
+    agents = WaldiezAgents(
+        users=[],
+        assistants=[],
+        managers=[],
+        rag_users=[],
+        swarm_agents=[
+            agent2.model_dump(),  # type: ignore
+            agent3.model_dump(),  # type: ignore
+            agent4.model_dump(),  # type: ignore
+        ],
+    )
+    all_chats = [chat2, chat3]
+    chat_dumps = [chat.model_dump() for chat in all_chats]
+    for index, _ in enumerate(chat_dumps):
+        chat_dumps[index]["data"]["order"] = index
+    flow = WaldiezFlow(
+        id="wf-1",
+        name="flow1",
+        description="A flow.",
+        tags=[],
+        requirements=[],
+        data=WaldiezFlowData(
+            agents=agents,
+            chats=chat_dumps,  # type: ignore
+        ),
+    )
+    waldiez = Waldiez(
+        flow=flow,
+    )
+    all_agents = [agent2, agent3, agent4]
+    agent_names = {agent.id: agent.name for agent in all_agents}
+    chat_names = {chat.id: chat.name for chat in all_chats}
+    agents_string, user_string = get_swarm_agents_strings(
+        flow=waldiez.flow,
+        initial_agent=agent2,
+        sender=agent2,
+        recipient=agent3,
+        agent_names=agent_names,
+        user_agent=None,
+    )
+    # Then
+    assert agents_string == "agent2, agent3, agent4"
+    assert user_string == "None"

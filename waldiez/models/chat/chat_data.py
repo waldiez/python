@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional, Union
 from pydantic import Field, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
+from ..agents.swarm_agent import WaldiezSwarmAfterWork
 from ..common import WaldiezBase
 from .chat_message import WaldiezChatMessage, validate_message_dict
 from .chat_nested import WaldiezChatNested
@@ -177,6 +178,23 @@ class WaldiezChatData(WaldiezBase):
             description="The real target of the chat (overrides the target).",
         ),
     ]
+    max_rounds: Annotated[
+        int,
+        Field(
+            20,
+            title="Max Rounds",
+            description="Maximum number of conversation rounds.(swarm)",
+        ),
+    ] = 20
+    after_work: Annotated[
+        Optional[WaldiezSwarmAfterWork],
+        Field(
+            None,
+            alias="afterWork",
+            title="After Work",
+            description="The work to do after the chat (swarm).",
+        ),
+    ] = None
 
     _message_content: Optional[str] = None
 

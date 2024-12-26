@@ -10,6 +10,7 @@ from .agent import WaldiezAgent
 from .assistant import WaldiezAssistant
 from .group_manager.group_manager import WaldiezGroupManager
 from .rag_user import WaldiezRagUser
+from .swarm_agent import WaldiezSwarmAgent
 from .user_proxy import WaldiezUserProxy
 
 
@@ -60,6 +61,14 @@ class WaldiezAgents(WaldiezBase):
             default_factory=list,
         ),
     ]
+    swarm_agents: Annotated[
+        List[WaldiezSwarmAgent],
+        Field(
+            title="Swarm Agents.",
+            description="Swarm agents",
+            default_factory=list,
+        ),
+    ]
 
     @property
     def members(self) -> Iterator[WaldiezAgent]:
@@ -74,6 +83,7 @@ class WaldiezAgents(WaldiezBase):
         yield from self.assistants
         yield from self.managers
         yield from self.rag_users
+        yield from self.swarm_agents
 
     @model_validator(mode="after")
     def validate_agents(self) -> Self:
