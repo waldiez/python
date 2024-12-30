@@ -53,7 +53,8 @@ class AgentPosition:
     Raises
     ------
     ValueError
-        If the position is not "BEFORE_ALL" or "AFTER_ALL" and the agent is not provided.
+        If the position is not "BEFORE_ALL" or "AFTER_ALL"
+        and the agent is not provided.
     """
 
     agent: Optional[WaldiezAgent]
