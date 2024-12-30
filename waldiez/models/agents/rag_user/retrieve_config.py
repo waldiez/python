@@ -1,6 +1,8 @@
 """RAG user agent retrieve config."""
 
-from typing import Dict, List, Optional, Union
+import os
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
@@ -36,6 +38,13 @@ CUSTOM_TEXT_SPLIT_FUNCTION_ARGS = [
 ]
 CUSTOM_TEXT_SPLIT_FUNCTION_HINTS = (
     "# type: (str, int, str, bool, int) -> List[str]"
+)
+NOT_LOCAL = (
+    "http://",
+    "https://",
+    "ftp://",
+    "ftps://",
+    "sftp://",
 )
 
 
@@ -531,7 +540,7 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
             valid, error_or_content = check_function(
                 code_string=self.embedding_function,
                 function_name=CUSTOM_EMBEDDING_FUNCTION,
-                method_args=CUSTOM_EMBEDDING_FUNCTION_ARGS,
+                function_args=CUSTOM_EMBEDDING_FUNCTION_ARGS,
                 type_hints=CUSTOM_EMBEDDING_FUNCTION_HINTS,
             )
             if not valid:
@@ -555,7 +564,7 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
             valid, error_or_content = check_function(
                 code_string=self.custom_token_count_function,
                 function_name=CUSTOM_TOKEN_COUNT_FUNCTION,
-                method_args=CUSTOM_TOKEN_COUNT_FUNCTION_ARGS,
+                function_args=CUSTOM_TOKEN_COUNT_FUNCTION_ARGS,
                 type_hints=CUSTOM_TOKEN_COUNT_FUNCTION_HINTS,
             )
             if not valid:
@@ -579,12 +588,46 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
             valid, error_or_content = check_function(
                 code_string=self.custom_text_split_function,
                 function_name=CUSTOM_TEXT_SPLIT_FUNCTION,
-                method_args=CUSTOM_TEXT_SPLIT_FUNCTION_ARGS,
+                function_args=CUSTOM_TEXT_SPLIT_FUNCTION_ARGS,
                 type_hints=CUSTOM_TEXT_SPLIT_FUNCTION_HINTS,
             )
             if not valid:
                 raise ValueError(error_or_content)
             self._text_split_function_string = error_or_content
+
+    def validate_docs_path(self) -> None:
+        """Validate the docs path.
+
+        Raises
+        ------
+        ValueError
+            If the validation fails.
+        """
+        if not self.docs_path:
+            return
+        # if urls or directories ok, if files they should resolve
+        doc_paths = (
+            [self.docs_path]
+            if isinstance(self.docs_path, str)
+            else self.docs_path
+        )
+        for index, path in enumerate(doc_paths):
+            is_remote, is_raw = is_remote_path(path)
+            if is_remote:
+                if not is_raw:
+                    doc_paths[index] = f'r"{path}"'
+                continue
+            if path.startswith("file://"):
+                path = path[len("file://") :]
+            if path.startswith('r"file://"'):
+                path = path[len('r"file://"') :]
+            if string_represents_folder(path):
+                if not is_raw:
+                    doc_paths[index] = f'r"{path}"'
+                continue
+            resolved = resolve_path(path, is_raw)
+            doc_paths[index] = resolved
+        self.docs_path = doc_paths
 
     @model_validator(mode="after")
     def validate_rag_user_data(self) -> Self:
@@ -603,8 +646,91 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
         self.validate_custom_embedding_function()
         self.validate_custom_token_count_function()
         self.validate_custom_text_split_function()
+        self.validate_docs_path()
         if not self.db_config.model:
             self.db_config.model = WaldiezRagUserModels[self.vector_db]
         if isinstance(self.n_results, int) and self.n_results < 1:
             self.n_results = None
         return self
+
+
+def string_represents_folder(path: str) -> bool:
+    """Check if a string represents a folder.
+
+    Parameters
+    ----------
+    path : str
+        The string to check (does not need to exist).
+
+    Returns
+    -------
+    bool
+        True if the path is likely a folder, False if it's likely a file.
+    """
+    if path.endswith(os.path.sep):
+        return True
+    if os.path.isdir(path):
+        return True
+    return not os.path.splitext(path)[1]
+
+
+def is_remote_path(path: str) -> Tuple[bool, bool]:
+    """Check if a path is a remote path.
+
+    Parameters
+    ----------
+    path : str
+        The path to check.
+
+    Returns
+    -------
+    Tuple[bool, bool]
+        If the path is a remote path and if it's a raw string.
+    """
+    is_raw = path.startswith(("r'", 'r"'))
+    for not_local in NOT_LOCAL:
+        if path.startswith((not_local, f'r"{not_local}"', f"r'{not_local}'")):
+            return True, is_raw
+    return False, is_raw
+
+
+def resolve_path(path: str, is_raw: bool) -> str:
+    """Try to resolve a path.
+
+    Parameters
+    ----------
+    path : str
+        The path to resolve.
+    is_raw : bool
+        If the path is a raw string.
+    Returns
+    -------
+    Path
+        The resolved path.
+
+    Raises
+    ------
+    ValueError
+        If the path is not a valid local path.
+    """
+    # pylint: disable=broad-except
+    path_string = path
+    if is_raw:
+        path_string = path[2:-1]
+    if path_string.startswith(NOT_LOCAL):
+        return path
+    try:
+        resolved = Path(path_string).resolve()
+    except BaseException as error:  # pragma: no cover
+        # check if 'r'... is needed
+        raw_string = f'r"{path}"'
+        try:
+            Path(raw_string).resolve()
+        except BaseException:
+            raise ValueError(
+                f"Path {path} is not a valid local path."
+            ) from error
+        return raw_string
+    if not resolved.exists():
+        raise ValueError(f"Path {path} does not exist.")
+    return f'r"{resolved}"'

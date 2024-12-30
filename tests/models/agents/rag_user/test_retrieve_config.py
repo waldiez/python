@@ -1,6 +1,10 @@
 """Test waldiez.models.agents.rag_user.retrieve_config.*."""
 
 # flake8: noqa E501
+import os
+import shutil
+from pathlib import Path
+
 import pytest
 
 from waldiez.models.agents.rag_user.retrieve_config import (
@@ -26,7 +30,7 @@ def test_waldiez_rag_user_retrieve_config() -> None:
             wait_until_document_ready=None,
             metadata={},
         ),
-        docs_path=None,
+        docs_path="folder",
         new_docs=True,
         model=None,
         chunk_token_size=None,
@@ -147,3 +151,62 @@ def custom_text_split_function(text, max_tokens, chunk_mode, must_break_at_empty
             use_custom_text_split=True,
             custom_text_split_function="def something():\n    return []",
         )
+
+
+def test_not_resolved_path() -> None:
+    """Test not resolved path."""
+    with pytest.raises(ValueError):
+        WaldiezRagUserRetrieveConfig(  # type: ignore
+            task="default",
+            vector_db="chroma",
+            docs_path="/path/to/not_resolved_path.txt",
+        )
+
+
+def test_with_file_as_doc_path(tmp_path: Path) -> None:
+    """Test with file as doc path (resolved).
+
+    Parameters
+    ----------
+    tmp_path : Path
+        The temporary path.
+    """
+    docs_file = tmp_path / "test_with_file_as_doc_path.txt"
+    docs_file.touch()
+    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+        task="default",
+        vector_db="chroma",
+        docs_path=[str(docs_file)],
+    )
+    assert config.docs_path == [f'r"{docs_file}"']
+    docs_file.unlink()
+
+
+def test_with_folder_as_doc_path(tmp_path: Path) -> None:
+    """Test with folder as doc path.
+
+    Parameters
+    ----------
+    tmp_path : Path
+        The temporary path.
+    """
+    # not ending with os.sep (we check if is_dir)
+    docs_dir = tmp_path / "test_with_folder_as_doc_path"
+    docs_dir.mkdir(exist_ok=True)
+    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+        task="default",
+        vector_db="chroma",
+        docs_path=[str(docs_dir)],
+    )
+    assert config.docs_path == [f'r"{docs_dir}"']
+    shutil.rmtree(docs_dir, ignore_errors=True)
+    # ending with os.sep we assume it is a folder
+    docs_dir.mkdir(exist_ok=True)
+    doc_path = str(docs_dir) + os.path.sep
+    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+        task="default",
+        vector_db="chroma",
+        docs_path=[doc_path],
+    )
+    assert config.docs_path == [f'r"{doc_path}"']
+    shutil.rmtree(docs_dir, ignore_errors=True)

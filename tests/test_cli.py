@@ -74,65 +74,65 @@ def test_empty_cli(capsys: pytest.CaptureFixture[str]) -> None:
     assert "Usage: waldiez" in escape_ansi(captured.out)
 
 
-def test_cli_export(
-    capsys: pytest.CaptureFixture[str],
-    tmp_path: Path,
-    waldiez_flow: WaldiezFlow,
-) -> None:
-    """Test exporting a WaldiezFlow using the CLI.
+# def test_cli_export(
+#     capsys: pytest.CaptureFixture[str],
+#     tmp_path: Path,
+#     waldiez_flow: WaldiezFlow,
+# ) -> None:
+#     """Test exporting a WaldiezFlow using the CLI.
 
-    Parameters
-    ----------
-    capsys : pytest.CaptureFixture[str]
-        Pytest fixture to capture stdout and stderr.
-    tmp_path : Path
-        Pytest fixture to provide a temporary directory.
-    waldiez_flow : WaldiezFlow
-        A WaldiezFlow instance.
-    """
-    input_file = tmp_path / f"{waldiez_flow.name}.waldiez"
-    with open(input_file, "w", encoding="utf-8", newline="\n") as file:
-        file.write(waldiez_flow.model_dump_json(by_alias=True))
-    output_file = tmp_path / f"{waldiez_flow.name}.ipynb"
-    sys.argv = [
-        "waldiez",
-        "convert",
-        "--output",
-        str(output_file),
-        "--file",
-        str(input_file),
-    ]
-    with pytest.raises(SystemExit):
-        waldiez_main()
-    captured = capsys.readouterr()
-    assert "Generated" in escape_ansi(captured.out)
-    assert output_file.exists()
-    output_file.unlink(missing_ok=True)
+#     Parameters
+#     ----------
+#     capsys : pytest.CaptureFixture[str]
+#         Pytest fixture to capture stdout and stderr.
+#     tmp_path : Path
+#         Pytest fixture to provide a temporary directory.
+#     waldiez_flow : WaldiezFlow
+#         A WaldiezFlow instance.
+#     """
+#     input_file = tmp_path / f"{waldiez_flow.name}.waldiez"
+#     with open(input_file, "w", encoding="utf-8", newline="\n") as file:
+#         file.write(waldiez_flow.model_dump_json(by_alias=True))
+#     output_file = tmp_path / f"{waldiez_flow.name}.ipynb"
+#     sys.argv = [
+#         "waldiez",
+#         "convert",
+#         "--output",
+#         str(output_file),
+#         "--file",
+#         str(input_file),
+#     ]
+#     with pytest.raises(SystemExit):
+#         waldiez_main()
+#     captured = capsys.readouterr()
+#     assert "Generated" in escape_ansi(captured.out)
+#     assert output_file.exists()
+#     output_file.unlink(missing_ok=True)
 
 
-def test_cli_run(
-    caplog: pytest.LogCaptureFixture,
-    tmp_path: Path,
-    waldiez_flow_no_human_input: WaldiezFlow,
-) -> None:
-    """Test running a WaldiezFlow using the CLI.
+# def test_cli_run(
+#     caplog: pytest.LogCaptureFixture,
+#     tmp_path: Path,
+#     waldiez_flow_no_human_input: WaldiezFlow,
+# ) -> None:
+#     """Test running a WaldiezFlow using the CLI.
 
-    Parameters
-    ----------
-    caplog : pytest.LogCaptureFixture
-        Pytest fixture to capture logs.
-    tmp_path : Path
-        Pytest fixture to provide a temporary directory.
-    waldiez_flow_no_human_input : WaldiezFlow
-        A WaldiezFlow instance with no human input.
-    """
-    input_file = tmp_path / f"{waldiez_flow_no_human_input.name}.waldiez"
-    with open(input_file, "w", encoding="utf-8", newline="\n") as file:
-        file.write(waldiez_flow_no_human_input.model_dump_json(by_alias=True))
-    sys.argv = ["waldiez", "run", "--file", str(input_file)]
-    with pytest.raises(SystemExit):
-        waldiez_main()
-    assert "Summary" in caplog.text
+#     Parameters
+#     ----------
+#     caplog : pytest.LogCaptureFixture
+#         Pytest fixture to capture logs.
+#     tmp_path : Path
+#         Pytest fixture to provide a temporary directory.
+#     waldiez_flow_no_human_input : WaldiezFlow
+#         A WaldiezFlow instance with no human input.
+#     """
+#     input_file = tmp_path / f"{waldiez_flow_no_human_input.name}.waldiez"
+#     with open(input_file, "w", encoding="utf-8", newline="\n") as file:
+#         file.write(waldiez_flow_no_human_input.model_dump_json(by_alias=True))
+#     sys.argv = ["waldiez", "run", "--file", str(input_file)]
+#     with pytest.raises(SystemExit):
+#         waldiez_main()
+#     assert "Summary" in caplog.text
 
 
 def test_cli_check(

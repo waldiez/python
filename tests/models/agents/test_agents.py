@@ -61,6 +61,7 @@ def test_waldiez_agents() -> None:
         users=[user],
         managers=[],
         rag_users=[],
+        swarm_agents=[],
     )
     assert agents.assistants == [assistant]
     assert next(agents.members) == user

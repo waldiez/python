@@ -134,6 +134,7 @@ def get_runnable_flow() -> WaldiezFlow:
         assistants=[assistant],
         managers=[],
         rag_users=[],
+        swarm_agents=[],
     )
     flow = WaldiezFlow(
         id="wf-1",
@@ -148,6 +149,7 @@ def get_runnable_flow() -> WaldiezFlow:
             models=[],
             skills=[],
             chats=[chat],
+            is_async=False,
         ),
         tags=["flow"],
         requirements=[],

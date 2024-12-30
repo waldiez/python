@@ -131,3 +131,4 @@ def test_waldiez_chat_with_rag_user() -> None:
     # Then
     assert chat_args["n_results"] == 5
     assert chat_args["problem"] == "Solve this task"
+    assert chat.context_variables == {"problem": "Solve this task"}

@@ -11,6 +11,14 @@ WaldiezChatMessageType = Literal[
     "string", "method", "rag_message_generator", "none"
 ]
 
+CALLABLE_MESSAGE = "callable_message"
+CALLABLE_MESSAGE_ARGS = ["sender", "recipient", "context"]
+CALLABLE_MESSAGE_HINTS = (
+    "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]"
+)
+# pylint: disable=line-too-long
+CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS = "# type: (RetrieveUserProxyAgent, ConversableAgent, dict) -> Union[dict, str]"  # noqa: E501
+
 
 class WaldiezChatMessage(WaldiezBase):
     """
@@ -92,7 +100,7 @@ def validate_message_dict(
     ],
     function_name: str,
     function_args: List[str],
-    function_type_hints: str,
+    type_hints: str,
     skip_definition: bool = False,
 ) -> WaldiezChatMessage:
     """Validate a message dict.
@@ -106,10 +114,10 @@ def validate_message_dict(
     value : dict
         The message dict.
     function_name : str
-        The function name.
+        The method name.
     function_args : List[str]
-        The expected function arguments.
-    function_type_hints : str
+        The expected method arguments.
+    type_hints : str
         The type hints to include.
     skip_definition : bool, optional
         Skip the function definition in the content, by default False
@@ -159,8 +167,8 @@ def validate_message_dict(
         valid, error_or_content = check_function(
             code_string=content,
             function_name=function_name,
-            method_args=function_args,
-            type_hints=function_type_hints,
+            function_args=function_args,
+            type_hints=type_hints,
         )
         if not valid:
             raise ValueError(error_or_content)
@@ -229,8 +237,6 @@ def _get_message_args_from_dict(
     context_value = value.get("context")
     if isinstance(context_value, dict):
         context = context_value
-    if not isinstance(context, dict):  # pragma: no cover
-        context = {}
     return message_type, use_carryover, content, context
 
 
@@ -269,6 +275,11 @@ def callable_message(sender, recipient, context):
     if isinstance(carryover, list):
         carryover = carryover[-1]
     if not isinstance(carryover, str):
+        if isinstance(carryover, list):
+            carryover = carryover[-1]
+        elif isinstance(carryover, dict):
+            carryover = carryover.get("content", "")
+    if not isinstance(carryover, str):
         carryover = ""'''
     if text_content:
         method_content += f"""
@@ -282,9 +293,7 @@ def callable_message(sender, recipient, context):
     return method_content
 
 
-RAG_METHOD_WITH_CARRYOVER = '''
-def callable_message(sender, recipient, context):
-    # type: (RetrieveUserProxyAgent, ConversableAgent, dict) -> Union[dict, str]
+RAG_METHOD_WITH_CARRYOVER_BODY = '''
     """Get the message using the RAG message generator method.
 
     Parameters
@@ -305,9 +314,19 @@ def callable_message(sender, recipient, context):
     if isinstance(carryover, list):
         carryover = carryover[-1]
     if not isinstance(carryover, str):
+        if isinstance(carryover, list):
+            carryover = carryover[-1]
+        elif isinstance(carryover, dict):
+            carryover = carryover.get("content", "")
+    if not isinstance(carryover, str):
         carryover = ""
     message = sender.message_generator(sender, recipient, context)
     if carryover:
         message += carryover
     return message
 '''
+# pylint: disable=line-too-long
+RAG_METHOD_WITH_CARRYOVER = (
+    "def callable_message(sender, recipient, context):"
+    f"{RAG_METHOD_WITH_CARRYOVER_BODY}"
+)

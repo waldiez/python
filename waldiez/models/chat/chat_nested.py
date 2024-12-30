@@ -98,7 +98,7 @@ class WaldiezChatNested(WaldiezBase):
                 value,
                 function_name=function_name,
                 function_args=NESTED_CHAT_ARGS,
-                function_type_hints=NESTED_CHAT_HINTS,
+                type_hints=NESTED_CHAT_HINTS,
             )
         if isinstance(value, WaldiezChatMessage):
             return validate_message_dict(
@@ -110,7 +110,7 @@ class WaldiezChatNested(WaldiezBase):
                 },
                 function_name=function_name,
                 function_args=NESTED_CHAT_ARGS,
-                function_type_hints=NESTED_CHAT_HINTS,
+                type_hints=NESTED_CHAT_HINTS,
             )
         raise ValueError(f"Invalid message type: {type(value)}")
 
@@ -141,7 +141,7 @@ class WaldiezChatNested(WaldiezBase):
                     },
                     function_name=NESTED_CHAT_MESSAGE,
                     function_args=NESTED_CHAT_ARGS,
-                    function_type_hints=NESTED_CHAT_HINTS,
+                    type_hints=NESTED_CHAT_HINTS,
                     skip_definition=True,
                 ).content
         if self.reply is not None:
@@ -157,7 +157,7 @@ class WaldiezChatNested(WaldiezBase):
                     },
                     function_name=NESTED_CHAT_REPLY,
                     function_args=NESTED_CHAT_ARGS,
-                    function_type_hints=NESTED_CHAT_HINTS,
+                    type_hints=NESTED_CHAT_HINTS,
                     skip_definition=True,
                 ).content
         return self

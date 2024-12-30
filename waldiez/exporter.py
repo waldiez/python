@@ -8,8 +8,8 @@ to trigger the chat(s).
 If additional tools/skills are used,
 they are exported as their `skill_name` in the same directory with
 the `flow.py` file. So the `flow.py` could have entries like:
-`form {skill1_name} import {skill1_name}`
-`form {skill2_name} import {skill2_name}`
+`form {flow_name}_{skill1_name} import {skill1_name}`
+`form {flow_name}_{skill2_name} import {skill2_name}`
 """
 
 # pylint: disable=inconsistent-quotes
@@ -19,16 +19,10 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
-from .exporting import comment, export_flow, get_valid_instance_name
-from .models import (
-    Waldiez,
-    WaldiezAgent,
-    WaldiezChat,
-    WaldiezModel,
-    WaldiezSkill,
-)
+from .exporting import FlowExporter
+from .models import Waldiez
 
 
 class WaldiezExporter:
@@ -38,15 +32,6 @@ class WaldiezExporter:
         waldiez (Waldiez): The Waldiez instance.
     """
 
-    _agent_names: Dict[str, str]
-    _model_names: Dict[str, str]
-    _skill_names: Dict[str, str]
-    _chat_names: Dict[str, str]
-    _chats: List[WaldiezChat]
-    _skills: List[WaldiezSkill]
-    _models: List[WaldiezModel]
-    _agents: List[WaldiezAgent]
-
     def __init__(self, waldiez: Waldiez) -> None:
         """Initialize the Waldiez exporter.
 
@@ -54,7 +39,7 @@ class WaldiezExporter:
             waldiez (Waldiez): The Waldiez instance.
         """
         self.waldiez = waldiez
-        self._initialize()
+        # self._initialize()
 
     @classmethod
     def load(cls, file_path: Path) -> "WaldiezExporter":
@@ -72,56 +57,6 @@ class WaldiezExporter:
         """
         waldiez = Waldiez.load(file_path)
         return cls(waldiez)
-
-    def _initialize(
-        self,
-    ) -> None:
-        """Get all the names in the flow.
-
-        We need to make sure that no duplicate names are used,
-        and that the names can be used as python variables.
-        """
-        all_names: Dict[str, str] = {}
-        agent_names: Dict[str, str] = {}
-        model_names: Dict[str, str] = {}
-        skill_names: Dict[str, str] = {}
-        chat_names: Dict[str, str] = {}
-        chats: List[WaldiezChat] = []
-        skills: List[WaldiezSkill] = []
-        models: List[WaldiezModel] = []
-        agents: List[WaldiezAgent] = []
-        for agent in self.waldiez.agents:
-            all_names = get_valid_instance_name(
-                (agent.id, agent.name), all_names, prefix="wa"
-            )
-            agent_names[agent.id] = all_names[agent.id]
-            agents.append(agent)
-        for model in self.waldiez.models:
-            all_names = get_valid_instance_name(
-                (model.id, model.name), all_names, prefix="wm"
-            )
-            model_names[model.id] = all_names[model.id]
-            models.append(model)
-        for skill in self.waldiez.skills:
-            all_names = get_valid_instance_name(
-                (skill.id, skill.name), all_names, prefix="ws"
-            )
-            skill_names[skill.id] = all_names[skill.id]
-            skills.append(skill)
-        for chat in self.waldiez.flow.data.chats:
-            all_names = get_valid_instance_name(
-                (chat.id, chat.name), all_names, prefix="wc"
-            )
-            chat_names[chat.id] = all_names[chat.id]
-            chats.append(chat)
-        self._agent_names = agent_names
-        self._model_names = model_names
-        self._skill_names = skill_names
-        self._chat_names = chat_names
-        self._chats = chats
-        self._skills = skills
-        self._models = models
-        self._agents = agents
 
     def export(self, path: Union[str, Path], force: bool = False) -> None:
         """Export the Waldiez instance.
@@ -175,25 +110,17 @@ class WaldiezExporter:
         RuntimeError
             If the notebook could not be generated.
         """
-        content = f"{comment(True)}{self.waldiez.name}" + "\n\n"
-        content += f"{comment(True, 2)}Dependencies" + "\n\n"
-        content += "import sys\n"
-        requirements = " ".join(self.waldiez.requirements)
-        if requirements:
-            content += (
-                f"# !{{sys.executable}} -m pip install -q {requirements}" + "\n"
-            )
-        content += export_flow(
-            waldiez=self.waldiez,
-            agents=(self._agents, self._agent_names),
-            chats=(self._chats, self._chat_names),
-            models=(self._models, self._model_names),
-            skills=(self._skills, self._skill_names),
-            output_dir=path.parent,
-            notebook=True,
-        )
         # we first create a .py file with the content
         # and then convert it to a notebook using jupytext
+        exporter = FlowExporter(
+            waldiez=self.waldiez,
+            output_dir=path.parent,
+            for_notebook=True,
+        )
+        output = exporter.export()
+        content = output["content"]
+        if not content:
+            raise RuntimeError("Could not generate notebook")
         py_path = path.with_suffix(".tmp.py")
         with open(py_path, "w", encoding="utf-8", newline="\n") as f:
             f.write(content)
@@ -226,26 +153,21 @@ class WaldiezExporter:
         ----------
         path : Path
             The path to export to.
+
+        Raises
+        ------
+        RuntimeError
+            If the python script could not be generated.
         """
-        content = "#!/usr/bin/env python\n"
-        content += f'"""{self.waldiez.name}\n\n'
-        content += f"{self.waldiez.description}\n\n"
-        content += f"Tags: {', '.join(self.waldiez.tags)}\n\n"
-        content += f"Requirements: {', '.join(self.waldiez.requirements)}\n\n"
-        content += '"""\n\n'
-        content += "# cspell: disable\n"
-        content += "# flake8: noqa\n\n"
-        content += export_flow(
+        exporter = FlowExporter(
             waldiez=self.waldiez,
-            agents=(self._agents, self._agent_names),
-            chats=(self._chats, self._chat_names),
-            models=(self._models, self._model_names),
-            skills=(self._skills, self._skill_names),
             output_dir=path.parent,
-            notebook=False,
+            for_notebook=False,
         )
-        content += '\n\nif __name__ == "__main__":\n'
-        content += "    print(main())\n"
+        output = exporter.export()
+        content = output["content"]
+        if not content:
+            raise RuntimeError("Could not generate python script")
         with open(path, "w", encoding="utf-8", newline="\n") as file:
             file.write(content)
 

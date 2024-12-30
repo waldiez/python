@@ -111,7 +111,7 @@ class WaldiezAgentTerminationMessage(WaldiezBase):
         valid, error_or_content = check_function(
             self.method_content,
             function_name=IS_TERMINATION_MESSAGE,
-            method_args=IS_TERMINATION_MESSAGE_ARGS,
+            function_args=IS_TERMINATION_MESSAGE_ARGS,
             type_hints=IS_TERMINATION_MESSAGE_HINTS,
         )
         if not valid:

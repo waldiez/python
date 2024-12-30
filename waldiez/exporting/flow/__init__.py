@@ -1,5 +1,5 @@
-"""Export the entire flow to string."""
+"""Flow exporter."""
 
-from .flow import export_flow
+from .flow_exporter import FlowExporter
 
-__all__ = ["export_flow"]
+__all__ = ["FlowExporter"]

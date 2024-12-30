@@ -42,7 +42,7 @@ def callable_message(sender, recipient, context):
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        method_args=WaldiezMethodArgs[function_name],
+        function_args=WaldiezMethodArgs[function_name],
         type_hints=WaldiezMethodHints[function_name],
     )
     # Then
@@ -62,12 +62,12 @@ def callable_message(sender, recipient, context):
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        method_args=[],
+        function_args=[],
         type_hints="",
     )
     # Then
     assert not valid
-    assert "No function with name" in body
+    assert "No method with name" in body
 
     # Given
     code_string = """
@@ -79,7 +79,7 @@ def callable_message(other, context):
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        method_args=WaldiezMethodArgs[function_name],
+        function_args=WaldiezMethodArgs[function_name],
         type_hints=WaldiezMethodHints[function_name],
     )
     # Then
@@ -95,7 +95,7 @@ def is_termination_message(x):
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        method_args=WaldiezMethodArgs[function_name],
+        function_args=WaldiezMethodArgs[function_name],
         type_hints=WaldiezMethodHints[function_name],
     )
     # Then
@@ -112,7 +112,7 @@ def is_termination_message(4):
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        method_args=WaldiezMethodArgs[function_name],
+        function_args=WaldiezMethodArgs[function_name],
         type_hints=WaldiezMethodHints[function_name],
     )
     # Then
@@ -132,7 +132,7 @@ def nested_chat_reply(recipient, messages, sender, config):
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        method_args=WaldiezMethodArgs[function_name],
+        function_args=WaldiezMethodArgs[function_name],
         type_hints=WaldiezMethodHints[function_name],
     )
     # Then
@@ -154,9 +154,9 @@ def nested_chat_reply_(recipient, messages, sender, config):
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        method_args=WaldiezMethodArgs[function_name],
+        function_args=WaldiezMethodArgs[function_name],
         type_hints=WaldiezMethodHints[function_name],
     )
     # Then
     assert not valid
-    assert "No function with name" in body
+    assert "No method with name" in body

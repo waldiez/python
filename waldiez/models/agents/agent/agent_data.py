@@ -117,7 +117,7 @@ class WaldiezAgentData(WaldiezBase):
         ),
     ]
     teachability: Annotated[
-        WaldiezAgentTeachability,
+        Optional[WaldiezAgentTeachability],
         Field(
             title="Teachability",
             description="The agent teachability configuration.",

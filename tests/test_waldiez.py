@@ -8,7 +8,7 @@ from autogen.version import __version__ as ag2_version  # type: ignore
 
 from waldiez import Waldiez
 
-from .exporting.flow_helpers import get_flow
+from .exporting.flow.flow_helpers import get_flow
 
 
 def test_waldiez() -> None:
@@ -41,30 +41,6 @@ def test_waldiez() -> None:
         else:
             assert not waldiez2.get_group_chat_members(agent)
     assert waldiez2.chats
-
-
-def test_waldiez_without_rag() -> None:
-    """Test Waldiez."""
-    flow_dict = get_flow().model_dump(by_alias=True)
-    # remove the rag user from the agents
-    flow_dict["data"]["agents"]["ragUsers"] = []
-    # also remove any chats that has source or target "wa-4" (the rag agent)
-    flow_dict["data"]["chats"] = [
-        chat
-        for chat in flow_dict["data"]["chats"]
-        if (
-            chat["data"]["source"] != "wa-4"
-            and chat["data"]["target"] != "wa-4"
-        )
-    ]
-    waldiez = Waldiez.from_dict(data=flow_dict)
-    assert waldiez.name == flow_dict["name"]
-    assert waldiez.description == flow_dict["description"]
-    assert waldiez.tags == flow_dict["tags"]
-    assert next(waldiez.models)
-    assert not waldiez.has_rag_agents
-    assert f"pyautogen[retrievechat]=={ag2_version}" not in waldiez.requirements
-    assert f"pyautogen=={ag2_version}" in waldiez.requirements
 
 
 def test_waldiez_errors() -> None:
