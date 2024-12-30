@@ -205,6 +205,11 @@ class Waldiez:
         return self.flow.tags
 
     @property
+    def is_async(self) -> bool:
+        """Check if the flow is asynchronous."""
+        return self.flow.is_async
+
+    @property
     def requirements(self) -> List[str]:
         """Get the flow requirements."""
         autogen_version = _get_autogen_version()
@@ -238,7 +243,7 @@ class Waldiez:
                 requirements.add(
                     f"pyautogen[{model.data.api_type}]==" f"{autogen_version}"
                 )
-        return list(requirements)
+        return sorted(list(requirements))
 
     def get_flow_env_vars(self) -> List[Tuple[str, str]]:
         """Get the flow environment variables.
@@ -270,6 +275,23 @@ class Waldiez:
         if agent.agent_type != "manager":
             return []
         return self.flow.get_group_chat_members(agent.id)
+
+    def get_swarm_members(
+        self, initial_agent: WaldiezAgent
+    ) -> Tuple[List[WaldiezAgent], Optional[WaldiezAgent]]:
+        """Get the chat members that connect to a swarm agent.
+
+        Parameters
+        ----------
+        initial_agent : WaldiezAgent
+            The initial agent.
+
+        Returns
+        -------
+        Tuple[List[WaldiezAgent], Optional[WaldiezAgent]]
+            The swarm agents and the user agent.
+        """
+        return self.flow.get_swarm_chat_members(initial_agent)
 
 
 def _get_flow(

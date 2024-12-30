@@ -19,6 +19,7 @@ class WaldiezBase(BaseModel):
         alias_generator=to_camel,
         # allow passing either `skill_id` or `skillId`
         populate_by_name=True,
+        # allow setting any attribute after initialization
         frozen=False,
     )
 

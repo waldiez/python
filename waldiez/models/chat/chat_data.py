@@ -7,15 +7,15 @@ from typing_extensions import Annotated, Self
 
 from ..agents.swarm_agent import WaldiezSwarmAfterWork
 from ..common import WaldiezBase
-from .chat_message import WaldiezChatMessage, validate_message_dict
+from .chat_message import (
+    CALLABLE_MESSAGE,
+    CALLABLE_MESSAGE_ARGS,
+    CALLABLE_MESSAGE_HINTS,
+    WaldiezChatMessage,
+    validate_message_dict,
+)
 from .chat_nested import WaldiezChatNested
 from .chat_summary import WaldiezChatSummary
-
-CALLABLE_MESSAGE = "callable_message"
-CALLABLE_MESSAGE_ARGS = ["sender", "recipient", "context"]
-CALLABLE_MESSAGE_HINTS = (
-    "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]"
-)
 
 
 class WaldiezChatData(WaldiezBase):

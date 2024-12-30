@@ -139,6 +139,17 @@ class WaldiezFlow(WaldiezBase):
     ] = None
 
     @property
+    def is_async(self) -> bool:
+        """Check if the flow is asynchronous.
+
+        Returns
+        -------
+        bool
+            True if the flow is asynchronous, False otherwise.
+        """
+        return self.data.is_async
+
+    @property
     def ordered_flow(
         self,
     ) -> List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]]:
@@ -254,14 +265,14 @@ class WaldiezFlow(WaldiezBase):
 
     def get_swarm_chat_members(
         self,
-        initial_agent_id: str,
+        initial_agent: WaldiezAgent,
     ) -> Tuple[List[WaldiezAgent], Optional[WaldiezAgent]]:
         """Get the swarm chat members.
 
         Parameters
         ----------
-        initial_agent_id : str
-            The ID of the initial agent.
+        initial_agent : WaldiezAgent
+            The initial agent.
 
         Returns
         -------
@@ -270,12 +281,11 @@ class WaldiezFlow(WaldiezBase):
         """
         members: List[WaldiezAgent] = []
         user_agent: Optional[WaldiezAgent] = None
-        agent = self.get_agent_by_id(initial_agent_id)
-        if agent.agent_type != "swarm":
+        if initial_agent.agent_type != "swarm":
             return members, user_agent
-        members.append(agent)
+        members.append(initial_agent)
         connections = self.get_agent_connections(
-            initial_agent_id,
+            initial_agent.id,
             all_chats=True,
         )
         # only swarm agents in the group

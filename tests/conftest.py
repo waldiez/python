@@ -149,6 +149,7 @@ def get_runnable_flow() -> WaldiezFlow:
             models=[],
             skills=[],
             chats=[chat],
+            is_async=False,
         ),
         tags=["flow"],
         requirements=[],

@@ -11,6 +11,14 @@ WaldiezChatMessageType = Literal[
     "string", "method", "rag_message_generator", "none"
 ]
 
+CALLABLE_MESSAGE = "callable_message"
+CALLABLE_MESSAGE_ARGS = ["sender", "recipient", "context"]
+CALLABLE_MESSAGE_HINTS = (
+    "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]"
+)
+# pylint: disable=line-too-long
+CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS = "# type: (RetrieveUserProxyAgent, ConversableAgent, dict) -> Union[dict, str]"  # noqa: E501
+
 
 class WaldiezChatMessage(WaldiezBase):
     """
@@ -285,9 +293,7 @@ def callable_message(sender, recipient, context):
     return method_content
 
 
-RAG_METHOD_WITH_CARRYOVER = '''
-def callable_message(sender, recipient, context):
-    # type: (RetrieveUserProxyAgent, ConversableAgent, dict) -> Union[dict, str]
+RAG_METHOD_WITH_CARRYOVER_BODY = '''
     """Get the message using the RAG message generator method.
 
     Parameters
@@ -319,3 +325,8 @@ def callable_message(sender, recipient, context):
         message += carryover
     return message
 '''
+# pylint: disable=line-too-long
+RAG_METHOD_WITH_CARRYOVER = (
+    "def callable_message(sender, recipient, context):"
+    f"{RAG_METHOD_WITH_CARRYOVER_BODY}"
+)

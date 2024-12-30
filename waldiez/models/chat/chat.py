@@ -64,6 +64,11 @@ class WaldiezChat(WaldiezBase):
         return self.data.name
 
     @property
+    def description(self) -> str:
+        """Get the description."""
+        return self.data.description
+
+    @property
     def source(self) -> str:
         """Get the source."""
         if self.data.real_source:
@@ -146,3 +151,30 @@ class WaldiezChat(WaldiezBase):
             if isinstance(n_results, int) and n_results > 0:
                 args_dict["n_results"] = n_results
         return args_dict
+
+    def model_dump(self, **kwargs: Any) -> Dict[str, Any]:
+        """Dump the model to a dict including the chat attributes.
+
+        Parameters
+        ----------
+        kwargs : Any
+            The keyword arguments.
+        Returns
+        -------
+        Dict[str, Any]
+            The model dump with the chat attributes.
+        """
+        dump = super().model_dump(**kwargs)
+        dump["name"] = self.name
+        dump["description"] = self.description
+        dump["source"] = self.source
+        dump["target"] = self.target
+        dump["nested_chat"] = self.nested_chat.model_dump()
+        dump["message"] = self.message.model_dump()
+        dump["message_content"] = self.message_content
+        dump["context_variables"] = self.context_variables
+        dump["max_rounds"] = self.max_rounds
+        dump["after_work"] = (
+            self.after_work.model_dump() if self.after_work else None
+        )
+        return dump

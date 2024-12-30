@@ -24,9 +24,9 @@ class WaldiezSwarmAgent(WaldiezAgent):
     agent_type: Annotated[
         Literal["swarm"],
         Field(
-            "rag_user",
+            "swarm",
             title="Agent type",
-            description="The agent type: 'rag_user' for a RAG user agent",
+            description="The agent type: 'swarm' for a swarm agent.",
             alias="agentType",
         ),
     ]

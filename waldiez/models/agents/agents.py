@@ -81,9 +81,9 @@ class WaldiezAgents(WaldiezBase):
         """
         yield from self.users
         yield from self.assistants
-        yield from self.managers
         yield from self.rag_users
         yield from self.swarm_agents
+        yield from self.managers
 
     @model_validator(mode="after")
     def validate_agents(self) -> Self:

@@ -8,7 +8,7 @@ import pytest
 from waldiez import Waldiez, WaldiezExporter
 from waldiez.models import WaldiezFlow
 
-from .exporting.flow_helpers import get_flow
+from .exporting.flow.flow_helpers import get_flow
 
 
 def test_export_load_from_file(
@@ -187,6 +187,7 @@ def test_export_complex_flow(tmp_path: Path) -> None:
     exporter.export(output_file)
     assert output_file.exists()
     output_file.unlink()
-    skill_file = tmp_path / "skill_name.py"
+    skill_name = next(waldiez.skills).name
+    skill_file = tmp_path / f"{waldiez.name}_{skill_name}.py"
     assert skill_file.exists()
     skill_file.unlink(missing_ok=True)

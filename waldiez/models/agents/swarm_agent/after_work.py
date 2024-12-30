@@ -115,7 +115,8 @@ class WaldiezSwarmAfterWork(WaldiezBase):
             agent_instance = agent_names.get(self.recipient, self.recipient)
             return f"AFTER_WORK({agent_instance})"
         return (
-            f"def {function_name}(last_speaker, messages, groupchat):\n"
+            f"def {function_name}(last_speaker, messages, groupchat):"
+            "\n"
             f"{self._recipient_string}"
         )
 

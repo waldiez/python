@@ -1,12 +1,10 @@
-"""Test exporting a swarm chat."""
+"""Test waldiez.exporting.chats.ChatsExporter with a swarm chat."""
 
 import pytest
 
-from waldiez.exporting.chats.chats import (
-    export_chats,
-    export_swarm_message_string,
-)
-from waldiez.exporting.chats.helpers import (
+from waldiez.exporting.chats import ChatsExporter
+from waldiez.exporting.chats.utils.swarm import (
+    export_swarm_chat,
     get_swarm_after_work_string,
     get_swarm_agents_strings,
     get_swarm_messages_string,
@@ -26,10 +24,9 @@ from waldiez.models import (
 )
 
 
-# pylint: disable=too-many-locals
-def test_export_chats() -> None:
-    """Test export_chats()."""
-    # Given
+# pylint: disable=too-many-locals,too-many-statements
+def test_swarm_chat() -> None:
+    """Test ChatsExporter with a swarm chat."""
     agent1 = WaldiezAgent(  # type: ignore
         id="wa-1",
         name="agent1",
@@ -206,6 +203,10 @@ def callable_message(sender, recipient, context):
             after_work=None,
         ),
     )
+    all_agents = [agent1, agent2, agent3, agent4, agent5]
+    all_chats = [chat1, chat2, chat3, chat4]
+    agent_names = {agent.id: agent.name for agent in all_agents}
+    chat_names = {chat.id: chat.name for chat in all_chats}
     agents = WaldiezAgents(
         users=[agent1.model_dump()],  # type: ignore
         assistants=[agent5.model_dump()],  # type: ignore
@@ -217,7 +218,6 @@ def callable_message(sender, recipient, context):
             agent4.model_dump(),  # type: ignore
         ],
     )
-    all_chats = [chat1, chat2, chat3, chat4]
     flow = WaldiezFlow(
         id="wf-1",
         name="flow1",
@@ -232,15 +232,21 @@ def callable_message(sender, recipient, context):
     waldiez = Waldiez(
         flow=flow,
     )
-    all_agents = [agent1, agent2, agent3, agent4, agent5]
-    agent_names = {agent.id: agent.name for agent in all_agents}
-    chat_names = {chat.id: chat.name for chat in all_chats}
-    # When
-    exported, _ = export_chats(
-        waldiez=waldiez, agent_names=agent_names, chat_names=chat_names, tabs=1
+    swarm_members = waldiez.get_swarm_members(
+        initial_agent=agent2,
     )
-    # Then
-    expected = """initiate_swarm_chat(
+    exporter = ChatsExporter(
+        get_swarm_members=lambda _: swarm_members,
+        all_agents=all_agents,
+        agent_names=agent_names,
+        all_chats=all_chats,
+        chat_names=chat_names,
+        main_chats=waldiez.chats,
+        for_notebook=False,
+    )
+    generated = exporter.generate()
+    expected = """
+    results, _, __ = initiate_swarm_chat(
         initial_agent=agent2,
         agents=[agent2, agent3, agent4],
         messages=[{"role": "user", "content": "Hello wa-2 from wa-1!"}],
@@ -250,68 +256,65 @@ def callable_message(sender, recipient, context):
         user_agent=agent1,
         after_work=AFTER_WORK(AfterWorkOption.REVERT_TO_USER),
         max_rounds=10,
-    )"""
-    assert expected == exported
+    )
+"""
+    assert generated == expected
+    chat_imports = exporter.get_imports()
+    assert chat_imports
+    assert chat_imports[0][0] == "from autogen import initiate_swarm_chat"
     with pytest.raises(ValueError):
         # no swarm agent in chat
-        export_swarm_message_string(
-            flow=waldiez.flow,
+        export_swarm_chat(
+            get_swarm_members=lambda _: swarm_members,
             chat=chat4,
             sender=agent5,
             recipient=agent1,
             agent_names=agent_names,
             chat_names=chat_names,
             tabs=1,
+            serializer=exporter.serializer,
+            string_escape=exporter.string_escape,
         )
-
-    # When
     after_work_string, _ = get_swarm_after_work_string(
         chat=chat3,
         agent_names=agent_names,
         chat_names=chat_names,
     )
-    # Then
     assert after_work_string == "AFTER_WORK(agent4)"
-    # When
     after_work_string, _ = get_swarm_after_work_string(
         chat=chat4,
         agent_names=agent_names,
         chat_names=chat_names,
     )
-    # Then
     assert after_work_string == "AFTER_WORK(AfterWorkOption.TERMINATE)"
-    # When
     after_work_string, additional_method_string = get_swarm_after_work_string(
         chat=chat2,
         agent_names=agent_names,
         chat_names=chat_names,
     )
-    # Then
     assert after_work_string == f"custom_after_work_{chat_names[chat2.id]}"
     # pylint: disable=line-too-long,inconsistent-quotes
     expected = (
-        f"\ndef {after_work_string}(last_speaker, messages, groupchat):\n"
+        "\n"
+        f"def {after_work_string}(last_speaker, messages, groupchat):"
+        "\n"
         "    # type: (SwarmAgent, List[dict], GroupChat) -> Union[AfterWorkOption, SwarmAgent, str]\n"  # noqa E501
         '    return "TERMINATE"'
     )
     assert expected == additional_method_string
-    # When
-    messages_string = get_swarm_messages_string(chat=chat4)
-    # Then
+    messages_string = get_swarm_messages_string(
+        chat=chat4, string_escape=exporter.string_escape
+    )
     assert messages_string == ""
-    # When
     agents_string, user_string = get_swarm_agents_strings(
-        flow=waldiez.flow,
-        initial_agent=agent2,
+        swarm_members=swarm_members,
         sender=agent1,
         recipient=agent2,
         agent_names=agent_names,
         user_agent=None,
     )
-    # Then
     assert agents_string == "agent2, agent3, agent4"
     assert user_string == "agent1"
-    # When
     agents = WaldiezAgents(
         users=[],
         assistants=[],
@@ -344,14 +347,15 @@ def callable_message(sender, recipient, context):
     all_agents = [agent2, agent3, agent4]
     agent_names = {agent.id: agent.name for agent in all_agents}
     chat_names = {chat.id: chat.name for chat in all_chats}
-    agents_string, user_string = get_swarm_agents_strings(
-        flow=waldiez.flow,
+    swarm_members = waldiez.flow.get_swarm_chat_members(
         initial_agent=agent2,
+    )
+    agents_string, user_string = get_swarm_agents_strings(
+        swarm_members=swarm_members,
         sender=agent2,
         recipient=agent3,
         agent_names=agent_names,
         user_agent=None,
     )
-    # Then
     assert agents_string == "agent2, agent3, agent4"
     assert user_string == "None"

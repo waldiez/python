@@ -5,6 +5,8 @@
 - Model (LLM config, API type, etc.).
 - Skill (Skills/Tools to be registered).
 - Flow (Flow of the conversation).
+- Methods (Method names, arguments, hints, etc.).
+- Waldiez (Main class to hold the flow).
 """
 
 from .agents import (

@@ -44,7 +44,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
     Notes
     -----
     Each agent should have at most one `AfterWork` and (if any) it should be
-    of the list of hand offs.
+    at the end the list of hand offs.
     """
 
     functions: Annotated[
@@ -74,7 +74,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
             title="Hand Offs",
             description=(
                 "A list of hand offs to register. "
-                "There should only be at most one AfterWork per agent"
+                "There should only be at most one `AfterWork` per agent"
                 "And (if any) it should be at the end of the list."
             ),
             default_factory=list,

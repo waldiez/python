@@ -36,6 +36,8 @@ class WaldiezFlowData(WaldiezBase):
         The skills of the flow. See `WaldiezSkill`.
     chats : List[WaldiezChat]
         The chats of the flow. See `WaldiezChat`.
+    is_async : bool
+        Whether the flow is asynchronous or not.
     """
 
     # the ones below (nodes,edges, viewport) we ignore
@@ -95,5 +97,13 @@ class WaldiezFlowData(WaldiezBase):
             description="The chats of the flow",
             title="Chats",
             default_factory=list,
+        ),
+    ]
+    is_async: Annotated[
+        bool,
+        Field(
+            False,
+            description="Whether the flow is asynchronous or not",
+            title="Is Async",
         ),
     ]

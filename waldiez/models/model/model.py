@@ -103,6 +103,27 @@ class WaldiezModel(WaldiezBase):
     ]
 
     @property
+    def api_key_env_key(self) -> str:
+        """Get the model's api key environment key to check.
+
+        - openai: 'OPENAI_API_KEY',
+        - azure: 'AZURE_API_KEY',
+        - google: 'GOOGLE_GEMINI_API_KEY',
+        - anthropic: 'ANTHROPIC_API_KEY',
+        - mistral: 'MISTRAL_API_KEY',
+        - groq: 'GROQ_API_KEY',
+        - together: 'TOGETHER_API_KEY',
+        - nim: 'NIM_API_KEY',
+        - other: 'OPENAI_API_KEY'
+        """
+        env_key = "OPENAI_API_KEY"
+        if self.data.api_type == "google":
+            env_key = "GOOGLE_GEMINI_API_KEY"
+        elif self.data.api_type not in ["openai", "other"]:
+            env_key = f"{self.data.api_type.upper()}_API_KEY"
+        return env_key
+
+    @property
     def api_key(self) -> str:
         """Get the model's api key.
 
@@ -120,11 +141,7 @@ class WaldiezModel(WaldiezBase):
         """
         if self.data.api_key:
             return self.data.api_key
-        env_key = "OPENAI_API_KEY"
-        if self.data.api_type == "google":
-            env_key = "GOOGLE_GEMINI_API_KEY"
-        elif self.data.api_type not in ["openai", "other"]:
-            env_key = f"{self.data.api_type.upper()}_API_KEY"
+        env_key = self.api_key_env_key
         api_key = os.environ.get(env_key, "")
         return api_key
 
