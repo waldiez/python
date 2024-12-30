@@ -80,6 +80,7 @@ test: .before_test
 	python -m pytest \
 		-c pyproject.toml \
 		--cov=${.PACKAGE_NAME} \
+        --cov-branch \
 		--cov-report=term-missing:skip-covered \
 		--cov-report html:${.REPORTS_DIR}/html \
 		--cov-report xml:${.REPORTS_DIR}/coverage.xml \
@@ -93,6 +94,7 @@ test_models: .before_test
 		-c pyproject.toml -vv \
 		--cov-report=term-missing:skip-covered \
 		--cov=${.PACKAGE_NAME}/models \
+        --cov-branch \
 		${.TESTS_DIR}/models
 
 .PHONY: test-models
@@ -104,6 +106,7 @@ test_exporting: .before_test
 		-c pyproject.toml -vv \
 		--cov-report=term-missing:skip-covered \
 		--cov=${.PACKAGE_NAME}/exporting \
+        --cov-branch \
 		${.TESTS_DIR}/exporting
 
 .PHONY: test-exporting

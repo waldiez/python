@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 from pydantic import Field
 from typing_extensions import Annotated
 
-from ..agents import WaldiezAgent, WaldiezRagUser
+from ..agents import WaldiezAgent, WaldiezRagUser, WaldiezSwarmAfterWork
 from ..common import WaldiezBase
 from .chat_data import WaldiezChatData
 from .chat_message import WaldiezChatMessage
@@ -64,6 +64,11 @@ class WaldiezChat(WaldiezBase):
         return self.data.name
 
     @property
+    def description(self) -> str:
+        """Get the description."""
+        return self.data.description
+
+    @property
     def source(self) -> str:
         """Get the source."""
         if self.data.real_source:
@@ -101,6 +106,25 @@ class WaldiezChat(WaldiezBase):
         """Get the message content."""
         return self.data.message_content
 
+    @property
+    def context_variables(self) -> Dict[str, Any]:
+        """Get the context variables."""
+        if isinstance(self.data.message, str):  # pragma: no cover
+            # it can never be a string (just for the linter)
+            # we manage this on the validation part in the model
+            return {}
+        return self.data.message.context
+
+    @property
+    def max_rounds(self) -> int:
+        """Get the max rounds for swarm chat."""
+        return self.data.max_rounds
+
+    @property
+    def after_work(self) -> Optional[WaldiezSwarmAfterWork]:
+        """Get the after work."""
+        return self.data.after_work
+
     def get_chat_args(
         self,
         sender: Optional[WaldiezAgent] = None,
@@ -127,3 +151,30 @@ class WaldiezChat(WaldiezBase):
             if isinstance(n_results, int) and n_results > 0:
                 args_dict["n_results"] = n_results
         return args_dict
+
+    def model_dump(self, **kwargs: Any) -> Dict[str, Any]:
+        """Dump the model to a dict including the chat attributes.
+
+        Parameters
+        ----------
+        kwargs : Any
+            The keyword arguments.
+        Returns
+        -------
+        Dict[str, Any]
+            The model dump with the chat attributes.
+        """
+        dump = super().model_dump(**kwargs)
+        dump["name"] = self.name
+        dump["description"] = self.description
+        dump["source"] = self.source
+        dump["target"] = self.target
+        dump["nested_chat"] = self.nested_chat.model_dump()
+        dump["message"] = self.message.model_dump()
+        dump["message_content"] = self.message_content
+        dump["context_variables"] = self.context_variables
+        dump["max_rounds"] = self.max_rounds
+        dump["after_work"] = (
+            self.after_work.model_dump() if self.after_work else None
+        )
+        return dump

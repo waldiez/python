@@ -1,22 +1,17 @@
 """Test WaldiezRunner."""
 
-# pylint: disable=protected-access,wrong-import-position
+# pylint: disable=protected-access
 
 import shutil
-import warnings
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
 import pytest
+from autogen.io import IOStream  # type: ignore
 
-warnings.filterwarnings(
-    "ignore", module="flaml", message="^.*flaml.automl is not available.*$"
-)
-from autogen.io import IOStream  # type: ignore  # noqa: E402
-
-from waldiez.models import Waldiez, WaldiezFlow  # noqa: E402
-from waldiez.runner import WaldiezRunner, get_printer  # noqa: E402
+from waldiez.models import Waldiez, WaldiezFlow
+from waldiez.runner import WaldiezRunner, get_printer
 
 
 class CustomIOStream(IOStream):
@@ -84,8 +79,8 @@ def test_waldiez_runner(
     """
     waldiez = Waldiez.from_dict(data=waldiez_flow.model_dump(by_alias=True))
     output_path = tmp_path / "output.py"
+    runner = WaldiezRunner(waldiez)
     with IOStream.set_default(CustomIOStream()):
-        runner = WaldiezRunner(waldiez)
         runner.run(output_path=output_path)
     std_out = capsys.readouterr().out
     assert "Starting workflow" in std_out

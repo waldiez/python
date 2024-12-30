@@ -143,7 +143,7 @@ def test_waldiez_model_api_key_and_price() -> None:
 def test_waldiez_api_key() -> None:
     """Test WaldiezModel api key from env var."""
     current_api_key = os.environ.pop("GOOGLE_GEMINI_API_KEY", None)
-    os.environ["GOOGLE_GEMINI_API_KEY"] = "gemini_api_key"
+    os.environ["GOOGLE_GEMINI_API_KEY"] = "GOOGLE_GEMINI_API_KEY"
     # Given
     api_type: WaldiezModelAPIType = "google"
     data = WaldiezModelData(  # type: ignore
@@ -163,7 +163,7 @@ def test_waldiez_api_key() -> None:
         updated_at="2021-01-01T00:00:00.000Z",
     )
     # Then
-    assert model.api_key == "gemini_api_key"
+    assert model.api_key == "GOOGLE_GEMINI_API_KEY"
     if current_api_key is not None:
         os.environ["GOOGLE_GEMINI_API_KEY"] = current_api_key
     else:
@@ -243,3 +243,21 @@ def test_waldiez_model_use_default_base_url() -> None:
         expected_url = DEFAULT_BASE_URLS.get(api_type, "")
         if expected_url:
             assert model.get_llm_config()["base_url"] == expected_url
+    data = WaldiezModelData(  # type: ignore
+        api_type="mistral",
+        base_url="https://example.com",
+    )
+    # When
+    model = WaldiezModel(
+        id="wm-1",
+        name="model",
+        description="description",
+        data=data,
+        type="model",
+        tags=["tag1", "tag2"],
+        requirements=["requirement1", "requirement2"],
+        created_at="2021-01-01T00:00:00.000Z",
+        updated_at="2021-01-01T00:00:00.000Z",
+    )
+    # Then
+    assert model.get_llm_config()["base_url"] == "https://example.com"

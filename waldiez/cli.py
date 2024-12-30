@@ -103,7 +103,7 @@ def run(
         for result in results:
             _log_result(result, logger)
             sep = "-" * 80
-            print(f"\n{sep}\n")
+            print("\n" + f"{sep}" + "\n")
     else:
         _log_result(results, logger)
 

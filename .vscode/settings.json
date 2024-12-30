@@ -1,5 +1,6 @@
 {
     "files.eol": "\n",
+    "files.trimTrailingWhitespaceInRegexAndStrings": false,
     "python.envFile": "",
     "pylint.args": ["--rcfile=pyproject.toml"],
     "pylint.importStrategy": "fromEnvironment",
@@ -81,7 +82,9 @@
         "superfences",
         "Toumanidis",
         "typer",
+        "unicodeescape",
         "userns",
+        "UXXXXXXXX",
         "venv",
         "waldiez",
         "websurfer",

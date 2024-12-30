@@ -24,9 +24,9 @@ def parse_code_string(
     try:
         tree = ast.parse(code_string)
     except SyntaxError as e:
-        return f"SyntaxError: {e}, in \n{code_string}", None
+        return f"SyntaxError: {e}, in " + "\n" + f"{code_string}", None
     except BaseException as e:  # pragma: no cover
-        return f"Invalid code: {e}, in \n{code_string}", None
+        return f"Invalid code: {e}, in " + "\n" + f"{code_string}", None
     return None, tree
 
 
@@ -116,7 +116,7 @@ def _get_function_body(
             function_body = "\n".join(function_body_lines[1:])
             if type_hints:
                 # add type hints after the function definition
-                function_body = f"    {type_hints}\n{function_body}"
+                function_body = f"    {type_hints}" + "\n" + f"{function_body}"
             return True, function_body
     error_msg = (
         f"No method with name `{function_name}`"

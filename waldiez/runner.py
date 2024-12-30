@@ -341,9 +341,7 @@ def refresh_environment() -> None:
     default_io_stream = IOStream.get_default()
     site.main()
     # pylint: disable=import-outside-toplevel
-    modules_to_reload = [
-        mod for mod in sys.modules if mod.startswith("autogen")
-    ]
+    modules_to_reload = [mod for mod in sys.modules if "autogen" in mod]
     for mod in modules_to_reload:
         del sys.modules[mod]
     warnings.filterwarnings(

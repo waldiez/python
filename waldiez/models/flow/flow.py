@@ -139,6 +139,17 @@ class WaldiezFlow(WaldiezBase):
     ] = None
 
     @property
+    def is_async(self) -> bool:
+        """Check if the flow is asynchronous.
+
+        Returns
+        -------
+        bool
+            True if the flow is asynchronous, False otherwise.
+        """
+        return self.data.is_async
+
+    @property
     def ordered_flow(
         self,
     ) -> List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]]:
@@ -165,18 +176,9 @@ class WaldiezFlow(WaldiezBase):
         ValueError
             If the agent with the given ID is not found.
         """
-        for user in self.data.agents.users:
-            if user.id == agent_id:
-                return user
-        for assistant in self.data.agents.assistants:
-            if assistant.id == agent_id:
-                return assistant
-        for manager in self.data.agents.managers:
-            if manager.id == agent_id:
-                return manager
-        for rag_user in self.data.agents.rag_users:
-            if rag_user.id == agent_id:
-                return rag_user
+        for agent in self.data.agents.members:
+            if agent.id == agent_id:
+                return agent
         raise ValueError(f"Agent with ID {agent_id} not found.")
 
     def _get_flow_order(
@@ -255,8 +257,45 @@ class WaldiezFlow(WaldiezBase):
         agent = self.get_agent_by_id(group_manager_id)
         if agent.agent_type != "manager":
             return []
-        connections = self.get_agent_connections(group_manager_id)
+        connections = self.get_agent_connections(
+            group_manager_id,
+            all_chats=True,
+        )
         return [self.get_agent_by_id(member_id) for member_id in connections]
+
+    def get_swarm_chat_members(
+        self,
+        initial_agent: WaldiezAgent,
+    ) -> Tuple[List[WaldiezAgent], Optional[WaldiezAgent]]:
+        """Get the swarm chat members.
+
+        Parameters
+        ----------
+        initial_agent : WaldiezAgent
+            The initial agent.
+
+        Returns
+        -------
+        Tuple[List[WaldiezAgent], Optional[WaldiezAgent]]
+            The list of swarm chat members and the user agent if any.
+        """
+        members: List[WaldiezAgent] = []
+        user_agent: Optional[WaldiezAgent] = None
+        if initial_agent.agent_type != "swarm":
+            return members, user_agent
+        members.append(initial_agent)
+        connections = self.get_agent_connections(
+            initial_agent.id,
+            all_chats=True,
+        )
+        # only swarm agents in the group
+        for member_id in connections:
+            member = self.get_agent_by_id(member_id)
+            if member.agent_type == "swarm":
+                members.append(member)
+            if member.agent_type == "user" and not user_agent:
+                user_agent = member
+        return members, user_agent
 
     def _validate_agent_connections(self) -> None:
         for agent in self.data.agents.members:

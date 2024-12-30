@@ -11,6 +11,14 @@ WaldiezChatMessageType = Literal[
     "string", "method", "rag_message_generator", "none"
 ]
 
+CALLABLE_MESSAGE = "callable_message"
+CALLABLE_MESSAGE_ARGS = ["sender", "recipient", "context"]
+CALLABLE_MESSAGE_HINTS = (
+    "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]"
+)
+# pylint: disable=line-too-long
+CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS = "# type: (RetrieveUserProxyAgent, ConversableAgent, dict) -> Union[dict, str]"  # noqa: E501
+
 
 class WaldiezChatMessage(WaldiezBase):
     """
@@ -229,8 +237,6 @@ def _get_message_args_from_dict(
     context_value = value.get("context")
     if isinstance(context_value, dict):
         context = context_value
-    if not isinstance(context, dict):  # pragma: no cover
-        context = {}
     return message_type, use_carryover, content, context
 
 
@@ -269,6 +275,11 @@ def callable_message(sender, recipient, context):
     if isinstance(carryover, list):
         carryover = carryover[-1]
     if not isinstance(carryover, str):
+        if isinstance(carryover, list):
+            carryover = carryover[-1]
+        elif isinstance(carryover, dict):
+            carryover = carryover.get("content", "")
+    if not isinstance(carryover, str):
         carryover = ""'''
     if text_content:
         method_content += f"""
@@ -282,9 +293,7 @@ def callable_message(sender, recipient, context):
     return method_content
 
 
-RAG_METHOD_WITH_CARRYOVER = '''
-def callable_message(sender, recipient, context):
-    # type: (RetrieveUserProxyAgent, ConversableAgent, dict) -> Union[dict, str]
+RAG_METHOD_WITH_CARRYOVER_BODY = '''
     """Get the message using the RAG message generator method.
 
     Parameters
@@ -305,9 +314,19 @@ def callable_message(sender, recipient, context):
     if isinstance(carryover, list):
         carryover = carryover[-1]
     if not isinstance(carryover, str):
+        if isinstance(carryover, list):
+            carryover = carryover[-1]
+        elif isinstance(carryover, dict):
+            carryover = carryover.get("content", "")
+    if not isinstance(carryover, str):
         carryover = ""
     message = sender.message_generator(sender, recipient, context)
     if carryover:
         message += carryover
     return message
 '''
+# pylint: disable=line-too-long
+RAG_METHOD_WITH_CARRYOVER = (
+    "def callable_message(sender, recipient, context):"
+    f"{RAG_METHOD_WITH_CARRYOVER_BODY}"
+)

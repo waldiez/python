@@ -5,6 +5,8 @@
 - Model (LLM config, API type, etc.).
 - Skill (Skills/Tools to be registered).
 - Flow (Flow of the conversation).
+- Methods (Method names, arguments, hints, etc.).
+- Waldiez (Main class to hold the flow).
 """
 
 from .agents import (
@@ -34,6 +36,13 @@ from .agents import (
     WaldiezRagUserTask,
     WaldiezRagUserVectorDb,
     WaldiezRagUserVectorDbConfig,
+    WaldiezSwarmAfterWork,
+    WaldiezSwarmAfterWorkOption,
+    WaldiezSwarmAfterWorkRecipientType,
+    WaldiezSwarmAgent,
+    WaldiezSwarmAgentData,
+    WaldiezSwarmOnCondition,
+    WaldiezSwarmUpdateSystemMessage,
     WaldiezUserProxy,
     WaldiezUserProxyData,
 )
@@ -104,4 +113,11 @@ __all__ = [
     "WaldiezRagUserVectorDb",
     "WaldiezRagUserVectorDbConfig",
     "WaldiezRagUserModels",
+    "WaldiezSwarmAgent",
+    "WaldiezSwarmAfterWork",
+    "WaldiezSwarmAfterWorkOption",
+    "WaldiezSwarmAfterWorkRecipientType",
+    "WaldiezSwarmAgentData",
+    "WaldiezSwarmOnCondition",
+    "WaldiezSwarmUpdateSystemMessage",
 ]

@@ -227,6 +227,7 @@ def test_waldiez_flow() -> None:
         assistants=[assistant],
         managers=[manager],
         rag_users=[rag_user],
+        swarm_agents=[],
     )
     chats = [
         WaldiezChat(
@@ -345,10 +346,10 @@ def test_waldiez_flow() -> None:
         models=[model],
         skills=[skill],
         chats=chats,
+        is_async=False,
     )
     # When
-    flow1 = WaldiezFlow(
-        id="wf-1",
+    flow1 = WaldiezFlow(  # type: ignore
         name="flow",
         type="flow",
         description="Flow",
@@ -360,6 +361,7 @@ def test_waldiez_flow() -> None:
         data=flow_data,
     )
     # Then
+    assert flow1.id is not None
     assert not flow1.data.nodes
     assert flow1.get_agent_by_id("wa-1").id == "wa-1"
     with pytest.raises(ValueError):
@@ -393,6 +395,7 @@ def test_waldiez_flow() -> None:
                 models=[model],
                 skills=[skill],
                 chats=[],
+                is_async=False,
             ),
         )
     with pytest.raises(ValueError):
@@ -415,6 +418,7 @@ def test_waldiez_flow() -> None:
                 models=[],
                 skills=[skill, skill],
                 chats=chats,
+                is_async=False,
             ),
         )
 
@@ -438,6 +442,7 @@ def test_waldiez_flow() -> None:
                 models=[model, model],
                 skills=[],
                 chats=chats,
+                is_async=False,
             ),
         )
     assistant2 = WaldiezAssistant(
@@ -479,6 +484,7 @@ def test_waldiez_flow() -> None:
         assistants=[assistant, assistant2],
         managers=[manager],
         rag_users=[rag_user],
+        swarm_agents=[],
     )
     with pytest.raises(ValueError):
         # agents do not connect to any other node
@@ -500,6 +506,7 @@ def test_waldiez_flow() -> None:
                 models=[model],
                 skills=[skill],
                 chats=chats,
+                is_async=False,
             ),
         )
     # set positions < 0
@@ -509,6 +516,7 @@ def test_waldiez_flow() -> None:
         assistants=[assistant],
         managers=[],
         rag_users=[],
+        swarm_agents=[],
     )
     chats2 = [
         WaldiezChat(
@@ -553,6 +561,11 @@ def test_waldiez_flow() -> None:
             models=[],
             skills=[],
             chats=chats2,
+            is_async=False,
         ),
     )
     assert flow.ordered_flow == [(chats2[0], user, assistant)]
+
+    swarm_members, swarm_user = flow.get_swarm_chat_members(user)
+    assert not swarm_members
+    assert swarm_user is None

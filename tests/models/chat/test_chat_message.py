@@ -127,6 +127,11 @@ def callable_message(sender, recipient, context):
     if isinstance(carryover, list):
         carryover = carryover[-1]
     if not isinstance(carryover, str):
+        if isinstance(carryover, list):
+            carryover = carryover[-1]
+        elif isinstance(carryover, dict):
+            carryover = carryover.get("content", "")
+    if not isinstance(carryover, str):
         carryover = ""
     final_message = "Hello there" + carryover
     return final_message
@@ -169,6 +174,11 @@ def callable_message(sender, recipient, context):
     carryover = context.get("carryover", "")
     if isinstance(carryover, list):
         carryover = carryover[-1]
+    if not isinstance(carryover, str):
+        if isinstance(carryover, list):
+            carryover = carryover[-1]
+        elif isinstance(carryover, dict):
+            carryover = carryover.get("content", "")
     if not isinstance(carryover, str):
         carryover = ""
     return carryover
