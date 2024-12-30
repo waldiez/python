@@ -119,6 +119,7 @@ nav:
               - UserProxy: models/agents/user_proxy.md
               - GroupManager: models/agents/group_manager.md
               - RagUser: models/agents/rag_user.md
+              - SwarmAgent: models/agents/swarm_agent.md
           - Chat: models/chat.md
           - Flow: models/flow.md
           - Common: models/common.md

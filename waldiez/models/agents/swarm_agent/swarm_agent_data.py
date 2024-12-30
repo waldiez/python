@@ -1,7 +1,6 @@
-"""Swarm agent data.
+"""Swarm agent data."""
 
-https://docs.ag2.ai/docs/reference/agentchat/contrib/swarm_agent
-"""
+# https://docs.ag2.ai/docs/reference/agentchat/contrib/swarm_agent
 
 from typing import List, Union
 
@@ -22,7 +21,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
     Attributes
     ----------
     functions : List[str]
-        A list of functions to register with the agent.
+        A list of functions (skill ids) to register with the agent.
 
     update_agent_state_before_reply : List[str]
         A list of functions, including `UPDATE_SYSTEM_MESSAGE`,
@@ -31,15 +30,6 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
 
     hand_offs : List[Union[WaldiezSwarmOnCondition, WaldiezSwarmAfterWork]]
         A list of hand offs to register.
-
-    See Also
-    --------
-    waldiez.models.agents.swarm.on_condition.WaldiezSwarmOnCondition :
-        A condition to handle handoff.
-    waldiez.models.agents.swarm.after_work.WaldiezSwarmAfterWork :
-        An after work to handle handoff.
-    waldiez.models.agents.swarm.update_system_message.WaldiezSwarmUpdateSystemMessage :
-        Update the agent's system message before they reply.
 
     Notes
     -----
@@ -51,7 +41,9 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         List[str],
         Field(
             title="Functions",
-            description="A list of functions to register with the agent.",
+            description=(
+                "A list of functions (skill ids) to register with the agent."
+            ),
             default_factory=list,
         ),
     ]
