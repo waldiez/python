@@ -44,8 +44,8 @@ class AgentExporter(BaseExporter, ExporterMixin):
 
         Parameters
         ----------
-        agents : List[WaldiezAgent]
-            The agents in the flow.
+        agent : WaldiezAgent
+            The agent to export.
         agent_names : Dict[str, str]
             The agent ids to names mapping.
         model_names : Dict[str, str]

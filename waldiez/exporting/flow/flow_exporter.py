@@ -1,21 +1,23 @@
 """Flow Exporter class.
 
-We gather all the exports (models, skills, agents, chats).
+- We gather all the exports (models, skills, agents, chats).
 
-We first add all the imports from the above exports.
-If we have skills, we include their imports.
+- We first add all the imports from the above exports.  
+- If we have skills, we include their imports.
     (their files were generated when exporting the skills).
-Then, we write the all model configs.
-Next, we write the agent definitions
+- Then, we write the all model configs.  
+- Next, we write the agent definitions  
     (using the `llm_config=...` argument from the model exports).
-If additional (nested_chats) are defined,
+- If additional (nested_chats) are defined,  
     we write their registrations after all agents are defined.
-Next, we write the chat definitions
+- Next, we write the chat definitions  
     (using the agent names from the agent exports).
-If exporting to py,
-    we add the "run" function and  the def main to call the run function.
-If the flow is async, the "run" function is async.
+- If exporting to py,  
+    we add the `run` function and the `def main()` to call the run function.
+- If the flow is async, the `run` function is async.
 """
+# flake8: noqa E501
+# pylint: disable=line-too-long
 
 from functools import partial
 from pathlib import Path
@@ -278,17 +280,11 @@ class FlowExporter(BaseExporter, ExporterMixin):
 
         Parameters
         ----------
-        model_export : Optional[
-            List[Tuple[str, Union[ExportPosition, AgentPosition]]]
-        ]
+        model_export : Optional[List[Tuple[str, Union[ExportPosition, AgentPosition]]]]
             The model exports.
-        skill_export : Optional[
-            List[Tuple[str, Union[ExportPosition, AgentPosition]]]
-        ]
+        skill_export : Optional[List[Tuple[str, Union[ExportPosition, AgentPosition]]]]
             The skill exports.
-        chat_export : Optional[
-            List[Tuple[str, Union[ExportPosition, AgentPosition]]]
-        ]
+        chat_export : Optional[List[Tuple[str, Union[ExportPosition, AgentPosition]]]]
             The chat exports.
 
         Returns
@@ -343,7 +339,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
         return exporter.export()
 
     @staticmethod
-    def get_gather_agent_arguments(
+    def gather_agent_arguments(
         before_export: List[Tuple[str, Union[ExportPosition, AgentPosition]]],
         after_export: List[Tuple[str, Union[ExportPosition, AgentPosition]]],
     ) -> List[Tuple[str, AgentPosition]]:
@@ -398,7 +394,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
         """
         agent_outputs = []
         for agent in self.agents:
-            exported_with_agent_arg = self.get_gather_agent_arguments(
+            exported_with_agent_arg = self.gather_agent_arguments(
                 before_export, after_export
             )
             arguments_resolver = partial(

@@ -48,7 +48,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
 
         Parameters
         ----------
-        swarm_members_resolver : Callable[
+        get_swarm_members : Callable[
                 [WaldiezAgent],
                 Tuple[List[WaldiezAgent], Optional[WaldiezAgent]]
             ]

@@ -15,33 +15,7 @@ from .utils import (
 
 
 class ExporterMixin:
-    """Static methods to be used by the exporters.
-
-    Methods
-    -------
-    serializer(item: Any, tabs: int = 1) -> str
-        Get the string representation of an item.
-    function_generator(
-        function_name: str,
-        renamed_function_name: str,
-        method_body: str,
-    ) -> str
-        Get a function string.
-    path_resolver(path: str) -> str
-        Get the path string.
-    get_escaped_string(string: str) -> str
-        Get a string with escaped quotes and newlines.
-    get_comment(key: CommentKey, for_notebook: bool) -> str
-        Get the comment string.
-    comment(for_notebook: bool, hashtags: int = 1) -> str
-        Comment the text.
-    get_valid_instance_name(
-        instance: Tuple[str, str],
-        current_names: Dict[str, str],
-        prefix: str = "w",
-    ) -> Dict[str, str]
-        Get a valid instance name.
-    """
+    """Static methods to be used by the exporters."""
 
     @staticmethod
     def serializer(item: Any, tabs: int = 1) -> str:

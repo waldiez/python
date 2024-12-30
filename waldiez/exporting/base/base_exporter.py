@@ -9,7 +9,21 @@ from .import_position import ImportPosition
 
 
 class ExporterReturnType(TypedDict):
-    """Exporter Return Type."""
+    """Exporter Return Type.
+
+    Attributes
+    ----------
+    content : Optional[str]
+        The exported content.
+    imports : Optional[List[Tuple[str, ImportPosition]]]
+        The additional imports required for the exported content.
+    environment_variables : Optional[List[Tuple[str, str]]]
+        The environment variables to set.
+    before_export : Optional[List[Tuple[str, Union[ExportPosition, AgentPosition]]]]
+        The exported content before the main export and its position.
+    after_export : Optional[List[Tuple[str, Union[ExportPosition, AgentPosition]]]]
+        The exported content after the main export and its position.
+    """
 
     content: Optional[str]
     imports: Optional[List[Tuple[str, ImportPosition]]]
@@ -31,9 +45,9 @@ class BaseExporter(abc.ABC):
 
         Parameters
         ----------
-        *args
+        *args : Any
             The positional arguments.
-        **kwargs
+        **kwargs : Any
             The keyword arguments.
         """
         raise NotImplementedError("Method not implemented.")
