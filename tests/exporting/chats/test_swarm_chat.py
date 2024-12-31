@@ -296,11 +296,20 @@ def callable_message(sender, recipient, context):
     # pylint: disable=line-too-long,inconsistent-quotes
     expected = (
         "\n"
-        f"def {after_work_string}(last_speaker, messages, groupchat):"
-        "\n"
-        "    # type: (SwarmAgent, List[dict], GroupChat) -> Union[AfterWorkOption, SwarmAgent, str]\n"  # noqa E501
-        '    return "TERMINATE"'
+        f"def {after_work_string}("
+        "\n    last_speaker: SwarmAgent,"
+        "\n    messages: List[Dict[str, Any]],"
+        "\n    groupchat: GroupChat,"
+        "\n) -> Union[AfterWorkOption, SwarmAgent, str]:"
+        '\n    return "TERMINATE"'
     )
+
+    #  - def custom_after_work_chat2(
+    #   -     last_speaker: SwarmAgent,
+    #   -     messages: List[Dict[str, Any]],
+    #   -     groupchat: GroupChat,
+    #   - ) -> Union[AfterWorkOption, SwarmAgent, str]:
+    #         return "TERMINATE"
     assert expected == additional_method_string
     messages_string = get_swarm_messages_string(
         chat=chat4, string_escape=exporter.string_escape

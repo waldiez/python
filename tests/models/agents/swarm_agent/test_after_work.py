@@ -65,8 +65,11 @@ def custom_after_work(last_speaker, messages, groupchat):
         recipient=callable_body, recipient_type="callable"
     )
     expected_recipient_string = (
-        "def my_custom_after_work(last_speaker, messages, groupchat):\n"
-        "    # type: (SwarmAgent, List[dict], GroupChat) -> Union[AfterWorkOption, SwarmAgent, str]\n"
+        "def my_custom_after_work(\n"
+        "    last_speaker: SwarmAgent,\n"
+        "    messages: List[Dict[str, Any]],\n"
+        "    groupchat: GroupChat,\n) -> "
+        "Union[AfterWorkOption, SwarmAgent, str]:\n"
         '    return "TERMINATE"'
     )
     assert (

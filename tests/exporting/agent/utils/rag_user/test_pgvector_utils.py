@@ -101,7 +101,6 @@ def test_get_pgvector_db_args_custom_embeddings() -> None:
         "import psycopg",
     }
     assert embeddings_func == (
-        "\ndef custom_embedding_function_rag_user():\n"
-        "    # type: () -> Callable[..., Any]\n"
+        "\ndef custom_embedding_function_rag_user() -> Callable[..., Any]:\n"
         '    return SentenceTransformer("model").encode\n'
     )

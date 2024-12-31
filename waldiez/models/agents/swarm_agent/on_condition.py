@@ -9,15 +9,18 @@ from ...common import WaldiezBase, check_function
 
 CUSTOM_ON_CONDITION_AVAILABLE = "custom_on_condition_available"
 CUSTOM_ON_CONDITION_AVAILABLE_ARGS = ["agent", "message"]
-CUSTOM_ON_CONDITION_AVAILABLE_HINTS = "# type: (ConversableAgent, dict) -> bool"
-
-# pylint: disable=line-too-long
+CUSTOM_ON_CONDITION_AVAILABLE_TYPES = (
+    ["Agent", "Dict[str, Any]"],
+    "bool",
+)
 
 # In ag2 it used as:
 #
 # if on_condition.available is not None:
 #     if isinstance(on_condition.available, Callable):
-#         is_available = on_condition.available(agent, next(iter(agent.chat_messages.values())))  # noqa: E501
+#         is_available = on_condition.available(
+#           agent, next(iter(agent.chat_messages.values()))
+#         )
 #     elif isinstance(on_condition.available, str):
 #         is_available = agent.get_context(on_condition.available) or False
 
@@ -58,6 +61,17 @@ class WaldiezSwarmOnCondition(WaldiezBase):
             ),
         ),
     ]
+    target_type: Annotated[
+        Literal["agent", "nested_chat"],
+        Field(
+            "agent",
+            title="Target Type",
+            description=(
+                "The type of the target. "
+                "Can be either 'agent' or 'nested_chat'.Default is 'agent'."
+            ),
+        ),
+    ] = "agent"
     condition: Annotated[
         str,
         Field(
@@ -90,10 +104,29 @@ class WaldiezSwarmOnCondition(WaldiezBase):
 
     _available_string: str = ""
 
-    @property
-    def available_string(self) -> str:
-        """Get the available string."""
-        return self._available_string
+    def get_available_string(
+        self,
+        function_name: str = CUSTOM_ON_CONDITION_AVAILABLE,
+    ) -> str:
+        """Get the available string.
+
+        Parameters
+        ----------
+        function_name : str, optional
+            The function name. Default is `custom_on_condition_available`.
+
+        Returns
+        -------
+        str
+            The available string.
+        """
+        if self.available_check_type != "callable":
+            return self._available_string
+        return (
+            f"def {function_name}(agent: Agent, message: Dict[str, Any]):"
+            "\n"
+            f"{self._available_string}"
+        )
 
     @model_validator(mode="after")
     def validate_available(self) -> Self:
@@ -116,7 +149,6 @@ class WaldiezSwarmOnCondition(WaldiezBase):
                 code_string=self.available,
                 function_name=CUSTOM_ON_CONDITION_AVAILABLE,
                 function_args=CUSTOM_ON_CONDITION_AVAILABLE_ARGS,
-                type_hints=CUSTOM_ON_CONDITION_AVAILABLE_HINTS,
             )
             if not is_valid or not error_or_body:
                 raise ValueError(f"Invalid callable: {error_or_body}")

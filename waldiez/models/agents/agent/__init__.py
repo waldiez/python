@@ -9,14 +9,14 @@ from .teachability import WaldiezAgentTeachability
 from .termination_message import (
     IS_TERMINATION_MESSAGE,
     IS_TERMINATION_MESSAGE_ARGS,
-    IS_TERMINATION_MESSAGE_HINTS,
+    IS_TERMINATION_MESSAGE_TYPES,
     WaldiezAgentTerminationMessage,
 )
 
 __all__ = [
     "IS_TERMINATION_MESSAGE",
     "IS_TERMINATION_MESSAGE_ARGS",
-    "IS_TERMINATION_MESSAGE_HINTS",
+    "IS_TERMINATION_MESSAGE_TYPES",
     "WaldiezAgent",
     "WaldiezAgentCodeExecutionConfig",
     "WaldiezAgentData",

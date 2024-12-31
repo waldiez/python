@@ -260,6 +260,7 @@ def get_chat_message(
         sender.agent_type == "rag_user"
         and isinstance(sender, WaldiezRagUser)
         and chat.message.type == "rag_message_generator"
+        and chat.message.use_carryover is False
     ):
         message = f"{sender_name}.message_generator"
         return "\n" + f"{tab}    message={message},", additional_methods_string
@@ -284,5 +285,12 @@ def get_chat_message(
                 "\n" + f'{tab}    message="{message}",',
                 additional_methods_string,
             )
-        return "", additional_methods_string
+        if chat.message.type == "rag_message_generator":
+            additional_methods_string += (
+                method_content if method_content else ""
+            )
+            return (
+                "\n" + f"{tab}    message={message},",
+                additional_methods_string,
+            )
     return "", additional_methods_string  # pragma: no cover

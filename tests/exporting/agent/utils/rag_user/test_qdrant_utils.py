@@ -186,8 +186,7 @@ def test_get_qdrant_db_args_custom_embeddings() -> None:
         "            embedding_function=custom_embedding_function_rag_user,\n"
     )
     assert embeddings_func == (
-        "\ndef custom_embedding_function_rag_user():\n"
-        "    # type: () -> Callable[..., Any]\n"
+        "\ndef custom_embedding_function_rag_user() -> Callable[..., Any]:\n"
         "    # pylint: disable=import-outside-toplevel\n"
         "    from sentence_transformers import SentenceTransformer\n"
         '    return SentenceTransformer("model").encode\n'

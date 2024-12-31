@@ -78,10 +78,7 @@ def test_waldiez_agent_termination_message_method() -> None:
         termination_message.method_content
         == "def is_termination_message(message):\n    return False"
     )
-    assert (
-        termination_message.string
-        == "    # type: (dict) -> bool\n    return False"
-    )
+    assert termination_message.string == "    return False"
 
     with pytest.raises(ValueError):
         WaldiezAgentTerminationMessage(

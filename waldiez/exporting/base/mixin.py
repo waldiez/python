@@ -8,7 +8,6 @@ from .utils import (
     get_comment,
     get_escaped_string,
     get_item_string,
-    get_method_string,
     get_path_string,
     get_valid_instance_name,
 )
@@ -33,34 +32,6 @@ class ExporterMixin:
             The string representation of the item.
         """
         return get_item_string(item=item, tabs=tabs)
-
-    @staticmethod
-    def function_generator(
-        function_name: str,
-        renamed_function_name: str,
-        method_body: str,
-    ) -> str:
-        """Get a function string.
-
-        Parameters
-        ----------
-        function_name : Union[str, str]
-            The method name.
-        renamed_function_name : str
-            The renamed method name.
-        method_body : str
-            The method body.
-
-        Returns
-        -------
-        str
-            The function string having the definition, type hints and body.
-        """
-        return get_method_string(
-            function_name=function_name,
-            renamed_function_name=renamed_function_name,
-            method_body=method_body,
-        )
 
     @staticmethod
     def path_resolver(path: str) -> str:

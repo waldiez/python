@@ -60,7 +60,7 @@ def _get_chroma_embedding_function_string(
     """
     to_import = ""
     embedding_function_arg = ""
-    embedding_function_body = ""
+    embedding_function_content = ""
     vector_db_model = agent.retrieve_config.db_config.model
     if not agent.retrieve_config.use_custom_embedding:
         to_import = (
@@ -70,13 +70,13 @@ def _get_chroma_embedding_function_string(
         embedding_function_arg = "SentenceTransformerEmbeddingFunction("
         embedding_function_arg += f'model_name="{vector_db_model}")'
     else:
-        embedding_function_arg = f"custom_embedding_function_{agent_name}"
-        embedding_function_body = (
-            "\n" + f"def custom_embedding_function_{agent_name}():" + "\n"
-            f"{agent.retrieve_config.embedding_function_string}" + "\n"
+        embedding_function_content, embedding_function_arg = (
+            agent.retrieve_config.get_custom_embedding_function(
+                name_suffix=agent_name
+            )
         )
-
-    return embedding_function_arg, to_import, embedding_function_body
+        embedding_function_content = "\n" + embedding_function_content
+    return embedding_function_arg, to_import, embedding_function_content
 
 
 def get_chroma_db_args(

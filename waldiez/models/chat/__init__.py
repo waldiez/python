@@ -5,17 +5,16 @@ from .chat_data import WaldiezChatData
 from .chat_message import (
     CALLABLE_MESSAGE,
     CALLABLE_MESSAGE_ARGS,
-    CALLABLE_MESSAGE_HINTS,
-    CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS,
+    CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_TYPES,
+    CALLABLE_MESSAGE_TYPES,
     WaldiezChatMessage,
     WaldiezChatMessageType,
-    validate_message_dict,
 )
 from .chat_nested import (
     NESTED_CHAT_ARGS,
-    NESTED_CHAT_HINTS,
     NESTED_CHAT_MESSAGE,
     NESTED_CHAT_REPLY,
+    NESTED_CHAT_TYPES,
     WaldiezChatNested,
 )
 from .chat_summary import WaldiezChatSummary, WaldiezChatSummaryMethod
@@ -23,12 +22,12 @@ from .chat_summary import WaldiezChatSummary, WaldiezChatSummaryMethod
 __all__ = [
     "CALLABLE_MESSAGE",
     "CALLABLE_MESSAGE_ARGS",
-    "CALLABLE_MESSAGE_HINTS",
-    "CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS",
+    "CALLABLE_MESSAGE_TYPES",
+    "CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_TYPES",
     "NESTED_CHAT_MESSAGE",
     "NESTED_CHAT_REPLY",
     "NESTED_CHAT_ARGS",
-    "NESTED_CHAT_HINTS",
+    "NESTED_CHAT_TYPES",
     "WaldiezChat",
     "WaldiezChatData",
     "WaldiezChatMessage",
@@ -36,5 +35,4 @@ __all__ = [
     "WaldiezChatNested",
     "WaldiezChatSummary",
     "WaldiezChatSummaryMethod",
-    "validate_message_dict",
 ]

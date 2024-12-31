@@ -88,7 +88,6 @@ class AgentExporter(BaseExporter, ExporterMixin):
             agent=self.agent,
             agent_names=self.agent_names,
             group_chat_members=self.group_chat_members,
-            function_generator=self.function_generator,
             serializer=self.serializer,
         )
         # before_agent, termination_arg

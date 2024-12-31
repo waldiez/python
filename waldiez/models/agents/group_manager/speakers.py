@@ -1,11 +1,11 @@
 """Group chat speakers."""
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, check_function
+from ...common import WaldiezBase, check_function, generate_function
 
 WaldiezGroupManagerSpeakersSelectionMethod = Literal[
     "auto",
@@ -19,8 +19,9 @@ WaldiezGroupManagerSpeakersTransitionsType = Literal["allowed", "disallowed"]
 
 CUSTOM_SPEAKER_SELECTION = "custom_speaker_selection"
 CUSTOM_SPEAKER_SELECTION_ARGS = ["last_speaker", "groupchat"]
-CUSTOM_SPEAKER_SELECTION_HINTS = (
-    "# type: (ConversableAgent, GroupChat) -> Union[Agent, str, None]"
+CUSTOM_SPEAKER_SELECTION_TYPES = (
+    ["ConversableAgent", "GroupChat"],
+    "Optional[Union[Agent, str]]",
 )
 
 
@@ -179,6 +180,40 @@ class WaldiezGroupManagerSpeakers(WaldiezBase):
         """
         return self._custom_method_string
 
+    def get_custom_method_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Get the custom method function.
+
+        Parameters
+        ----------
+        name_prefix : str
+            The function name prefix.
+        name_suffix : str
+            The function name suffix.
+
+        Returns
+        -------
+        Tuple[str, str]
+            The custom method function and the function name.
+        """
+        function_name = CUSTOM_SPEAKER_SELECTION
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=CUSTOM_SPEAKER_SELECTION_ARGS,
+                function_types=CUSTOM_SPEAKER_SELECTION_TYPES,
+                function_body=self.custom_method_string or "",
+            ),
+            function_name,
+        )
+
     @model_validator(mode="after")
     def validate_group_speakers_config(self) -> Self:
         """Validate the speakers config.
@@ -200,7 +235,6 @@ class WaldiezGroupManagerSpeakers(WaldiezBase):
                 code_string=self.selection_custom_method,
                 function_name=CUSTOM_SPEAKER_SELECTION,
                 function_args=CUSTOM_SPEAKER_SELECTION_ARGS,
-                type_hints=CUSTOM_SPEAKER_SELECTION_HINTS,
             )
             if not is_valid or not error_or_body:
                 # pylint: disable=inconsistent-quotes

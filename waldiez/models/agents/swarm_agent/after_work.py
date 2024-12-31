@@ -18,10 +18,12 @@ WaldiezSwarmAfterWorkRecipientType = Literal["agent", "option", "callable"]
 WaldiezSwarmAfterWorkOption = Literal["TERMINATE", "REVERT_TO_USER", "STAY"]
 
 
-# pylint: disable=line-too-long
 CUSTOM_AFTER_WORK = "custom_after_work"
 CUSTOM_AFTER_WORK_ARGS = ["last_speaker", "messages", "groupchat"]
-CUSTOM_AFTER_WORK_HINTS = "# type: (SwarmAgent, List[dict], GroupChat) -> Union[AfterWorkOption, SwarmAgent, str]"  # noqa: E501
+CUSTOM_AFTER_WORK_TYPES = (
+    ["SwarmAgent", "List[Dict[str, Any]]", "GroupChat"],
+    "Union[AfterWorkOption, SwarmAgent, str]",
+)
 
 
 class WaldiezSwarmAfterWork(WaldiezBase):
@@ -90,7 +92,7 @@ class WaldiezSwarmAfterWork(WaldiezBase):
     def get_recipient_string(
         self,
         agent_names: Dict[str, str],
-        function_name: str = "custom_after_work",
+        function_name: str = CUSTOM_AFTER_WORK,
     ) -> str:
         """Get the recipient string.
 
@@ -115,8 +117,11 @@ class WaldiezSwarmAfterWork(WaldiezBase):
             agent_instance = agent_names.get(self.recipient, self.recipient)
             return f"AFTER_WORK({agent_instance})"
         return (
-            f"def {function_name}(last_speaker, messages, groupchat):"
-            "\n"
+            f"def {function_name}(" + "\n"
+            "    last_speaker: SwarmAgent,\n"
+            "    messages: List[Dict[str, Any]],\n"
+            "    groupchat: GroupChat,\n"
+            ") -> Union[AfterWorkOption, SwarmAgent, str]:\n"
             f"{self._recipient_string}"
         )
 
@@ -140,7 +145,6 @@ class WaldiezSwarmAfterWork(WaldiezBase):
                 code_string=self.recipient,
                 function_name=CUSTOM_AFTER_WORK,
                 function_args=CUSTOM_AFTER_WORK_ARGS,
-                type_hints=CUSTOM_AFTER_WORK_HINTS,
             )
             if not is_valid or not error_or_body:
                 # pylint: disable=inconsistent-quotes

@@ -30,10 +30,7 @@ def custom_update_system_message(agent, messages):
         update_function=callable_body,
     )
     # pylint: disable=inconsistent-quotes
-    expected_update_function_string = (
-        "    # type: (ConversableAgent, List[Dict[str, Any]]) -> str\n"
-        '    return "custom message"'
-    )
+    expected_update_function_string = '    return "custom message"'
     assert update_system_message.update_function_type == "callable"
     assert update_system_message.update_function_string == (
         expected_update_function_string

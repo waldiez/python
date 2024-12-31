@@ -5,7 +5,7 @@ from .group_manager_data import WaldiezGroupManagerData
 from .speakers import (
     CUSTOM_SPEAKER_SELECTION,
     CUSTOM_SPEAKER_SELECTION_ARGS,
-    CUSTOM_SPEAKER_SELECTION_HINTS,
+    CUSTOM_SPEAKER_SELECTION_TYPES,
     WaldiezGroupManagerSpeakers,
     WaldiezGroupManagerSpeakersSelectionMethod,
     WaldiezGroupManagerSpeakersSelectionMode,
@@ -15,7 +15,7 @@ from .speakers import (
 __all__ = [
     "CUSTOM_SPEAKER_SELECTION",
     "CUSTOM_SPEAKER_SELECTION_ARGS",
-    "CUSTOM_SPEAKER_SELECTION_HINTS",
+    "CUSTOM_SPEAKER_SELECTION_TYPES",
     "WaldiezGroupManager",
     "WaldiezGroupManagerData",
     "WaldiezGroupManagerSpeakers",

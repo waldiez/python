@@ -2,11 +2,24 @@
 
 import ast
 
-from waldiez.models.common.method_utils import check_function, parse_code_string
-from waldiez.models.methods import (
-    WaldiezMethodArgs,
-    WaldiezMethodHints,
-    WaldiezMethodName,
+from waldiez.models.agents.agent.termination_message import (
+    IS_TERMINATION_MESSAGE,
+    IS_TERMINATION_MESSAGE_ARGS,
+)
+from waldiez.models.chat.chat_message import (
+    CALLABLE_MESSAGE,
+    CALLABLE_MESSAGE_ARGS,
+    CALLABLE_MESSAGE_TYPES,
+)
+from waldiez.models.chat.chat_nested import (
+    NESTED_CHAT_ARGS,
+    NESTED_CHAT_REPLY,
+    NESTED_CHAT_TYPES,
+)
+from waldiez.models.common.method_utils import (
+    check_function,
+    generate_function,
+    parse_code_string,
 )
 
 
@@ -37,33 +50,29 @@ def test_check_function() -> None:
 def callable_message(sender, recipient, context):
     return "Hello"
     """
-    function_name: WaldiezMethodName = WaldiezMethodName.CALLABLE_MESSAGE
+    function_name = CALLABLE_MESSAGE
+    function_args = CALLABLE_MESSAGE_ARGS
     # When
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        function_args=WaldiezMethodArgs[function_name],
-        type_hints=WaldiezMethodHints[function_name],
+        function_args=function_args,
     )
     # Then
     assert valid
-    assert body == (
-        "    # type: (ConversableAgent, ConversableAgent, dict) -> "
-        'Union[dict, str]\n    return "Hello"'
-    )
+    assert body == '    return "Hello"'
 
     # Given
     code_string = """
 def callable_message(sender, recipient, context):
     return "Hello"
     """
-    function_name = "invalid_function"  # type: ignore[assignment]
+    function_name = "invalid_function"
     # When
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
         function_args=[],
-        type_hints="",
     )
     # Then
     assert not valid
@@ -74,13 +83,12 @@ def callable_message(sender, recipient, context):
 def callable_message(other, context):
     return "Hello"
     """
-    function_name = WaldiezMethodName.CALLABLE_MESSAGE
     # When
+    function_name = CALLABLE_MESSAGE
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        function_args=WaldiezMethodArgs[function_name],
-        type_hints=WaldiezMethodHints[function_name],
+        function_args=[],
     )
     # Then
     assert not valid
@@ -90,13 +98,13 @@ def callable_message(other, context):
 def is_termination_message(x):
     return True
     """
-    function_name = WaldiezMethodName.IS_TERMINATION_MESSAGE
+    function_name = IS_TERMINATION_MESSAGE
+    function_args = IS_TERMINATION_MESSAGE_ARGS
     # When
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        function_args=WaldiezMethodArgs[function_name],
-        type_hints=WaldiezMethodHints[function_name],
+        function_args=function_args,
     )
     # Then
     assert not valid
@@ -107,13 +115,11 @@ def is_termination_message(x):
 def is_termination_message(4):
     return True
     """
-    function_name = WaldiezMethodName.IS_TERMINATION_MESSAGE
     # When
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        function_args=WaldiezMethodArgs[function_name],
-        type_hints=WaldiezMethodHints[function_name],
+        function_args=function_args,
     )
     # Then
     assert not valid
@@ -127,20 +133,20 @@ def some_other_function(sender, recipient, context):
 def nested_chat_reply(recipient, messages, sender, config):
     return "Hello"
     """
-    function_name = WaldiezMethodName.NESTED_CHAT_REPLY
+    function_name = NESTED_CHAT_REPLY
+    function_args = NESTED_CHAT_ARGS
     # When
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        function_args=WaldiezMethodArgs[function_name],
-        type_hints=WaldiezMethodHints[function_name],
+        function_args=function_args,
     )
     # Then
     assert valid
     # pylint: disable=line-too-long
     # fmt: off
     assert body == (
-        '    # type: (ConversableAgent, list[dict], ConversableAgent, dict) -> Union[dict, str]\n    return "Hello"'  # noqa: E501
+        '    return "Hello"'  # noqa: E501
     )
     # fmt: on
 
@@ -149,14 +155,61 @@ def nested_chat_reply(recipient, messages, sender, config):
 def nested_chat_reply_(recipient, messages, sender, config):
     return "Hello"
     """
-    function_name = WaldiezMethodName.NESTED_CHAT_REPLY
     # When
     valid, body = check_function(
         code_string=code_string,
         function_name=function_name,
-        function_args=WaldiezMethodArgs[function_name],
-        type_hints=WaldiezMethodHints[function_name],
+        function_args=function_args,
     )
     # Then
     assert not valid
     assert "No method with name" in body
+
+
+def test_generate_function() -> None:
+    """Test generate_function."""
+    # Given
+    function_name = CALLABLE_MESSAGE
+    function_args = CALLABLE_MESSAGE_ARGS
+    function_types = CALLABLE_MESSAGE_TYPES
+    function_body = "    return 'Hello'"
+    # When
+    function_string = generate_function(
+        function_name=function_name,
+        function_args=function_args,
+        function_types=function_types,
+        function_body=function_body,
+    )
+    # Then
+    assert function_string == (
+        "def callable_message(\n"
+        "    sender: ConversableAgent,\n"
+        "    recipient: ConversableAgent,\n"
+        "    context: Dict[str, Any],\n"
+        ") -> Union[Dict[str, Any], str]:\n"
+        "    return 'Hello'\n"
+    )
+    # Given
+    function_name = NESTED_CHAT_REPLY
+    function_args = NESTED_CHAT_ARGS
+    function_types = NESTED_CHAT_TYPES
+    function_body = "    return 'Hello'"
+    # When
+    function_string = generate_function(
+        function_name=function_name,
+        function_args=function_args,
+        function_types=function_types,
+        function_body=function_body,
+        types_as_comments=True,
+    )
+    # Then
+    assert function_string == (
+        "def nested_chat_reply(\n"
+        "    recipient,  # type: ConversableAgent\n"
+        "    messages,  # type: List[Dict[str, Any]]\n"
+        "    sender,  # type: ConversableAgent\n"
+        "    config,  # type: Dict[str, Any]\n"
+        "):\n"
+        "    # type: (...) -> Union[Dict[str, Any], str]\n"
+        "    return 'Hello'\n"
+    )

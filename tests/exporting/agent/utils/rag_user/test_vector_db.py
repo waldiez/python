@@ -254,8 +254,7 @@ except ValueError:
     rag_user_client.create_collection("collection_name")
 
 
-def custom_embedding_function_rag_user():
-    # type: () -> Callable[..., Any]
+def custom_embedding_function_rag_user() -> Callable[..., Any]:
     # pylint: disable=import-outside-toplevel
     from sentence_transformers import SentenceTransformer
     return SentenceTransformer("model").encode

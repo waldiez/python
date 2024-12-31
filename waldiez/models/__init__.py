@@ -55,7 +55,6 @@ from .chat import (
     WaldiezChatSummaryMethod,
 )
 from .flow import WaldiezFlow, WaldiezFlowData
-from .methods import WaldiezMethodArgs, WaldiezMethodHints, WaldiezMethodName
 from .model import (
     WaldiezModel,
     WaldiezModelAPIType,
@@ -94,9 +93,6 @@ __all__ = [
     "WaldiezGroupManagerSpeakersSelectionMode",
     "WaldiezGroupManagerSpeakersTransitionsType",
     "WaldiezChatMessage",
-    "WaldiezMethodName",
-    "WaldiezMethodArgs",
-    "WaldiezMethodHints",
     "WaldiezModel",
     "WaldiezModelAPIType",
     "WaldiezModelData",

@@ -4,8 +4,8 @@
 
 from typing import List, Union
 
-from pydantic import Field
-from typing_extensions import Annotated
+from pydantic import Field, model_validator
+from typing_extensions import Annotated, Self
 
 from ..agent import WaldiezAgentData
 from .after_work import WaldiezSwarmAfterWork
@@ -55,7 +55,8 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
                 "A list of functions, including UPDATE_SYSTEM_MESSAGEs,"
                 "called to update the agent's state before it replies. "
                 " Each function is called when the agent is selected "
-                "and before it speaks."
+                "and before it speaks. If not an UPDATE_SYSTEM_MESSAGE, "
+                "it should be a skill id."
             ),
             default_factory=list,
         ),
@@ -72,3 +73,32 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
             default_factory=list,
         ),
     ]
+
+    @model_validator(mode="after")
+    def validate_hand_offs(self) -> Self:
+        """Validate the hand offs.
+
+        Returns
+        -------
+        Self
+            The swarm agent data.
+
+        Raises
+        ------
+        ValueError
+            If there are more than one `AfterWork`s.
+        """
+        after_works = [
+            hand_off
+            for hand_off in self.hand_offs
+            if isinstance(hand_off, WaldiezSwarmAfterWork)
+        ]
+        if len(after_works) > 1:
+            raise ValueError(
+                "Each agent should have at most one `AfterWork` "
+                "and (if any) it should be at the end of the list."
+            )
+        if after_works and after_works[0] != self.hand_offs[-1]:
+            self.hand_offs.remove(after_works[0])
+            self.hand_offs.append(after_works[0])
+        return self

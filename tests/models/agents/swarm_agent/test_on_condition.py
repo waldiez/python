@@ -58,9 +58,12 @@ def custom_on_condition_available(agent, message):
         available_check_type="callable",
     )
     expected_available_string = (
-        "    # type: (ConversableAgent, dict) -> bool\n" "    return True"
+        "def custom_on_condition_available("
+        "agent: Agent, "
+        "message: Dict[str, Any]"
+        "):\n    return True"
     )
-    assert on_condition.available_string == expected_available_string
+    assert on_condition.get_available_string() == expected_available_string
     assert on_condition.available_check_type == "callable"
 
 

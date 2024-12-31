@@ -153,8 +153,7 @@ def test_get_chroma_db_custom_embeddings() -> None:
         "            embedding_function=custom_embedding_function_rag_user,\n"
     )
     assert embeddings_func == (
-        "\ndef custom_embedding_function_rag_user():\n"
-        "    # type: () -> Callable[..., Any]\n"
+        "\ndef custom_embedding_function_rag_user() -> Callable[..., Any]:\n"
         '    return SentenceTransformerEmbeddingFunction(model_name="model")\n'
     )
     assert imports == {

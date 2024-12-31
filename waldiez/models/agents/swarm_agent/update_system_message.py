@@ -7,8 +7,9 @@ from ...common import WaldiezBase, check_function
 
 CUSTOM_UPDATE_SYSTEM_MESSAGE = "custom_update_system_message"
 CUSTOM_UPDATE_SYSTEM_MESSAGE_ARGS = ["agent", "messages"]
-CUSTOM_UPDATE_SYSTEM_MESSAGE_HINTS = (
-    "# type: (ConversableAgent, List[Dict[str, Any]]) -> str"
+CUSTOM_UPDATE_SYSTEM_MESSAGE_TYPES = (
+    ["ConversableAgent", "List[Dict[str, Any]]"],
+    "str",
 )
 
 
@@ -20,15 +21,18 @@ class WaldiezSwarmUpdateSystemMessage(WaldiezBase):
     update_function_type : Literal["string", "callable"]
         The type of the update function. Can be either a string or a callable.
     update_function : str
-        "The string template or function definition to update "
-        "the agent's system message. Can be a string or a Callable.  "
-        "If the `function_type` is 'string' it will be used as a "
-        "template and substitute the context variables.  "
-        "If `function_type` is 'callable', it should have signature: "
-        "def custom_update_system_message("
-        "   agent: ConversableAgent, "
-        "   messages: List[Dict[str, Any]] "
-        ") -> str"
+        The string template or function definition to update
+        the agent's system message. Can be a string or a Callable.
+        If the `function_type` is 'string' it will be used as a
+        template and substitute the context variables.
+        If the `function_type` is 'callable', it should have the signature:
+    ```
+    def custom_update_system_message(
+        agent: ConversableAgent,
+        messages: List[Dict[str, Any]]
+    ) -> str:
+
+    ```
     """
 
     update_function_type: Annotated[
@@ -98,7 +102,6 @@ class WaldiezSwarmUpdateSystemMessage(WaldiezBase):
                 code_string=self.update_function,
                 function_name=CUSTOM_UPDATE_SYSTEM_MESSAGE,
                 function_args=CUSTOM_UPDATE_SYSTEM_MESSAGE_ARGS,
-                type_hints=CUSTOM_UPDATE_SYSTEM_MESSAGE_HINTS,
             )
             if not valid or not error_or_body:
                 # pylint: disable=inconsistent-quotes

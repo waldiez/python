@@ -8,10 +8,6 @@ from waldiez.models import (
     WaldiezChatMessage,
     WaldiezRagUser,
 )
-from waldiez.models.chat import (
-    CALLABLE_MESSAGE_HINTS,
-    CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS,
-)
 
 
 def update_summary_chat_args(
@@ -81,18 +77,11 @@ def get_chat_message_string(
         sender.agent_type == "rag_user" and chat.message.use_carryover
     )
     chat_name = chat_names[chat.id]
-    original_function_name = "callable_message"
-    function_args = "sender, recipient, context"
-    function_name = f"{original_function_name}_{chat_name}"
-    function_def = f"def {function_name}({function_args}):"
-    message_content = chat.message_content
-    if is_rag_with_carryover:
-        message_content = chat.message_content.replace(
-            CALLABLE_MESSAGE_HINTS,
-            CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS,
-            1,
-        )
-    return function_name, function_def + "\n" + message_content + "\n"
+    function_content, function_name = chat.get_message_function(
+        name_suffix=chat_name,
+        is_rag=is_rag_with_carryover,
+    )
+    return function_name, function_content
 
 
 # pylint: disable=too-many-locals

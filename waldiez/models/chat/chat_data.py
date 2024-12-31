@@ -6,13 +6,11 @@ from pydantic import Field, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
 from ..agents.swarm_agent import WaldiezSwarmAfterWork
-from ..common import WaldiezBase
+from ..common import WaldiezBase, check_function
 from .chat_message import (
     CALLABLE_MESSAGE,
     CALLABLE_MESSAGE_ARGS,
-    CALLABLE_MESSAGE_HINTS,
     WaldiezChatMessage,
-    validate_message_dict,
 )
 from .chat_nested import WaldiezChatNested
 from .chat_summary import WaldiezChatSummary
@@ -222,18 +220,17 @@ class WaldiezChatData(WaldiezBase):
                 self._message_content = None
             elif self.message.type == "string":
                 self._message_content = self.message.content
+            elif self.message.type == "method":
+                valid, error_or_body = check_function(
+                    self.message.content or "",
+                    CALLABLE_MESSAGE,
+                    CALLABLE_MESSAGE_ARGS,
+                )
+                if not valid:
+                    raise ValueError(error_or_body)
+                self._message_content = error_or_body
             else:
-                self._message_content = validate_message_dict(
-                    value={
-                        "type": self.message.type,
-                        "content": self.message.content,
-                        "use_carryover": self.message.use_carryover,
-                    },
-                    function_name=CALLABLE_MESSAGE,
-                    function_args=CALLABLE_MESSAGE_ARGS,
-                    type_hints=CALLABLE_MESSAGE_HINTS,
-                    skip_definition=True,
-                ).content
+                self._message_content = self.message.content
         return self
 
     @field_validator("message", mode="before")
@@ -260,29 +257,17 @@ class WaldiezChatData(WaldiezBase):
             return WaldiezChatMessage(
                 type="none", use_carryover=False, content=None, context={}
             )
-        if isinstance(value, str):
+        if isinstance(value, (str, int, float, bool)):
             return WaldiezChatMessage(
-                type="string", use_carryover=False, content=value, context={}
+                type="string",
+                use_carryover=False,
+                content=str(value),
+                context={},
             )
         if isinstance(value, dict):
-            return validate_message_dict(
-                value,
-                function_name=CALLABLE_MESSAGE,
-                function_args=CALLABLE_MESSAGE_ARGS,
-                type_hints=CALLABLE_MESSAGE_HINTS,
-            )
+            return WaldiezChatMessage.model_validate(value)
         if isinstance(value, WaldiezChatMessage):
-            return validate_message_dict(
-                value={
-                    "type": value.type,
-                    "use_carryover": value.use_carryover,
-                    "content": value.content,
-                    "context": value.context,
-                },
-                function_name=CALLABLE_MESSAGE,
-                function_args=CALLABLE_MESSAGE_ARGS,
-                type_hints=CALLABLE_MESSAGE_HINTS,
-            )
+            return value
         return WaldiezChatMessage(
             type="none", use_carryover=False, content=None, context={}
         )
@@ -328,6 +313,8 @@ class WaldiezChatData(WaldiezBase):
 
     def get_chat_args(self) -> Dict[str, Any]:
         """Get the chat arguments to use in autogen.
+
+        Without the 'message' key.
 
         Returns
         -------
