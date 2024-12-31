@@ -29,6 +29,7 @@ jobs:
 
   deploy-docs:
     name: Deploy Docs to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build-docs
     environment:
       name: github-pages

@@ -1,7 +1,7 @@
 """Swarm after work model
 
 Handles the next step in the conversation when an
-agent doesn’t suggest a tool call or a handoff.
+agent doesn't suggest a tool call or a handoff.
 
 """
 
