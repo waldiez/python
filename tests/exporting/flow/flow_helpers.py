@@ -1,6 +1,6 @@
 """Helpers for getting a flow."""
 
-from typing import List
+from typing import Any, Dict, List, Optional
 
 from waldiez.models import (
     WaldiezAgentCodeExecutionConfig,
@@ -31,8 +31,10 @@ from waldiez.models import (
     WaldiezRagUserVectorDbConfig,
     WaldiezSkill,
     WaldiezSkillData,
+    WaldiezSwarmAfterWork,
     WaldiezSwarmAgent,
     WaldiezSwarmAgentData,
+    WaldiezSwarmOnCondition,
     WaldiezSwarmUpdateSystemMessage,
     WaldiezUserProxy,
     WaldiezUserProxyData,
@@ -469,9 +471,39 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
                         "    return messages[-1]"
                     ),
                 ),
+                "ws-1",
             ],
             # we need to check if use this or get this from the chats
-            hand_offs=[],
+            hand_offs=[
+                WaldiezSwarmOnCondition(
+                    target="wa-1",
+                    target_type="agent",
+                    condition="go to agent 1",
+                    available=None,
+                    available_check_type="none",
+                ),
+                WaldiezSwarmOnCondition(
+                    target="wa-2",
+                    target_type="agent",
+                    condition="go to agent 2",
+                    available="bool_variable",
+                    available_check_type="string",
+                ),
+                WaldiezSwarmOnCondition(
+                    target="wa-3",
+                    target_type="agent",
+                    condition="go to agent 3",
+                    available=(
+                        "def custom_on_condition_available(agent, message):\n"
+                        "    return True"
+                    ),
+                    available_check_type="callable",
+                ),
+                WaldiezSwarmAfterWork(
+                    recipient_type="option",
+                    recipient="REVERT_TO_USER",
+                ),
+            ],
         ),
     )
 
@@ -495,13 +527,30 @@ def get_chats(count: int = 4) -> List[WaldiezChat]:
         '    return "hello!"'
     )
     for index in range(count):
-        context = {"problem": "Solve tha task."} if index == 0 else {}
+        context: Dict[str, Any] = {}
+        if index in (0, 3):
+            context["problem"] = "Solve tha task."
+        if index == 3:
+            context["bool_variable"] = True
         nested_chat = WaldiezChatNested(
             message=None,
             reply=None,
         )
         source_index = index + 1
         target_index = index + 2
+        chat_after_work: Optional[WaldiezSwarmAfterWork] = None
+        if index == 3:
+            chat_after_work = WaldiezSwarmAfterWork(
+                recipient_type="callable",
+                recipient=(
+                    "def custom_after_work(\n"
+                    "    last_speaker,\n"
+                    "    messages,\n"
+                    "    groupchat\n"
+                    "):\n"
+                    "    return 'agent1'"
+                ),
+            )
         chat = WaldiezChat(
             id=f"wc-{index + 1}",
             data=WaldiezChatData(
@@ -534,6 +583,7 @@ def get_chats(count: int = 4) -> List[WaldiezChat]:
                 nested_chat=nested_chat,
                 real_source=None,
                 real_target=None,
+                after_work=chat_after_work,
             ),
         )
         chats.append(chat)

@@ -32,7 +32,7 @@ def test_waldiez_swarm_after_work_stay() -> None:
     )
     assert after_work.recipient == "STAY"
     assert after_work.recipient_type == "option"
-    recipient_string = after_work.get_recipient_string({})
+    recipient_string, _ = after_work.get_recipient({})
     assert recipient_string == "AFTER_WORK(AfterWorkOption.STAY)"
 
 
@@ -43,9 +43,7 @@ def test_waldiez_swarm_after_work_agent() -> None:
     )
     assert after_work.recipient == "agent_id"
     assert after_work.recipient_type == "agent"
-    recipient_string = after_work.get_recipient_string(
-        {"agent_id": "agent_name"}
-    )
+    recipient_string, _ = after_work.get_recipient({"agent_id": "agent_name"})
     assert recipient_string == "AFTER_WORK(agent_name)"
 
 
@@ -70,14 +68,11 @@ def custom_after_work(last_speaker, messages, groupchat):
         "    messages: List[Dict[str, Any]],\n"
         "    groupchat: GroupChat,\n) -> "
         "Union[AfterWorkOption, SwarmAgent, str]:\n"
-        '    return "TERMINATE"'
+        '    return "TERMINATE"\n'
     )
-    assert (
-        after_work.get_recipient_string(
-            {}, function_name="my_custom_after_work"
-        )
-        == expected_recipient_string
-    )
+    recipient = after_work.get_recipient({}, name_prefix="my")
+    assert recipient[0] == "AFTER_WORK(my_custom_after_work)"
+    assert recipient[1] == expected_recipient_string
     assert after_work.recipient_type == "callable"
 
 

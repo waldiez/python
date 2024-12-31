@@ -29,21 +29,29 @@ def get_def_main(flow_chats: str, is_async: bool) -> str:
     content = ""
     if is_async:
         content += "async "
-    content += "def run():\n"
+    content += "def main():\n"
     content += "    # type: () -> Union[ChatResult, List[ChatResult]]\n"
     content += '    """Start chatting."""\n'
     content += f"{flow_chats}" + "\n"
     content += get_logging_stop_string(1) + "\n"
     content += get_sqlite_to_csv_call_string(1) + "\n"
     content += "    return results\n\n\n"
-
-    content += "def main():\n"
-    content += "    # type: () -> Union[ChatResult, List[ChatResult]]\n"
-    content += '    """Run the main function."""\n'
     if is_async:
-        content += "    return asyncio.run(run())\n"
+        content += "async def call_main():\n"
     else:
-        content += "    return run()\n"
-    content += '\n\nif __name__ == "__main__":\n'
-    content += "    main()\n"
+        content += "def call_main() -> None:\n"
+    content += '    """Run the main function and print the results."""\n'
+    if is_async:
+        content += "    results = await main()\n"
+    else:
+        content += "    results = main()\n"
+    content += "    if not isinstance(results, list):\n"
+    content += "        results = [results]\n"
+    content += "    for result in results:\n"
+    content += "        pprint(asdict(result))\n\n\n"
+    content += 'if __name__ == "__main__":\n'
+    if is_async:
+        content += "    anyio.run(call_main())\n"
+    else:
+        content += "    call_main()\n"
     return content

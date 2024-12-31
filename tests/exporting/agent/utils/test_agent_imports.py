@@ -26,7 +26,7 @@ def test_get_agent_imports() -> None:
     }
     assert group_manager_imports == {
         "import autogen",
-        "from autogen import GroupChat, GroupChatManager",
+        "from autogen import GroupChatManager",
     }
     assert rag_user_imports == {
         "import autogen",

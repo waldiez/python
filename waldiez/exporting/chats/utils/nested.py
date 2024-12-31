@@ -21,6 +21,7 @@ def export_nested_chat_registration(
     agent_names: Dict[str, str],
     serializer: Callable[..., str],
     string_escape: Callable[[str], str],
+    is_async: bool,
 ) -> str:
     """Get the nested chat string.
 
@@ -38,6 +39,8 @@ def export_nested_chat_registration(
         The serializer to use to escape quotes in a string.
     string_escape : Callable[[str], str]
         The string escape function.
+    is_async : bool
+        Whether the chat is asynchronous.
 
     Returns
     -------
@@ -76,6 +79,8 @@ def export_nested_chat_registration(
 {agent_name}.register_nested_chats(
     trigger={trigger_names},
     chat_queue={var_name},
+    use_async={is_async},
+    ignore_async_in_sync_chat=True,
 )
 """
     functions_string = "\n".join(sorted(extra_contents))

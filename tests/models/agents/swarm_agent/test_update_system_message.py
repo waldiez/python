@@ -32,7 +32,7 @@ def custom_update_system_message(agent, messages):
     # pylint: disable=inconsistent-quotes
     expected_update_function_string = '    return "custom message"'
     assert update_system_message.update_function_type == "callable"
-    assert update_system_message.update_function_string == (
+    assert update_system_message._update_function == (
         expected_update_function_string
     )
 

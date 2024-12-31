@@ -284,7 +284,10 @@ def custom_embedding_function():
     assert (
         rag_content_before_agent
         == f"""
-rag_user_client = chromadb.PersistentClient(path=r"{local_path}", settings=Settings(anonymized_telemetry=False))
+rag_user_client = chromadb.PersistentClient(
+    path=r"{local_path}",
+    settings=Settings(anonymized_telemetry=False),
+)
 try:
     rag_user_client.get_collection("autogen-docs")
 except ValueError:

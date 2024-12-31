@@ -85,9 +85,9 @@ $CONTAINER_COMMAND run \
 
 ### UI
 
-For creating-only (no exporting or running) waldiez flows, you can use the playground at <https://waldiez.github.io>.  
-The repo for the js library is [here](https://github.com/waldiez/react).  
-We are currently working on waldiez-studio to provide a visual interface for creating and running Waldiez flows (you can find more [here](https://github.com/waldiez/studio)).  
+For creating-only (no exporting or running) waldiez flows, you can use the playground at <https://waldiez.github.io>.
+The repo for the js library is [here](https://github.com/waldiez/react).
+We are currently working on waldiez-studio to provide a visual interface for creating and running Waldiez flows (you can find more [here](https://github.com/waldiez/studio)).
 Until then, you can use our [Jupyter](https://github.com/waldiez/jupyter) or the [VSCode](https://github.com/waldiez/vscode) extension to create and run Waldiez flows.
 
 ### As a library
@@ -120,3 +120,4 @@ runner.run(output_path=output_path)
 - [juptytext](https://github.com/mwouts/jupytext)
 - [pydantic](https://github.com/pydantic/pydantic)
 - [typer](https://github.com/fastapi/typer)
+- [asyncer](https://github.com/fastapi/asyncer)

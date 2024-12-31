@@ -62,8 +62,10 @@ def test_get_chroma_db_args() -> None:
         "from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction",
     }
     assert before == (
-        f'rag_user_client = chromadb.PersistentClient(path=r"{local_path}", settings=Settings(anonymized_telemetry=False))'
-        "\n"
+        "rag_user_client = chromadb.PersistentClient(\n"
+        f'    path=r"{local_path}",'
+        "\n    settings=Settings(anonymized_telemetry=False),"
+        "\n)\n"
         'rag_user_client.get_or_create_collection("collection_name")'
         "\n"
     )

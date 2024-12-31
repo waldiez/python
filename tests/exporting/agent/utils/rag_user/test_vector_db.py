@@ -50,8 +50,10 @@ def test_get_rag_user_vector_db_string_chroma() -> None:
     local_path = os.path.join(os.getcwd(), "local_storage_path")
     assert before == (
         "\n"
-        f'rag_user_client = chromadb.PersistentClient(path=r"{local_path}", settings=Settings(anonymized_telemetry=False))'
+        f"rag_user_client = chromadb.PersistentClient("
         "\n"
+        f'    path=r"{local_path}",'
+        "\n    settings=Settings(anonymized_telemetry=False),\n)\n"
         "try:\n"
         '    rag_user_client.get_collection("collection_name")\n'
         "except ValueError:\n"
@@ -247,7 +249,10 @@ def test_get_rag_user_vector_db_string_custom_embedding() -> None:
     assert (
         before
         == f"""
-rag_user_client = chromadb.PersistentClient(path=r"{local_path}", settings=Settings(anonymized_telemetry=False))
+rag_user_client = chromadb.PersistentClient(
+    path=r"{local_path}",
+    settings=Settings(anonymized_telemetry=False),
+)
 try:
     rag_user_client.get_collection("collection_name")
 except ValueError:
@@ -315,7 +320,10 @@ def test_get_rag_user_vector_db_string_with_metadata() -> None:
     assert (
         before
         == f"""
-rag_user_client = chromadb.PersistentClient(path=r"{local_path}", settings=Settings(anonymized_telemetry=False))
+rag_user_client = chromadb.PersistentClient(
+    path=r"{local_path}",
+    settings=Settings(anonymized_telemetry=False),
+)
 try:
     rag_user_client.get_collection("collection_name")
 except ValueError:

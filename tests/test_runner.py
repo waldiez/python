@@ -11,7 +11,8 @@ import pytest
 from autogen.io import IOStream  # type: ignore
 
 from waldiez.models import Waldiez, WaldiezFlow
-from waldiez.runner import WaldiezRunner, get_printer
+from waldiez.runner import WaldiezRunner
+from waldiez.running.running import get_printer
 
 
 class CustomIOStream(IOStream):

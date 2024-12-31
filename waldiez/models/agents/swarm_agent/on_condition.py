@@ -1,11 +1,11 @@
 """Swarm condition model for handoff."""
 
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, check_function
+from ...common import WaldiezBase, check_function, generate_function
 
 CUSTOM_ON_CONDITION_AVAILABLE = "custom_on_condition_available"
 CUSTOM_ON_CONDITION_AVAILABLE_ARGS = ["agent", "message"]
@@ -104,28 +104,49 @@ class WaldiezSwarmOnCondition(WaldiezBase):
 
     _available_string: str = ""
 
-    def get_available_string(
-        self,
-        function_name: str = CUSTOM_ON_CONDITION_AVAILABLE,
-    ) -> str:
+    @property
+    def available_string(self) -> str:
         """Get the available string.
-
-        Parameters
-        ----------
-        function_name : str, optional
-            The function name. Default is `custom_on_condition_available`.
 
         Returns
         -------
         str
             The available string.
         """
-        if self.available_check_type != "callable":
-            return self._available_string
-        return (
-            f"def {function_name}(agent: Agent, message: Dict[str, Any]):"
-            "\n"
-            f"{self._available_string}"
+        return self._available_string
+
+    def get_available(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Get the available string.
+
+        Parameters
+        ----------
+        name_prefix : str, optional
+            The prefix to add to the function name. Default is None.
+        name_suffix : str, optional
+            The suffix to add to the function name. Default is None.
+        Returns
+        -------
+        Tuple[str, str]
+            The available string or function name and code if available.
+        """
+        if self.available_check_type == "none" or not self.available:
+            return "", ""
+        if self.available_check_type == "string":
+            return self.available_string, ""
+        function_name = CUSTOM_ON_CONDITION_AVAILABLE
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return function_name, generate_function(
+            function_name=function_name,
+            function_args=CUSTOM_ON_CONDITION_AVAILABLE_ARGS,
+            function_types=CUSTOM_ON_CONDITION_AVAILABLE_TYPES,
+            function_body=self.available_string,
         )
 
     @model_validator(mode="after")

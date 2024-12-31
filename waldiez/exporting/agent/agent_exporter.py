@@ -23,6 +23,7 @@ from .utils import (
     get_group_manager_extras,
     get_is_termination_message,
     get_rag_user_extras,
+    get_swarm_extras,
 )
 
 
@@ -90,6 +91,13 @@ class AgentExporter(BaseExporter, ExporterMixin):
             group_chat_members=self.group_chat_members,
             serializer=self.serializer,
         )
+        # before_agent, extra args, handoff_registrations
+        self._swarm = get_swarm_extras(
+            agent=self.agent,
+            agent_names=self.agent_names,
+            skill_names=self.skill_names,
+            string_escape=self.string_escape,
+        )
         # before_agent, termination_arg
         self._termination = get_is_termination_message(
             agent=self.agent, agent_name=self._agent_name
@@ -128,7 +136,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
         if not self.agent.data.system_message:
             return ""
         system_message = self.string_escape(self.agent.data.system_message)
-        return ",\n" + f'system_message="{system_message}"'
+        return ",\n    system_message=" + f'"{system_message}"'
 
     def get_before_export(
         self,
@@ -149,11 +157,35 @@ class AgentExporter(BaseExporter, ExporterMixin):
             before_agent_string += self._group_chat[0]
         if self._rag[0]:
             before_agent_string += self._rag[0]
+        if self._swarm[0]:
+            before_agent_string += self._swarm[0]
         if before_agent_string:
             return [
                 (
                     before_agent_string,
                     AgentPosition(self.agent, AgentPositions.BEFORE),
+                )
+            ]
+        return None
+
+    def get_after_export(
+        self,
+    ) -> Optional[List[Tuple[str, Union[ExportPosition, AgentPosition]]]]:
+        """Generate the content after the main export.
+
+        Returns
+        -------
+        Optional[List[Tuple[str, Union[ExportPosition, AgentPosition]]]]
+            The exported content after the main export and its position.
+        """
+        after_agent_string = ""
+        if self._swarm[2]:
+            after_agent_string += self._swarm[2]
+        if after_agent_string:
+            return [
+                (
+                    after_agent_string,
+                    AgentPosition(self.agent, AgentPositions.AFTER_ALL),
                 )
             ]
         return None
@@ -188,11 +220,15 @@ class AgentExporter(BaseExporter, ExporterMixin):
     code_execution_config={code_execution_arg},
     is_termination_msg={is_termination},{group_chat_arg}{retrieve_arg}
 """
+        if self._swarm[1]:
+            agent_str += self._swarm[1]
         # e.g. llm_config=...
         other_args = self.arguments_resolver(agent)
         if other_args:
             agent_str += ",\n".join(other_args)
-        agent_str += "\n)"
+        if not agent_str.endswith("\n"):
+            agent_str += "\n"
+        agent_str += ")"
         return agent_str
 
     def export(self) -> ExporterReturnType:
@@ -205,7 +241,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
         """
         agent_string = self.generate() or ""
         is_group_manager = self.agent.agent_type == "group_manager"
-        after_export: List[Tuple[str, ExportPosition | AgentPosition]] = []
+        after_export = self.get_after_export() or []
         content: Optional[str] = agent_string
         if is_group_manager and agent_string:
             content = None
@@ -213,6 +249,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
             # after the rest of the agents.
             # to avoid issues with (for example):
             #  'group_manager_group_chat = GroupChat(
+            #    # assistant and rag_user should be defined first
             # '    agents=[assistant, rag_user],
             # '    enable_clear_history=True,
             # ...

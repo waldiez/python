@@ -131,7 +131,6 @@ class FlowExporter(BaseExporter, ExporterMixin):
             after_export=after_export,
         )
         imports = gather_imports(
-            is_async=self.waldiez.is_async,
             model_imports=models_output["imports"],
             skill_imports=skills_output["imports"],
             chat_imports=chats_output["imports"],
@@ -144,7 +143,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
         if agents_output["after_export"]:
             after_export.extend(agents_output["after_export"])
         all_imports = (
-            get_the_imports_string(imports),
+            get_the_imports_string(imports, is_async=self.waldiez.is_async),
             ImportPosition.LOCAL,
         )
         before_chats_export = chats_output["before_export"] or []
@@ -476,6 +475,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
             chat_names=self.chat_names,
             main_chats=self.waldiez.chats,
             for_notebook=self.for_notebook,
+            is_async=self.waldiez.is_async,
         )
         output = exporter.export()
         chat_contents = output["content"] or ""

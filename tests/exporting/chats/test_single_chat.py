@@ -73,6 +73,7 @@ def callable_message(sender, recipient, context):
         chat_names=chat_names,
         main_chats=[(chat, agent1, agent2)],
         for_notebook=False,
+        is_async=False,
     )
     imports = exporter.get_imports()
     assert imports is None
@@ -165,6 +166,7 @@ def test_empty_chat() -> None:
         chat_names=chat_names,
         main_chats=[(chat, agent1, agent2)],
         for_notebook=False,
+        is_async=False,
     )
     imports = exporter.get_imports()
     assert imports is None
@@ -236,6 +238,7 @@ def test_chat_with_rag_and_carryover() -> None:
         chat_names=chat_names,
         main_chats=[(chat, agent1, agent2)],
         for_notebook=False,
+        is_async=False,
     )
     imports = exporter.get_imports()
     assert imports is None
@@ -334,6 +337,7 @@ def test_chat_with_rag_no_carryover() -> None:
         chat_names=chat_names,
         main_chats=[(chat, agent1, agent2)],
         for_notebook=False,
+        is_async=False,
     )
     imports = exporter.get_imports()
     assert imports is None
