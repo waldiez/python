@@ -28,13 +28,13 @@ class WaldiezSwarmUpdateSystemMessage(WaldiezBase):
         If the `function_type` is 'string' it will be used as a
         template and substitute the context variables.
         If the `function_type` is 'callable', it should have the signature:
-    ```
-    def custom_update_system_message(
-        agent: ConversableAgent,
-        messages: List[Dict[str, Any]]
-    ) -> str:
+        ```
+        def custom_update_system_message(
+            agent: ConversableAgent,
+            messages: List[Dict[str, Any]]
+        ) -> str:
 
-    ```
+        ```
     """
 
     update_function_type: Annotated[
