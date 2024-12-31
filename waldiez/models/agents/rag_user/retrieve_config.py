@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Tuple, Union
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, check_function
+from ...common import WaldiezBase, check_function, generate_function
 from .vector_db_config import WaldiezRagUserVectorDbConfig
 
 WaldiezRagUserTask = Literal["code", "qa", "default"]
@@ -22,11 +22,16 @@ WaldiezRagUserModels: Dict[WaldiezRagUserVectorDb, str] = {
 
 CUSTOM_EMBEDDING_FUNCTION = "custom_embedding_function"
 CUSTOM_EMBEDDING_FUNCTION_ARGS: List[str] = []
-CUSTOM_EMBEDDING_FUNCTION_HINTS = "# type: () -> Callable[..., Any]"
-
+CUSTOM_EMBEDDING_FUNCTION_TYPES: Tuple[List[str], str] = (
+    [],
+    "Callable[..., Any]",
+)
 CUSTOM_TOKEN_COUNT_FUNCTION = "custom_token_count_function"  # nosec
 CUSTOM_TOKEN_COUNT_FUNCTION_ARGS = ["text", "model"]  # nosec
-CUSTOM_TOKEN_COUNT_FUNCTION_HINTS = "# type: (str, str) -> int"  # nosec
+CUSTOM_TOKEN_COUNT_FUNCTION_TYPES = (
+    ["str", "str"],
+    "int",
+)
 
 CUSTOM_TEXT_SPLIT_FUNCTION = "custom_text_split_function"
 CUSTOM_TEXT_SPLIT_FUNCTION_ARGS = [
@@ -36,8 +41,9 @@ CUSTOM_TEXT_SPLIT_FUNCTION_ARGS = [
     "must_break_at_empty_line",
     "overlap",
 ]
-CUSTOM_TEXT_SPLIT_FUNCTION_HINTS = (
-    "# type: (str, int, str, bool, int) -> List[str]"
+CUSTOM_TEXT_SPLIT_FUNCTION_TYPES = (
+    ["str", "int", "str", "bool", "int"],
+    "List[str]",
 )
 NOT_LOCAL = (
     "http://",
@@ -523,6 +529,108 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
         """
         return self._text_split_function_string
 
+    def get_custom_embedding_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Generate the custom embedding function.
+
+        Parameters
+        ----------
+        name_prefix : str
+            The function name prefix.
+        name_suffix : str
+            The function name suffix.
+
+        Returns
+        -------
+        Tuple[str, str]
+            The custom embedding function and the function name.
+        """
+        function_name = CUSTOM_EMBEDDING_FUNCTION
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=CUSTOM_EMBEDDING_FUNCTION_ARGS,
+                function_types=CUSTOM_EMBEDDING_FUNCTION_TYPES,
+                function_body=self.embedding_function_string or "",
+            ),
+            function_name,
+        )
+
+    def get_custom_token_count_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Generate the custom token count function.
+
+        Parameters
+        ----------
+        name_prefix : str
+            The function name prefix.
+        name_suffix : str
+            The function name suffix.
+
+        Returns
+        -------
+        Tuple[str, str]
+            The custom token count function and the function name.
+        """
+        function_name = CUSTOM_TOKEN_COUNT_FUNCTION
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=CUSTOM_TOKEN_COUNT_FUNCTION_ARGS,
+                function_types=CUSTOM_TOKEN_COUNT_FUNCTION_TYPES,
+                function_body=self.token_count_function_string or "",
+            ),
+            function_name,
+        )
+
+    def get_custom_text_split_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Generate the custom text split function.
+
+        Parameters
+        ----------
+        name_prefix : str
+            The function name prefix.
+        name_suffix : str
+            The function name suffix.
+
+        Returns
+        -------
+        Tuple[str, str]
+            The custom text split function and the function name.
+        """
+        function_name = CUSTOM_TEXT_SPLIT_FUNCTION
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=CUSTOM_TEXT_SPLIT_FUNCTION_ARGS,
+                function_types=CUSTOM_TEXT_SPLIT_FUNCTION_TYPES,
+                function_body=self.text_split_function_string or "",
+            ),
+            function_name,
+        )
+
     def validate_custom_embedding_function(self) -> None:
         """Validate the custom embedding function.
 
@@ -541,7 +649,6 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
                 code_string=self.embedding_function,
                 function_name=CUSTOM_EMBEDDING_FUNCTION,
                 function_args=CUSTOM_EMBEDDING_FUNCTION_ARGS,
-                type_hints=CUSTOM_EMBEDDING_FUNCTION_HINTS,
             )
             if not valid:
                 raise ValueError(error_or_content)
@@ -565,7 +672,6 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
                 code_string=self.custom_token_count_function,
                 function_name=CUSTOM_TOKEN_COUNT_FUNCTION,
                 function_args=CUSTOM_TOKEN_COUNT_FUNCTION_ARGS,
-                type_hints=CUSTOM_TOKEN_COUNT_FUNCTION_HINTS,
             )
             if not valid:
                 raise ValueError(error_or_content)
@@ -589,7 +695,6 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
                 code_string=self.custom_text_split_function,
                 function_name=CUSTOM_TEXT_SPLIT_FUNCTION,
                 function_args=CUSTOM_TEXT_SPLIT_FUNCTION_ARGS,
-                type_hints=CUSTOM_TEXT_SPLIT_FUNCTION_HINTS,
             )
             if not valid:
                 raise ValueError(error_or_content)

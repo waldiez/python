@@ -10,10 +10,7 @@ from waldiez.models import (
     WaldiezChatSummary,
     WaldiezRagUser,
 )
-from waldiez.models.chat.chat_message import (
-    CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS,
-    RAG_METHOD_WITH_CARRYOVER_BODY,
-)
+from waldiez.models.chat.chat_message import get_last_carryover_method_content
 
 
 # pylint: disable=too-many-locals
@@ -76,17 +73,20 @@ def callable_message(sender, recipient, context):
         chat_names=chat_names,
         main_chats=[(chat, agent1, agent2)],
         for_notebook=False,
+        is_async=False,
     )
     imports = exporter.get_imports()
     assert imports is None
     before_export = exporter.get_before_export()
     assert before_export is not None
     before_export_str, export_position = before_export[0]
-    # pylint: disable=line-too-long
     expected_before_string = (
-        f"def callable_message_{chat_name}(sender, recipient, context):"
+        f"def callable_message_{chat_name}("
+        "\n    sender: ConversableAgent,"
+        "\n    recipient: ConversableAgent,"
+        "\n    context: Dict[str, Any],"
+        "\n) -> Union[Dict[str, Any], str]:"
         "\n"
-        "    # type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]\n"  # noqa: E501
         '    return f"Hello to {recipient.name} from {sender.name}"\n'
     )
     assert before_export_str == expected_before_string
@@ -166,6 +166,7 @@ def test_empty_chat() -> None:
         chat_names=chat_names,
         main_chats=[(chat, agent1, agent2)],
         for_notebook=False,
+        is_async=False,
     )
     imports = exporter.get_imports()
     assert imports is None
@@ -237,16 +238,21 @@ def test_chat_with_rag_and_carryover() -> None:
         chat_names=chat_names,
         main_chats=[(chat, agent1, agent2)],
         for_notebook=False,
+        is_async=False,
     )
     imports = exporter.get_imports()
     assert imports is None
     before_export = exporter.get_before_export()
-    # pylint: disable=line-too-long
+    expected_before_body = get_last_carryover_method_content(
+        "Hello, how are you?"
+    )
     expected_before = (
-        f"def callable_message_{chat_name}(sender, recipient, context):"
-        "\n"
-        f"    {CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS}"
-        f"{RAG_METHOD_WITH_CARRYOVER_BODY}"
+        "def callable_message_chat1(\n"
+        "    sender: RetrieveUserProxyAgent,\n"
+        "    recipient: ConversableAgent,\n"
+        "    context: Dict[str, Any],\n"
+        ") -> Union[Dict[str, Any], str]:"
+        f"{expected_before_body}"
     )
     assert before_export is not None
     before_export_str = before_export[0][0]
@@ -331,6 +337,7 @@ def test_chat_with_rag_no_carryover() -> None:
         chat_names=chat_names,
         main_chats=[(chat, agent1, agent2)],
         for_notebook=False,
+        is_async=False,
     )
     imports = exporter.get_imports()
     assert imports is None

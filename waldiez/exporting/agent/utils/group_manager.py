@@ -2,14 +2,13 @@
 
 from typing import Callable, Dict, List, Optional, Tuple
 
-from waldiez.models import WaldiezAgent, WaldiezGroupManager, WaldiezMethodName
+from waldiez.models import WaldiezAgent, WaldiezGroupManager
 
 
 def get_group_manager_extras(
     agent: WaldiezAgent,
     group_chat_members: List[WaldiezAgent],
     agent_names: Dict[str, str],
-    function_generator: Callable[[str, str, str], str],
     serializer: Callable[..., str],
 ) -> Tuple[str, str]:
     """Get the group manager extra string and custom selection method if any.
@@ -22,8 +21,6 @@ def get_group_manager_extras(
         The group members.
     agent_names : Dict[str, str]
         The agent names.
-    function_generator : Callable[[str, str, str], str]
-        The function generator.
     serializer : Callable[..., str]
         The serializer function.
 
@@ -42,14 +39,13 @@ def get_group_manager_extras(
                 agent=agent,
                 group_members=group_chat_members,
                 agent_names=agent_names,
-                function_generator=function_generator,
                 serializer=serializer,
             )
         )
         if group_chat_name:
             group_chat_arg = "\n" + f"    groupchat={group_chat_name},"
         if custom_speaker_selection:
-            before_agent_string += f"{custom_speaker_selection}" + "\n\n"
+            before_agent_string += f"{custom_speaker_selection}" + "\n"
         if group_chat_string:
             before_agent_string += group_chat_string
     return before_agent_string, group_chat_arg
@@ -59,7 +55,6 @@ def _get_group_manager_extras(
     agent: WaldiezGroupManager,
     group_members: List[WaldiezAgent],
     agent_names: Dict[str, str],
-    function_generator: Callable[[str, str, str], str],
     serializer: Callable[..., str],
 ) -> Tuple[str, str, Optional[str]]:
     """Get the group manager extra string and custom selection method if any.
@@ -102,19 +97,11 @@ def _get_group_manager_extras(
         group_chat_string += f"    max_round={agent.data.max_round}," + "\n"
     if agent.data.admin_name:
         group_chat_string += f'    admin_name="{agent.data.admin_name}",' + "\n"
-    extra_group_chat_string, function_name_and_content = (
+    extra_group_chat_string, custom_selection_method = (
         _get_group_chat_speakers_string(agent, agent_names, serializer)
     )
-    custom_selection_method: Optional[str] = None
     group_chat_string += extra_group_chat_string
     group_chat_string += ")\n\n"
-    if function_name_and_content:
-        function_name, method_content = function_name_and_content
-        custom_selection_method = function_generator(
-            WaldiezMethodName.CUSTOM_SPEAKER_SELECTION,
-            function_name,
-            method_content,
-        )
     return group_chat_string, group_chat_name, custom_selection_method
 
 
@@ -122,7 +109,7 @@ def _get_group_chat_speakers_string(
     agent: WaldiezGroupManager,
     agent_names: Dict[str, str],
     serializer: Callable[..., str],
-) -> Tuple[str, Optional[Tuple[str, str]]]:
+) -> Tuple[str, Optional[str]]:
     """Get the group chat speakers string.
 
     Parameters
@@ -138,11 +125,11 @@ def _get_group_chat_speakers_string(
     -------
     str
         The group chat speakers string.
-    Optional[Tuple[str, str]]
-        The custom selection method name and content if any.
+    Optional[str]
+        The custom custom for speaker selection if any.
     """
     speakers_string = ""
-    function_name_and_content: Optional[Tuple[str, str]] = None
+    function_content: Optional[str] = None
     if agent.data.speakers.max_retries_for_selecting is not None:
         speakers_string += (
             "    max_retries_for_selecting_speaker="
@@ -157,10 +144,10 @@ def _get_group_chat_speakers_string(
         )
     else:
         agent_name = agent_names[agent.id]
-        function_name = f"custom_speaker_selection_method_{agent_name}"
-        function_name_and_content = (
-            function_name,
-            agent.data.speakers.custom_method_string or "",
+        function_content, function_name = (
+            agent.data.speakers.get_custom_method_function(
+                name_suffix=agent_name
+            )
         )
         speakers_string += (
             f"    speaker_selection_method={function_name}," + "\n"
@@ -181,7 +168,7 @@ def _get_group_chat_speakers_string(
             serializer=serializer,
         )
     speakers_string = speakers_string.replace('"None"', "None")
-    return speakers_string, function_name_and_content
+    return speakers_string, function_content
 
 
 def _get_speakers_selection_repeat_string(

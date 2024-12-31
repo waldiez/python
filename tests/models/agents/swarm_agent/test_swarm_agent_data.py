@@ -34,10 +34,10 @@ def test_waldiez_swarm_data() -> None:
     update_system_message2 = WaldiezSwarmUpdateSystemMessage(
         update_function_type="callable",
         update_function=(
-            "def custom_update_system_message("
-            "   agent: ConversableAgent, "
-            "   messages: List[Dict[str, Any]] "
-            ") -> str:"
+            "def custom_update_system_message(\n"
+            "    agent: ConversableAgent,\n"
+            "    messages: List[Dict[str, Any]],\n"
+            ") -> str:\n"
             "    return 'custom update system message'"
         ),
     )

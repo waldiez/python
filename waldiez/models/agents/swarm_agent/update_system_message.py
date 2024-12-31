@@ -1,14 +1,17 @@
 """Update the agent's system message before they reply."""
 
+from typing import Optional, Tuple
+
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, check_function
+from ...common import WaldiezBase, check_function, generate_function
 
 CUSTOM_UPDATE_SYSTEM_MESSAGE = "custom_update_system_message"
 CUSTOM_UPDATE_SYSTEM_MESSAGE_ARGS = ["agent", "messages"]
-CUSTOM_UPDATE_SYSTEM_MESSAGE_HINTS = (
-    "# type: (ConversableAgent, List[Dict[str, Any]]) -> str"
+CUSTOM_UPDATE_SYSTEM_MESSAGE_TYPES = (
+    ["ConversableAgent", "List[Dict[str, Any]]"],
+    "str",
 )
 
 
@@ -20,15 +23,18 @@ class WaldiezSwarmUpdateSystemMessage(WaldiezBase):
     update_function_type : Literal["string", "callable"]
         The type of the update function. Can be either a string or a callable.
     update_function : str
-        "The string template or function definition to update "
-        "the agent's system message. Can be a string or a Callable.  "
-        "If the `function_type` is 'string' it will be used as a "
-        "template and substitute the context variables.  "
-        "If `function_type` is 'callable', it should have signature: "
-        "def custom_update_system_message("
-        "   agent: ConversableAgent, "
-        "   messages: List[Dict[str, Any]] "
-        ") -> str"
+        The string template or function definition to update
+        the agent's system message. Can be a string or a Callable.
+        If the `function_type` is 'string' it will be used as a
+        template and substitute the context variables.
+        If the `function_type` is 'callable', it should have the signature:
+    ```
+    def custom_update_system_message(
+        agent: ConversableAgent,
+        messages: List[Dict[str, Any]]
+    ) -> str:
+
+    ```
     """
 
     update_function_type: Annotated[
@@ -63,18 +69,42 @@ class WaldiezSwarmUpdateSystemMessage(WaldiezBase):
         ),
     ]
 
-    _update_function_string: str = ""
+    _update_function: str = ""
 
-    @property
-    def update_function_string(self) -> str:
-        """Return the update function as a string.
+    def get_update_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Get the update function.
+
+        Parameters
+        ----------
+        name_prefix : str, optional
+            The prefix of the name, by default None
+        name_suffix : str, optional
+            The suffix of the name, by default None
 
         Returns
         -------
-        str
-            The update function as a string.
+        Tuple[str, str]
+            The update function and the function name.
+
         """
-        return self._update_function_string
+        function_name = CUSTOM_UPDATE_SYSTEM_MESSAGE
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=CUSTOM_UPDATE_SYSTEM_MESSAGE_ARGS,
+                function_types=CUSTOM_UPDATE_SYSTEM_MESSAGE_TYPES,
+                function_body=self._update_function,
+            ),
+            function_name,
+        )
 
     @model_validator(mode="after")
     def validate_update_system_message(self) -> Self:
@@ -92,18 +122,17 @@ class WaldiezSwarmUpdateSystemMessage(WaldiezBase):
             or if the function type is not 'string' or 'callable'.
 
         """
-        self._update_function_string = self.update_function
+        self._update_function = self.update_function
         if self.update_function_type == "callable":
             valid, error_or_body = check_function(
                 code_string=self.update_function,
                 function_name=CUSTOM_UPDATE_SYSTEM_MESSAGE,
                 function_args=CUSTOM_UPDATE_SYSTEM_MESSAGE_ARGS,
-                type_hints=CUSTOM_UPDATE_SYSTEM_MESSAGE_HINTS,
             )
             if not valid or not error_or_body:
                 # pylint: disable=inconsistent-quotes
                 raise ValueError(
                     f"Invalid custom method: {error_or_body or 'no content'}"
                 )
-            self._update_function_string = error_or_body
+            self._update_function = error_or_body
         return self

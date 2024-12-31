@@ -48,10 +48,7 @@ def nested_chat_message(recipient, messages, sender, config):
     assert isinstance(chat_nested.message, WaldiezChatMessage)
     assert chat_nested.message.type == "method"
     assert chat_nested.message.content == message_content
-    assert chat_nested.message_content == (
-        "    # type: (ConversableAgent, list[dict], ConversableAgent, dict) ->"
-        ' Union[dict, str]\n    return "Hello there"'
-    )
+    assert chat_nested.message_content == '    return "Hello there"'
     assert isinstance(chat_nested.reply, WaldiezChatMessage)
     assert chat_nested.reply.type == "none"
     assert chat_nested.reply.content is None
@@ -80,10 +77,7 @@ def nested_chat_reply(recipient, messages, sender, config):
     assert isinstance(chat_nested.reply, WaldiezChatMessage)
     assert chat_nested.reply.type == "method"
     assert chat_nested.reply.content == reply_content
-    assert chat_nested.reply_content == (
-        "    # type: (ConversableAgent, list[dict], ConversableAgent, dict) ->"
-        ' Union[dict, str]\n    return "Hi"'
-    )
+    assert chat_nested.reply_content == '    return "Hi"'
 
     with pytest.raises(ValueError):
         chat_nested = WaldiezChatNested(

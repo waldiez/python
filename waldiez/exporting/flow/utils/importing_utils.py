@@ -8,6 +8,8 @@ BUILTIN_IMPORTS = [
     "import csv",
     "import os",
     "import sqlite3",
+    "from dataclasses import asdict",
+    "from pprint import pprint",
 ]
 TYPING_IMPORTS = [
     "Any",
@@ -22,17 +24,13 @@ COMMON_AUTOGEN_IMPORTS = [
     "from autogen import Agent",
     "from autogen import ConversableAgent",
     "from autogen import ChatResult",
+    "from autogen import GroupChat",
     "from autogen import runtime_logging",
 ]
 
 
-def get_standard_imports(is_async: bool) -> str:
+def get_standard_imports() -> str:
     """Get the standard imports.
-
-    Parameters
-    ----------
-    is_async : bool
-        If the flow is async.
 
     Returns
     -------
@@ -40,8 +38,6 @@ def get_standard_imports(is_async: bool) -> str:
         The standard imports.
     """
     builtin_imports = BUILTIN_IMPORTS.copy()
-    if is_async:
-        builtin_imports.insert(0, "import asyncio")
     imports_string = "\n".join(builtin_imports) + "\n"
     typing_imports = "from typing import " + ", ".join(TYPING_IMPORTS)
     imports_string += typing_imports
@@ -93,6 +89,7 @@ def sort_imports(
 
 def get_the_imports_string(
     all_imports: List[Tuple[str, ImportPosition]],
+    is_async: bool,
 ) -> str:
     """Get the final imports string.
 
@@ -100,6 +97,8 @@ def get_the_imports_string(
     ----------
     all_imports : List[Tuple[str, ImportPosition]]
         All the imports.
+    is_async : bool
+        If the flow is async.
     Returns
     -------
     str
@@ -118,6 +117,8 @@ def get_the_imports_string(
     final_string = "\n".join(builtin_imports) + "\n"
     while not final_string.endswith("\n\n"):
         final_string += "\n"
+    if is_async:
+        final_string += "\nimport anyio"
     if got_import_autogen:
         final_string += "\nimport autogen\n"
     if autogen_imports:
@@ -134,7 +135,6 @@ def get_the_imports_string(
 
 
 def gather_imports(
-    is_async: bool,
     model_imports: Optional[List[Tuple[str, ImportPosition]]],
     skill_imports: Optional[List[Tuple[str, ImportPosition]]],
     chat_imports: Optional[List[Tuple[str, ImportPosition]]],
@@ -144,8 +144,6 @@ def gather_imports(
 
     Parameters
     ----------
-    is_async : bool
-        If the flow is async.
     model_imports : Tuple[str, ImportPosition]
         The model imports.
     skill_imports : Tuple[str, ImportPosition]
@@ -160,7 +158,7 @@ def gather_imports(
     Tuple[str, ImportPosition]
         The gathered imports.
     """
-    imports_string = get_standard_imports(is_async)
+    imports_string = get_standard_imports()
     all_imports: List[Tuple[str, ImportPosition]] = [
         (
             imports_string,

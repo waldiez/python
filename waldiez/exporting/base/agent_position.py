@@ -39,7 +39,23 @@ POSITIONS_WITHOUT_AGENT = [
 
 @dataclass(order=True, frozen=True, slots=True)
 class AgentPosition:
-    """Agent position."""
+    """Agent position.
+
+    Attributes
+    ----------
+    agent: Optional[WaldiezAgent]
+        The agent.
+    position: AgentPositions
+        The position.
+    order: int
+        The order of the agent position.
+
+    Raises
+    ------
+    ValueError
+        If the position is not "BEFORE_ALL" or "AFTER_ALL"
+        and the agent is not provided.
+    """
 
     agent: Optional[WaldiezAgent]
     position: AgentPositions

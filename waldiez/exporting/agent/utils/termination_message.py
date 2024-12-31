@@ -33,13 +33,10 @@ def get_is_termination_message(
     if agent.data.termination.type == "keyword":
         return agent.data.termination.string, ""
     if agent.data.termination.type == "method":
-        function_name = f"is_termination_message_{agent_name}"
-        content = (
-            "\n\n"
-            + f"def is_termination_message_{agent_name}(message):"
-            + "\n"
-            + f"{agent.data.termination.string}"
-            + "\n\n"
+        content, function_name = (
+            agent.data.termination.get_termination_function(
+                name_suffix=agent_name
+            )
         )
-        return function_name, content
+        return function_name, "\n\n" + content + "\n"
     raise ValueError(f"Invalid termination type: {agent.data.termination.type}")

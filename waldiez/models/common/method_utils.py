@@ -34,21 +34,17 @@ def check_function(
     code_string: str,
     function_name: str,
     function_args: List[str],
-    type_hints: Optional[str] = None,
 ) -> Tuple[bool, str]:
     """Check the function.
 
     Parameters
     ----------
     code_string : str
-        The code string.
+        The code string to check.
     function_name : str
         The expected method name.
     function_args : List[str]
         The expected method arguments.
-    type_hints : Optional[str], optional
-        The type hints to include, by default None
-
     Returns
     -------
     Tuple[bool, str]
@@ -58,21 +54,19 @@ def check_function(
     error, tree = parse_code_string(code_string)
     if error is not None or tree is None:
         return False, error or "Invalid code"
-    return _get_function_body(
+    return _validate_function_body(
         tree,
         code_string,
         function_name,
         function_args,
-        type_hints=type_hints,
     )
 
 
-def _get_function_body(
+def _validate_function_body(
     tree: ast.Module,
     code_string: str,
     function_name: str,
     function_args: List[str],
-    type_hints: Optional[str] = None,
 ) -> Tuple[bool, str]:
     """Get the function body.
 
@@ -80,15 +74,12 @@ def _get_function_body(
     ----------
     tree : ast.Module
         The ast module.
-    code_string : str
-        The code string.
+    function_body : str
+        The function body.
     function_name : str
         The expected method name.
     function_args : List[str]
         The expected method arguments.
-    type_hints : Optional[str], optional
-        The type hints to include, by default None
-
     Returns
     -------
     Tuple[bool, str]
@@ -102,24 +93,80 @@ def _get_function_body(
             if len(node.args.args) != len(function_args):
                 return (
                     False,
-                    f"Invalid number of arguments in function {node.name}",
+                    (
+                        f"Invalid number of arguments, in function {node.name},"
+                        f" expected: {len(function_args)},"
+                        f" got: {len(node.args.args)} :("
+                    ),
                 )
             for arg, expected_arg in zip(node.args.args, function_args):
                 if arg.arg != expected_arg:
                     return (
                         False,
-                        f"Invalid argument name in function {node.name}",
+                        (
+                            f"Invalid argument name: {arg.arg}"
+                            f" in function {node.name}"
+                        ),
                     )
             function_body_lines = code_string.splitlines()[
                 node.lineno - 1 : node.end_lineno
             ]
             function_body = "\n".join(function_body_lines[1:])
-            if type_hints:
-                # add type hints after the function definition
-                function_body = f"    {type_hints}" + "\n" + f"{function_body}"
+            if function_body.startswith("\n"):
+                function_body = function_body[1:]
             return True, function_body
     error_msg = (
         f"No method with name `{function_name}`"
         f" and arguments `{function_args}` found"
     )
     return False, error_msg
+
+
+def generate_function(
+    function_name: str,
+    function_args: List[str],
+    function_types: Tuple[List[str], str],
+    function_body: str,
+    types_as_comments: bool = False,
+) -> str:
+    """Generate a function.
+
+    Parameters
+    ----------
+    function_name : str
+        The function name.
+    function_args : List[str]
+        The function arguments.
+    function_types : Tuple[List[str], str]
+        The function types.
+    function_body : str
+        The function body.
+    types_as_comments : bool, optional
+        Include the type hints as comments (or in the function signature)
+        (default is False).
+    Returns
+    -------
+    str
+        The generated function.
+    """
+    function_string = f"def {function_name}("
+    if not function_args:
+        function_string += ")"
+    else:
+        function_string += "\n"
+        for arg, arg_type in zip(function_args, function_types[0]):
+            if types_as_comments:
+                function_string += f"    {arg},  # type: {arg_type}\n"
+            else:
+                function_string += f"    {arg}: {arg_type},\n"
+        function_string += ")"
+    if types_as_comments:
+        function_string += ":\n"
+        function_string += "    # type: (...) -> " + function_types[1]
+    else:
+        function_string += " -> " + function_types[1] + ":"
+    function_string += "\n" if not function_body.startswith("\n") else ""
+    function_string += f"{function_body}"
+    if not function_string.endswith("\n"):
+        function_string += "\n"
+    return function_string

@@ -104,6 +104,7 @@ plugins:
             show_source: true
             group_by_category: false
             show_category_heading: true
+            inherited_members: false
 
 nav:
   - Waldiez: index.md
@@ -118,16 +119,17 @@ nav:
               - UserProxy: models/agents/user_proxy.md
               - GroupManager: models/agents/group_manager.md
               - RagUser: models/agents/rag_user.md
+              - SwarmAgent: models/agents/swarm_agent.md
           - Chat: models/chat.md
           - Flow: models/flow.md
           - Common: models/common.md
       - Exporting:
+          - Base: exporting/base.md
           - Models: exporting/models.md
           - Skills: exporting/skills.md
           - Chats: exporting/chats.md
           - Agents: exporting/agents.md
           - Flow: exporting/flow.md
-          - Utils: exporting/utils.md
       - Waldiez: waldiez.md
       - WaldiezRunner: runner.md
       - WaldiezExporter: exporter.md

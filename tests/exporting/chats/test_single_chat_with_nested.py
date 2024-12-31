@@ -176,6 +176,7 @@ def nested_chat_message(recipient, messages, sender, config):
             (chat1, agent1, agent2),
         ],
         for_notebook=False,
+        is_async=False,
     )
     generated = exporter.generate()
     expected = """
@@ -202,6 +203,8 @@ agent3_chat_queue = [
 agent3.register_nested_chats(
     trigger=["agent1"],
     chat_queue=agent3_chat_queue,
+    use_async=False,
+    ignore_async_in_sync_chat=True,
 )
 
 agent4_chat_queue = [
@@ -216,6 +219,8 @@ agent4_chat_queue = [
 agent4.register_nested_chats(
     trigger=["agent2"],
     chat_queue=agent4_chat_queue,
+    use_async=False,
+    ignore_async_in_sync_chat=True,
 )
 """
     assert after_export_str == excepted_after_string

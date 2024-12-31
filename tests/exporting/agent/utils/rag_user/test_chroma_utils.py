@@ -62,8 +62,10 @@ def test_get_chroma_db_args() -> None:
         "from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction",
     }
     assert before == (
-        f'rag_user_client = chromadb.PersistentClient(path=r"{local_path}", settings=Settings(anonymized_telemetry=False))'
-        "\n"
+        "rag_user_client = chromadb.PersistentClient(\n"
+        f'    path=r"{local_path}",'
+        "\n    settings=Settings(anonymized_telemetry=False),"
+        "\n)\n"
         'rag_user_client.get_or_create_collection("collection_name")'
         "\n"
     )
@@ -153,8 +155,7 @@ def test_get_chroma_db_custom_embeddings() -> None:
         "            embedding_function=custom_embedding_function_rag_user,\n"
     )
     assert embeddings_func == (
-        "\ndef custom_embedding_function_rag_user():\n"
-        "    # type: () -> Callable[..., Any]\n"
+        "\ndef custom_embedding_function_rag_user() -> Callable[..., Any]:\n"
         '    return SentenceTransformerEmbeddingFunction(model_name="model")\n'
     )
     assert imports == {

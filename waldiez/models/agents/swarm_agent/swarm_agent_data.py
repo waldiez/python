@@ -1,12 +1,11 @@
-"""Swarm agent data.
+"""Swarm agent data."""
 
-https://docs.ag2.ai/docs/reference/agentchat/contrib/swarm_agent
-"""
+# https://docs.ag2.ai/docs/reference/agentchat/contrib/swarm_agent
 
 from typing import List, Union
 
-from pydantic import Field
-from typing_extensions import Annotated
+from pydantic import Field, model_validator
+from typing_extensions import Annotated, Self
 
 from ..agent import WaldiezAgentData
 from .after_work import WaldiezSwarmAfterWork
@@ -22,7 +21,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
     Attributes
     ----------
     functions : List[str]
-        A list of functions to register with the agent.
+        A list of functions (skill ids) to register with the agent.
 
     update_agent_state_before_reply : List[str]
         A list of functions, including `UPDATE_SYSTEM_MESSAGE`,
@@ -31,15 +30,6 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
 
     hand_offs : List[Union[WaldiezSwarmOnCondition, WaldiezSwarmAfterWork]]
         A list of hand offs to register.
-
-    See Also
-    --------
-    waldiez.models.agents.swarm.on_condition.WaldiezSwarmOnCondition :
-        A condition to handle handoff.
-    waldiez.models.agents.swarm.after_work.WaldiezSwarmAfterWork :
-        An after work to handle handoff.
-    waldiez.models.agents.swarm.update_system_message.WaldiezSwarmUpdateSystemMessage :
-        Update the agent's system message before they reply.
 
     Notes
     -----
@@ -51,7 +41,9 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         List[str],
         Field(
             title="Functions",
-            description="A list of functions to register with the agent.",
+            description=(
+                "A list of functions (skill ids) to register with the agent."
+            ),
             default_factory=list,
         ),
     ]
@@ -63,7 +55,8 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
                 "A list of functions, including UPDATE_SYSTEM_MESSAGEs,"
                 "called to update the agent's state before it replies. "
                 " Each function is called when the agent is selected "
-                "and before it speaks."
+                "and before it speaks. If not an UPDATE_SYSTEM_MESSAGE, "
+                "it should be a skill id."
             ),
             default_factory=list,
         ),
@@ -80,3 +73,32 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
             default_factory=list,
         ),
     ]
+
+    @model_validator(mode="after")
+    def validate_hand_offs(self) -> Self:
+        """Validate the hand offs.
+
+        Returns
+        -------
+        Self
+            The swarm agent data.
+
+        Raises
+        ------
+        ValueError
+            If there are more than one `AfterWork`s.
+        """
+        after_works = [
+            hand_off
+            for hand_off in self.hand_offs
+            if isinstance(hand_off, WaldiezSwarmAfterWork)
+        ]
+        if len(after_works) > 1:
+            raise ValueError(
+                "Each agent should have at most one `AfterWork` "
+                "and (if any) it should be at the end of the list."
+            )
+        if after_works and after_works[0] != self.hand_offs[-1]:
+            self.hand_offs.remove(after_works[0])
+            self.hand_offs.append(after_works[0])
+        return self

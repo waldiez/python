@@ -22,7 +22,7 @@ def get_agent_imports(agent_class: str) -> Set[str]:
     elif agent_class == "UserProxyAgent":
         imports.add("from autogen import UserProxyAgent")
     elif agent_class == "GroupChatManager":
-        imports.add("from autogen import GroupChat, GroupChatManager")
+        imports.add("from autogen import GroupChatManager")
     elif agent_class == "RetrieveUserProxyAgent":
         imports.add(
             "from autogen.agentchat.contrib.retrieve_user_proxy_agent "

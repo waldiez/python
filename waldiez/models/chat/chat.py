@@ -1,15 +1,28 @@
 """Waldiez chat model."""
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from pydantic import Field
 from typing_extensions import Annotated
 
 from ..agents import WaldiezAgent, WaldiezRagUser, WaldiezSwarmAfterWork
-from ..common import WaldiezBase
+from ..common import WaldiezBase, generate_function
 from .chat_data import WaldiezChatData
-from .chat_message import WaldiezChatMessage
-from .chat_nested import WaldiezChatNested
+from .chat_message import (
+    CALLABLE_MESSAGE,
+    CALLABLE_MESSAGE_ARGS,
+    CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_TYPES,
+    CALLABLE_MESSAGE_TYPES,
+    RAG_METHOD_WITH_CARRYOVER_BODY,
+    WaldiezChatMessage,
+)
+from .chat_nested import (
+    NESTED_CHAT_ARGS,
+    NESTED_CHAT_MESSAGE,
+    NESTED_CHAT_REPLY,
+    NESTED_CHAT_TYPES,
+    WaldiezChatNested,
+)
 
 
 class WaldiezChat(WaldiezBase):
@@ -124,6 +137,140 @@ class WaldiezChat(WaldiezBase):
     def after_work(self) -> Optional[WaldiezSwarmAfterWork]:
         """Get the after work."""
         return self.data.after_work
+
+    def get_message_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+        is_rag: bool = False,
+    ) -> Tuple[str, str]:
+        """Get the message function.
+
+        Parameters
+        ----------
+        name_prefix : str
+            The function name prefix.
+        name_suffix : str
+            The function name suffix.
+        is_rag : bool
+            If the message is from a RAG user.
+
+        Returns
+        -------
+        Tuple[str, str]
+            The message function and the function name.
+        """
+        if self.message.type in ("string", "none") or (
+            not self.message_content and is_rag is False
+        ):
+            return "", ""
+        function_types = CALLABLE_MESSAGE_TYPES
+        function_name = CALLABLE_MESSAGE
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        if is_rag and self.message.type == "rag_message_generator":
+            function_types = CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_TYPES
+            return (
+                generate_function(
+                    function_name=function_name,
+                    function_args=CALLABLE_MESSAGE_ARGS,
+                    function_types=function_types,
+                    function_body=self.message.content_body
+                    or RAG_METHOD_WITH_CARRYOVER_BODY,
+                ),
+                function_name,
+            )
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=CALLABLE_MESSAGE_ARGS,
+                function_types=function_types,
+                function_body=self.message_content or "",
+            ),
+            function_name,
+        )
+
+    def get_nested_chat_message_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Get the nested chat message function.
+
+        Parameters
+        ----------
+        name_prefix : str
+            The function name prefix.
+        name_suffix : str
+            The function name suffix.
+
+        Returns
+        -------
+        Tuple[str, str]
+            The nested chat message function and the function name.
+        """
+        if (
+            not self.nested_chat.message
+            or self.nested_chat.message.type in ("string", "none")
+            or not self.nested_chat.message_content
+        ):
+            return "", ""
+        function_name = NESTED_CHAT_MESSAGE
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=NESTED_CHAT_ARGS,
+                function_types=NESTED_CHAT_TYPES,
+                function_body=self.nested_chat.message_content,
+            ),
+            function_name,
+        )
+
+    def get_nested_chat_reply_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Get the nested chat reply function.
+
+        Parameters
+        ----------
+        name_prefix : str
+            The function name prefix.
+        name_suffix : str
+            The function name suffix.
+
+        Returns
+        -------
+        Tuple[str, str]
+            The nested chat reply function and the function name.
+        """
+        if (
+            not self.nested_chat.reply
+            or self.nested_chat.reply.type in ("string", "none")
+            or not self.nested_chat.reply_content
+        ):
+            return "", ""
+        function_name = NESTED_CHAT_REPLY
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=NESTED_CHAT_ARGS,
+                function_types=NESTED_CHAT_TYPES,
+                function_body=self.nested_chat.reply_content,
+            ),
+            function_name,
+        )
 
     def get_chat_args(
         self,

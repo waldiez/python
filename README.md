@@ -120,6 +120,7 @@ runner.run(output_path=output_path)
 - [juptytext](https://github.com/mwouts/jupytext)
 - [pydantic](https://github.com/pydantic/pydantic)
 - [typer](https://github.com/fastapi/typer)
+- [asyncer](https://github.com/fastapi/asyncer)
 
 ## Known Conflicts
 

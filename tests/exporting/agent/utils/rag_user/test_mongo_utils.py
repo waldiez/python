@@ -99,8 +99,7 @@ def test_get_mongodb_db_custom_embeddings() -> None:
         "            wait_until_index_ready=20.0,\n"
     )
     assert embeddings_func == (
-        "\ndef custom_embedding_function_rag_user():\n"
-        "    # type: () -> Callable[..., Any]\n"
+        "\ndef custom_embedding_function_rag_user() -> Callable[..., Any]:\n"
         '    return SentenceTransformer("model").encode\n'
     )
     assert imports == set()

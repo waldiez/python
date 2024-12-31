@@ -243,6 +243,7 @@ def callable_message(sender, recipient, context):
         chat_names=chat_names,
         main_chats=waldiez.chats,
         for_notebook=False,
+        is_async=False,
     )
     generated = exporter.generate()
     expected = """
@@ -261,7 +262,9 @@ def callable_message(sender, recipient, context):
     assert generated == expected
     chat_imports = exporter.get_imports()
     assert chat_imports
-    assert chat_imports[0][0] == "from autogen import initiate_swarm_chat"
+    assert chat_imports[0][0] == (
+        "from autogen.agentchat.contrib.swarm import initiate_swarm_chat"
+    )
     with pytest.raises(ValueError):
         # no swarm agent in chat
         export_swarm_chat(
@@ -274,32 +277,36 @@ def callable_message(sender, recipient, context):
             tabs=1,
             serializer=exporter.serializer,
             string_escape=exporter.string_escape,
+            is_async=False,
         )
     after_work_string, _ = get_swarm_after_work_string(
         chat=chat3,
         agent_names=agent_names,
-        chat_names=chat_names,
+        name_suffix=chat_names[chat3.id],
     )
     assert after_work_string == "AFTER_WORK(agent4)"
     after_work_string, _ = get_swarm_after_work_string(
         chat=chat4,
         agent_names=agent_names,
-        chat_names=chat_names,
+        name_suffix=chat_names[chat4.id],
     )
     assert after_work_string == "AFTER_WORK(AfterWorkOption.TERMINATE)"
     after_work_string, additional_method_string = get_swarm_after_work_string(
         chat=chat2,
         agent_names=agent_names,
-        chat_names=chat_names,
+        name_suffix=chat_names[chat2.id],
     )
-    assert after_work_string == f"custom_after_work_{chat_names[chat2.id]}"
+    chat2_name = chat_names[chat2.id]
+    assert after_work_string == f"AFTER_WORK(custom_after_work_{chat2_name})"
     # pylint: disable=line-too-long,inconsistent-quotes
     expected = (
         "\n"
-        f"def {after_work_string}(last_speaker, messages, groupchat):"
-        "\n"
-        "    # type: (SwarmAgent, List[dict], GroupChat) -> Union[AfterWorkOption, SwarmAgent, str]\n"  # noqa E501
-        '    return "TERMINATE"'
+        f"def custom_after_work_{chat2_name}("
+        "\n    last_speaker: SwarmAgent,"
+        "\n    messages: List[Dict[str, Any]],"
+        "\n    groupchat: GroupChat,"
+        "\n) -> Union[AfterWorkOption, SwarmAgent, str]:"
+        '\n    return "TERMINATE"\n\n'
     )
     assert expected == additional_method_string
     messages_string = get_swarm_messages_string(

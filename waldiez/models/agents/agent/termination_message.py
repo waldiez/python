@@ -1,15 +1,18 @@
 """Waldiez Agent Termination Message Check."""
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, check_function
+from ...common import WaldiezBase, check_function, generate_function
 
 IS_TERMINATION_MESSAGE = "is_termination_message"
 IS_TERMINATION_MESSAGE_ARGS = ["message"]
-IS_TERMINATION_MESSAGE_HINTS = "# type: (dict) -> bool"
+IS_TERMINATION_MESSAGE_TYPES = (
+    ["Dict[str, Any]"],
+    "bool",
+)
 
 
 class WaldiezAgentTerminationMessage(WaldiezBase):
@@ -86,6 +89,40 @@ class WaldiezAgentTerminationMessage(WaldiezBase):
 
     _string: str = "None"
 
+    def get_termination_function(
+        self,
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
+        """Get the termination function.
+
+        Parameters
+        ----------
+        name_prefix : str
+            The function name prefix.
+        name_suffix : str
+            The function name suffix.
+
+        Returns
+        -------
+        Tuple[str, str]
+            The termination function and the function name.
+        """
+        function_name = "is_termination_message"
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
+        return (
+            generate_function(
+                function_name=function_name,
+                function_args=IS_TERMINATION_MESSAGE_ARGS,
+                function_types=IS_TERMINATION_MESSAGE_TYPES,
+                function_body=self.string,
+            ),
+            function_name,
+        )
+
     @property
     def string(self) -> str:
         """Get the value of the termination message.
@@ -112,7 +149,6 @@ class WaldiezAgentTerminationMessage(WaldiezBase):
             self.method_content,
             function_name=IS_TERMINATION_MESSAGE,
             function_args=IS_TERMINATION_MESSAGE_ARGS,
-            type_hints=IS_TERMINATION_MESSAGE_HINTS,
         )
         if not valid:
             raise ValueError(error_or_content)

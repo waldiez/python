@@ -164,8 +164,7 @@ except ValueError:
     rag_user_client.create_collection("autogen-docs")
 
 
-def custom_embedding_function_rag_user():
-    # type: () -> Callable[..., Any]
+def custom_embedding_function_rag_user() -> Callable[..., Any]:
     return text.split
 
 """
@@ -285,28 +284,37 @@ def custom_embedding_function():
     assert (
         rag_content_before_agent
         == f"""
-rag_user_client = chromadb.PersistentClient(path=r"{local_path}", settings=Settings(anonymized_telemetry=False))
+rag_user_client = chromadb.PersistentClient(
+    path=r"{local_path}",
+    settings=Settings(anonymized_telemetry=False),
+)
 try:
     rag_user_client.get_collection("autogen-docs")
 except ValueError:
     rag_user_client.create_collection("autogen-docs")
 
 
-def custom_embedding_function_rag_user():
-    # type: () -> Callable[..., Any]
+def custom_embedding_function_rag_user() -> Callable[..., Any]:
     return text.split
 
 
-def custom_token_count_function_rag_user():
-    # type: (str, str) -> int
+def custom_token_count_function_rag_user(
+    text: str,
+    model: str,
+) -> int:
     return len(text.split())
 
 
-def custom_text_split_function_rag_user():
-    # type: (str, int, str, bool, int) -> List[str]
+def custom_text_split_function_rag_user(
+    text: str,
+    max_tokens: int,
+    chunk_mode: str,
+    must_break_at_empty_line: bool,
+    overlap: int,
+) -> List[str]:
     return text.split()
 
 """
-    )
+)
 
 # fmt: on

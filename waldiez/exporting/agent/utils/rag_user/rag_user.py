@@ -100,20 +100,20 @@ def get_rag_user_retrieve_config_str(
         agent, retrieve_config, model_names, path_resolver
     )
     if retrieve_config.use_custom_token_count:
-        token_count_arg_name = f"custom_token_count_function_{agent_name}"
-        before_the_args += (
-            "\n" + f"def {token_count_arg_name}():" + "\n"
-            f"{retrieve_config.token_count_function_string}"
-            "\n\n"
+        function_content, token_count_arg_name = (
+            retrieve_config.get_custom_token_count_function(
+                name_suffix=agent_name
+            )
         )
+        before_the_args += "\n" + function_content + "\n"
         args_dict["custom_token_count_function"] = token_count_arg_name
     if retrieve_config.use_custom_text_split:
-        text_split_arg_name = f"custom_text_split_function_{agent_name}"
-        before_the_args += (
-            "\n" + f"def {text_split_arg_name}():" + "\n"
-            f"{retrieve_config.text_split_function_string}"
-            "\n\n"
+        function_content, text_split_arg_name = (
+            retrieve_config.get_custom_text_split_function(
+                name_suffix=agent_name
+            )
         )
+        before_the_args += "\n" + function_content + "\n"
         args_dict["custom_text_split_function"] = text_split_arg_name
     # docs_path = args_dict.pop("docs_path", [])
     args_content = serializer(args_dict)

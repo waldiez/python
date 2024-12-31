@@ -118,7 +118,7 @@ def test_models_exporter(tmp_path: Path) -> None:
         f"            {model1_name}_llm_config," + "\n"
         f"            {model2_name}_llm_config," + "\n"
         "        ],\n"
-        "    }"
+        "    },\n"
     )
     assert (tmp_path / f"{flow_name}_api_keys.py").exists()
     shutil.rmtree(output_dir)
@@ -188,4 +188,4 @@ def test_models_exporter(tmp_path: Path) -> None:
     assert models_exporter.get_imports() is not None
     after_export = models_exporter.get_after_export()
     assert after_export is not None
-    assert after_export[0][0] == "    llm_config=False"
+    assert after_export[0][0] == "    llm_config=False,\n"

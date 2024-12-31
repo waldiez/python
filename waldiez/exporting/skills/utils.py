@@ -91,11 +91,12 @@ def _write_skill_secrets(
     if not skill.secrets:
         return
     secrets_file = output_dir / f"{flow_name}_{skill_name}_secrets.py"
+    first_line = f'"""Secrets for the skill: {skill_name}."""' + "\n"
     with secrets_file.open("w", encoding="utf-8", newline="\n") as f:
-        f.write('"""Secrets for the skill."""\n')
-        f.write("from os import environ\n\n")
+        f.write(first_line)
+        f.write("import os\n\n")
         for key, value in skill.secrets.items():
-            f.write(f'environ["{key}"] = "{value}"' + "\n")
+            f.write(f'os.environ["{key}"] = "{value}"' + "\n")
 
 
 def export_skills(

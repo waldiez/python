@@ -43,12 +43,13 @@ class ChatsExporter(BaseExporter, ExporterMixin):
         chat_names: Dict[str, str],
         main_chats: List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]],
         for_notebook: bool,
+        is_async: bool,
     ):
         """Initialize the chats exporter.
 
         Parameters
         ----------
-        swarm_members_resolver : Callable[
+        get_swarm_members : Callable[
                 [WaldiezAgent],
                 Tuple[List[WaldiezAgent], Optional[WaldiezAgent]]
             ]
@@ -65,6 +66,8 @@ class ChatsExporter(BaseExporter, ExporterMixin):
             The main chats in the flow.
         for_notebook : bool
             Whether the export is for a notebook.
+        is_async : bool
+            Whether the chat is asynchronous.
         """
         self.all_agents = all_agents
         self.agent_names = agent_names
@@ -73,6 +76,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
         self.chat_names = chat_names
         self.get_swarm_members = get_swarm_members
         self.for_notebook = for_notebook
+        self.is_async = is_async
         self._chat_string = None
         self._before_chat = None
         self._generated = False
@@ -93,6 +97,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
                     serializer=self.serializer,
                     string_escape=self.string_escape,
                     tabs=0 if self.for_notebook else 1,
+                    is_async=self.is_async,
                 )
                 return
             self._chat_string, self._before_chat = export_single_chat(
@@ -104,6 +109,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
                 serializer=self.serializer,
                 string_escape=self.string_escape,
                 tabs=0 if self.for_notebook else 1,
+                is_async=self.is_async,
             )
             return
         self._chat_string, self._before_chat = export_sequential_chat(
@@ -113,6 +119,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
             serializer=self.serializer,
             string_escape=self.string_escape,
             tabs=0 if self.for_notebook else 1,
+            is_async=self.is_async,
         )
 
     def get_imports(self) -> Optional[List[Tuple[str, ImportPosition]]]:
@@ -126,17 +133,19 @@ class ChatsExporter(BaseExporter, ExporterMixin):
         if len(self.main_chats) == 1:
             _, sender, recipient = self.main_chats[0]
             if sender.agent_type == "swarm" or recipient.agent_type == "swarm":
-                return [
-                    (
-                        "from autogen import initiate_swarm_chat",
-                        ImportPosition.THIRD_PARTY,
-                    )
-                ]
+                import_string = "from autogen.agentchat.contrib.swarm import initiate_swarm_chat"
+                if self.is_async:
+                    import_string = "from autogen.agentchat.contrib.swarm import a_initiate_swarm_chat"
+                return [(import_string, ImportPosition.THIRD_PARTY)]
             # no additional imports, it is `sender.initiate_chat(....)`
             return None
-        return [
-            ("from autogen import initiate_chats", ImportPosition.THIRD_PARTY)
-        ]
+        if self.is_async:
+            import_string = (
+                "from autogen.agentchat.chat import a_initiate_chats"
+            )
+        else:
+            import_string = "from autogen.agentchat.chat import initiate_chats"
+        return [(import_string, ImportPosition.THIRD_PARTY)]
 
     def generate(self) -> str:
         """Generate the chats content.
@@ -193,6 +202,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
                 agent_names=self.agent_names,
                 string_escape=self.string_escape,
                 serializer=self.serializer,
+                is_async=self.is_async,
             )
             if registration_string:
                 nested_chat_registrations += "\n" + registration_string

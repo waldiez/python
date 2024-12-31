@@ -42,10 +42,7 @@ def test_waldiez_group_manager_speakers() -> None:
 
     # Then
     assert speakers_config.selection_method == "custom"
-    assert speakers_config.custom_method_string == (
-        "    # type: (ConversableAgent, GroupChat) -> Union[Agent, str, None]\n"
-        "    return last_speaker"
-    )
+    assert speakers_config.custom_method_string == ("    return last_speaker")
 
     with pytest.raises(ValueError):
         WaldiezGroupManagerSpeakers(

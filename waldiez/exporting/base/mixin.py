@@ -8,40 +8,13 @@ from .utils import (
     get_comment,
     get_escaped_string,
     get_item_string,
-    get_method_string,
     get_path_string,
     get_valid_instance_name,
 )
 
 
 class ExporterMixin:
-    """Static methods to be used by the exporters.
-
-    Methods
-    -------
-    serializer(item: Any, tabs: int = 1) -> str
-        Get the string representation of an item.
-    function_generator(
-        function_name: str,
-        renamed_function_name: str,
-        method_body: str,
-    ) -> str
-        Get a function string.
-    path_resolver(path: str) -> str
-        Get the path string.
-    get_escaped_string(string: str) -> str
-        Get a string with escaped quotes and newlines.
-    get_comment(key: CommentKey, for_notebook: bool) -> str
-        Get the comment string.
-    comment(for_notebook: bool, hashtags: int = 1) -> str
-        Comment the text.
-    get_valid_instance_name(
-        instance: Tuple[str, str],
-        current_names: Dict[str, str],
-        prefix: str = "w",
-    ) -> Dict[str, str]
-        Get a valid instance name.
-    """
+    """Static methods to be used by the exporters."""
 
     @staticmethod
     def serializer(item: Any, tabs: int = 1) -> str:
@@ -59,34 +32,6 @@ class ExporterMixin:
             The string representation of the item.
         """
         return get_item_string(item=item, tabs=tabs)
-
-    @staticmethod
-    def function_generator(
-        function_name: str,
-        renamed_function_name: str,
-        method_body: str,
-    ) -> str:
-        """Get a function string.
-
-        Parameters
-        ----------
-        function_name : Union[str, str]
-            The method name.
-        renamed_function_name : str
-            The renamed method name.
-        method_body : str
-            The method body.
-
-        Returns
-        -------
-        str
-            The function string having the definition, type hints and body.
-        """
-        return get_method_string(
-            function_name=function_name,
-            renamed_function_name=renamed_function_name,
-            method_body=method_body,
-        )
 
     @staticmethod
     def path_resolver(path: str) -> str:

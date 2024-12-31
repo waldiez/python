@@ -70,10 +70,7 @@ def custom_embedding_function():
         embedding_function=embedding_function,
     )
     assert retrieve_config.embedding_function_string is not None
-    assert (
-        retrieve_config.embedding_function_string
-        == "    # type: () -> Callable[..., Any]\n    return list"
-    )
+    assert retrieve_config.embedding_function_string == "    return list"
     assert retrieve_config.text_split_function_string is None
     assert retrieve_config.token_count_function_string is None
 
@@ -103,7 +100,7 @@ def custom_token_count_function(text, model):
     assert retrieve_config.token_count_function_string is not None
     assert (
         retrieve_config.token_count_function_string
-        == "    # type: (str, str) -> int\n    return 0"  # nosemgrep # nosec
+        == "    return 0"  # nosemgrep # nosec
     )
     assert retrieve_config.embedding_function_string is None
     assert retrieve_config.text_split_function_string is None
@@ -133,10 +130,7 @@ def custom_text_split_function(text, max_tokens, chunk_mode, must_break_at_empty
         custom_text_split_function=text_split_function,
     )
     assert retrieve_config.text_split_function_string is not None
-    assert (
-        retrieve_config.text_split_function_string
-        == "    # type: (str, int, str, bool, int) -> List[str]\n    return [text]"
-    )
+    assert retrieve_config.text_split_function_string == "    return [text]"
     assert retrieve_config.embedding_function_string is None
     assert retrieve_config.token_count_function_string is None
 

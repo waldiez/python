@@ -31,7 +31,6 @@ def test_get_group_manager_extras() -> None:
         agent=agent,
         group_chat_members=group_chat_members,
         agent_names=agent_names,
-        function_generator=ExporterMixin.function_generator,
         serializer=ExporterMixin.serializer,
     )
     # Then
@@ -62,7 +61,6 @@ def test_get_group_manager_extras() -> None:
         agent=manager,
         group_chat_members=group_chat_members,
         agent_names=agent_names,
-        function_generator=ExporterMixin.function_generator,
         serializer=ExporterMixin.serializer,
     )
     # Then
@@ -91,11 +89,10 @@ def test_get_group_manager_extras() -> None:
     group_chat_members = [agent]
     agent_names = {"wa-1": "agent_name", "wa-2": "group_manager"}
     expected_group_chat = (
-        "def custom_speaker_selection_method_group_manager(\n"
-        "    last_speaker,\n"
-        "    groupchat,\n"
-        "):\n"
-        "    # type: (ConversableAgent, GroupChat) -> Union[Agent, str, None]\n"
+        "def custom_speaker_selection_group_manager(\n"
+        "    last_speaker: ConversableAgent,\n"
+        "    groupchat: GroupChat,\n"
+        ") -> Optional[Union[Agent, str]]:\n"
         "    return last_speaker"
         "\n\n\n"
         "group_manager_group_chat = GroupChat(\n"
@@ -104,7 +101,7 @@ def test_get_group_manager_extras() -> None:
         "    send_introductions=False,\n"
         "    messages=[],\n"
         "    max_retries_for_selecting_speaker=3,\n"
-        "    speaker_selection_method=custom_speaker_selection_method_group_manager,\n"
+        "    speaker_selection_method=custom_speaker_selection_group_manager,\n"
         "    allow_repeat_speaker=True,\n"
         ")\n\n"
     )
@@ -115,7 +112,6 @@ def test_get_group_manager_extras() -> None:
         agent=manager,
         group_chat_members=group_chat_members,
         agent_names=agent_names,
-        function_generator=ExporterMixin.function_generator,
         serializer=ExporterMixin.serializer,
     )
     # Then
@@ -150,11 +146,10 @@ def test_get_group_manager_extras() -> None:
     agent_names = {"wa-1": "agent_name", "wa-2": "group_manager"}
     #
     expected_group_chat = (
-        "def custom_speaker_selection_method_group_manager(\n"
-        "    last_speaker,\n"
-        "    groupchat,\n"
-        "):\n"
-        "    # type: (ConversableAgent, GroupChat) -> Union[Agent, str, None]\n"
+        "def custom_speaker_selection_group_manager(\n"
+        "    last_speaker: ConversableAgent,\n"
+        "    groupchat: GroupChat,\n"
+        ") -> Optional[Union[Agent, str]]:\n"
         "    return last_speaker"
         "\n\n\n"
         "group_manager_group_chat = GroupChat(\n"
@@ -165,7 +160,7 @@ def test_get_group_manager_extras() -> None:
         "    max_round=5,\n"
         '    admin_name="agent_name",\n'
         "    max_retries_for_selecting_speaker=3,\n"
-        "    speaker_selection_method=custom_speaker_selection_method_group_manager,\n"
+        "    speaker_selection_method=custom_speaker_selection_group_manager,\n"
         "    allowed_or_disallowed_speaker_transitions={\n"
         "        agent_name: [\n"
         "            group_manager\n"
@@ -181,7 +176,6 @@ def test_get_group_manager_extras() -> None:
         agent=manager,
         group_chat_members=group_chat_members,
         agent_names=agent_names,
-        function_generator=ExporterMixin.function_generator,
         serializer=ExporterMixin.serializer,
     )
     # Then
@@ -224,7 +218,6 @@ def test_get_group_manager_extras() -> None:
         agent=manager,
         group_chat_members=group_chat_members,
         agent_names=agent_names,
-        function_generator=ExporterMixin.function_generator,
         serializer=ExporterMixin.serializer,
     )
     # Then

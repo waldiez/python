@@ -1,9 +1,9 @@
 """Waldiez Message Model."""
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional
 
-from pydantic import Field
-from typing_extensions import Annotated, Literal
+from pydantic import Field, model_validator
+from typing_extensions import Annotated, Literal, Self
 
 from ..common import WaldiezBase, check_function
 
@@ -13,11 +13,14 @@ WaldiezChatMessageType = Literal[
 
 CALLABLE_MESSAGE = "callable_message"
 CALLABLE_MESSAGE_ARGS = ["sender", "recipient", "context"]
-CALLABLE_MESSAGE_HINTS = (
-    "# type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]"
+CALLABLE_MESSAGE_TYPES = (
+    ["ConversableAgent", "ConversableAgent", "Dict[str, Any]"],
+    "Union[Dict[str, Any], str]",
 )
-# pylint: disable=line-too-long
-CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_HINTS = "# type: (RetrieveUserProxyAgent, ConversableAgent, dict) -> Union[dict, str]"  # noqa: E501
+CALLABLE_MESSAGE_RAG_WITH_CARRYOVER_TYPES = (
+    ["RetrieveUserProxyAgent", "ConversableAgent", "Dict[str, Any]"],
+    "Union[Dict[str, Any], str]",
+)
 
 
 class WaldiezChatMessage(WaldiezBase):
@@ -92,155 +95,94 @@ class WaldiezChatMessage(WaldiezBase):
         ),
     ]
 
+    _content_body: Optional[str] = None
 
-def validate_message_dict(
-    value: Dict[
-        Literal["type", "use_carryover", "content", "context"],
-        Union[Optional[str], Optional[bool], Optional[Dict[str, Any]]],
-    ],
-    function_name: str,
-    function_args: List[str],
-    type_hints: str,
-    skip_definition: bool = False,
-) -> WaldiezChatMessage:
-    """Validate a message dict.
+    @property
+    def content_body(self) -> Optional[str]:
+        """Get the content body."""
+        return self._content_body
 
-    Check the provided message dict.
-    Depending on the type, the content is validated.
-    If the type is "method", the content is checked against the function name.
+    @model_validator(mode="after")
+    def validate_content(self) -> Self:
+        """Validate the content (if not a method).
 
-    Parameters
-    ----------
-    value : dict
-        The message dict.
-    function_name : str
-        The method name.
-    function_args : List[str]
-        The expected method arguments.
-    type_hints : str
-        The type hints to include.
-    skip_definition : bool, optional
-        Skip the function definition in the content, by default False
+        Returns
+        -------
+        WaldiezChatMessage
+            The validated instance.
 
-    Returns
-    -------
-    WaldiezChatMessage
-        The validated message.
+        Raises
+        ------
+        ValueError
+            If the content is invalid.
+        """
+        content: Optional[str] = None
+        if self.type == "none":
+            content = "None"
+        if self.type == "method":
+            if not self.content:
+                raise ValueError(
+                    "The message content is required for the method type"
+                )
+            content = self.content
+        if self.type == "string":
+            if not self.content:
+                self.content = ""
+            if self.use_carryover:
+                content = get_last_carryover_method_content(
+                    text_content=self.content,
+                )
+            content = self.content
+        if self.type == "rag_message_generator":
+            if self.use_carryover:
+                content = get_last_carryover_method_content(
+                    text_content=self.content or "",
+                )
+            else:
+                content = RAG_METHOD_WITH_CARRYOVER_BODY
+                self.content = RAG_METHOD_WITH_CARRYOVER
+        self._content_body = content
+        return self
 
-    Raises
-    ------
-    ValueError
-        If the validation fails.
-    """
-    message_type, use_carryover, content, context = _get_message_args_from_dict(
-        value
-    )
-    if message_type == "string":
-        if not content or not isinstance(content, str):
-            content = ""
-        if use_carryover:
-            method_content = _get_last_carryover_method_content(content)
-            return WaldiezChatMessage(
-                type="method",
-                use_carryover=True,
-                content=method_content,
-                context=context,
-            )
-        return WaldiezChatMessage(
-            type="string",
-            use_carryover=False,
-            content=content,
-            context=context,
-        )
-    if message_type == "none":
-        return WaldiezChatMessage(
-            type="none",
-            use_carryover=False,
-            content=None,
-            context=context,
-        )
-    if message_type == "method":
-        if not content:
+    def validate_method(
+        self,
+        function_name: str,
+        function_args: List[str],
+    ) -> str:
+        """Validate a method.
+
+        Parameters
+        ----------
+        function_name : str
+            The method name.
+        function_args : List[str]
+            The expected method arguments.
+
+        Returns
+        -------
+        str
+            The validated method body.
+
+        Raises
+        ------
+        ValueError
+            If the validation fails.
+        """
+        if not self.content:
             raise ValueError(
                 "The message content is required for the method type"
             )
-        valid, error_or_content = check_function(
-            code_string=content,
+        is_valid, error_or_body = check_function(
+            code_string=self.content,
             function_name=function_name,
             function_args=function_args,
-            type_hints=type_hints,
         )
-        if not valid:
-            raise ValueError(error_or_content)
-        message_content = error_or_content if skip_definition else content
-        return WaldiezChatMessage(
-            type="method",
-            use_carryover=use_carryover,
-            content=message_content,
-            context=context,
-        )
-    if message_type == "rag_message_generator":
-        if use_carryover:
-            return WaldiezChatMessage(
-                type="method",
-                use_carryover=True,
-                content=RAG_METHOD_WITH_CARRYOVER,
-                context=context,
-            )
-        return WaldiezChatMessage(
-            type="rag_message_generator",
-            use_carryover=use_carryover,
-            content=None,
-            context=context,
-        )
-    raise ValueError("Invalid message type")  # pragma: no cover
+        if not is_valid:
+            raise ValueError(error_or_body)
+        return error_or_body
 
 
-def _get_message_args_from_dict(
-    value: Dict[
-        Literal["type", "use_carryover", "content", "context"],
-        Union[Optional[str], Optional[bool], Optional[Dict[str, Any]]],
-    ],
-) -> Tuple[str, bool, Optional[str], Dict[str, Any]]:
-    """Get the message args from a dict.
-
-    Parameters
-    ----------
-    value : dict
-        The message dict.
-
-    Returns
-    -------
-    tuple
-        The message type, content, and context.
-
-    Raises
-    ------
-    ValueError
-        If the message type is invalid.
-    """
-    message_type = value.get("type")
-    if not isinstance(message_type, str) or message_type not in (
-        "string",
-        "method",
-        "rag_message_generator",
-        "none",
-    ):
-        raise ValueError("Invalid message type")
-    use_carryover = value.get("use_carryover", False)
-    if not isinstance(use_carryover, bool):
-        use_carryover = False
-    content = value.get("content", "")
-    if not isinstance(content, str):
-        content = ""
-    context: Dict[str, Any] = {}
-    context_value = value.get("context")
-    if isinstance(context_value, dict):
-        context = context_value
-    return message_type, use_carryover, content, context
-
-
-def _get_last_carryover_method_content(text_content: str) -> str:
+def get_last_carryover_method_content(text_content: str) -> str:
     """Get the last carryover method content.
 
     Parameters
@@ -253,8 +195,6 @@ def _get_last_carryover_method_content(text_content: str) -> str:
         The last carryover method content.
     """
     method_content = '''
-def callable_message(sender, recipient, context):
-    # type: (ConversableAgent, ConversableAgent, dict) -> Union[dict, str]
     """Get the message to send using the last carryover.
 
     Parameters
@@ -263,12 +203,12 @@ def callable_message(sender, recipient, context):
         The source agent.
     recipient : ConversableAgent
         The target agent.
-    context : dict
+    context : Dict[str, Any]
         The context.
 
     Returns
     -------
-    Union[dict, str]
+    Union[Dict[str, Any], str]
         The message to send using the last carryover.
     """
     carryover = context.get("carryover", "")
@@ -302,12 +242,12 @@ RAG_METHOD_WITH_CARRYOVER_BODY = '''
         The source agent.
     recipient : ConversableAgent
         The target agent.
-    context : dict
+    context : Dict[str, Any]
         The context.
 
     Returns
     -------
-    Union[dict, str]
+    Union[Dict[str, Any], str]
         The message to send using the last carryover.
     """
     carryover = context.get("carryover", "")
@@ -325,8 +265,11 @@ RAG_METHOD_WITH_CARRYOVER_BODY = '''
         message += carryover
     return message
 '''
-# pylint: disable=line-too-long
 RAG_METHOD_WITH_CARRYOVER = (
-    "def callable_message(sender, recipient, context):"
+    "def callable_message(\n"
+    "    sender: RetrieveUserProxyAgent,\n"
+    "    recipient: ConversableAgent,\n"
+    "    context: Dict[str, Any],\n"
+    ") -> Union[Dict[str, Any], str]:"
     f"{RAG_METHOD_WITH_CARRYOVER_BODY}"
 )

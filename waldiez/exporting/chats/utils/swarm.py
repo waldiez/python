@@ -20,6 +20,7 @@ def export_swarm_chat(
     serializer: Callable[..., str],
     string_escape: Callable[[str], str],
     tabs: int,
+    is_async: bool,
 ) -> Tuple[str, str]:
     """Get the swarm chat message string.
 
@@ -43,7 +44,8 @@ def export_swarm_chat(
         The function to escape the string.
     tabs : int
         The number of tabs to use for indentation.
-
+    is_async : bool
+        Whether the chat is asynchronous.
     Returns
     -------
     Tuple[str, str]
@@ -76,13 +78,19 @@ def export_swarm_chat(
         if chat.context_variables
         else "{}"
     )
+    chat_name = chat_names[chat.id]
     after_work_string, additional_methods = get_swarm_after_work_string(
         chat=chat,
-        chat_names=chat_names,
         agent_names=agent_names,
+        name_suffix=chat_name,
     )
     agent_name = agent_names[initial_agent.id]
-    initiate_chat = "\n" + f"{tab}results, _, __ = initiate_swarm_chat(" + "\n"
+    results_is = f"{tab}results, _, __ = "
+    initiate = "initiate_swarm_chat"
+    if is_async:
+        results_is += "await "
+        initiate = "a_initiate_swarm_chat"
+    initiate_chat = "\n" + f"{results_is}{initiate}(" + "\n"
     initiate_chat += f"{tab}    initial_agent={agent_name}," + "\n"
     initiate_chat += f"{tab}    agents=[{swarm_agents_string}]," + "\n"
     initiate_chat += f"{tab}    messages={messages_string}," + "\n"
@@ -168,8 +176,8 @@ def get_swarm_messages_string(
 
 def get_swarm_after_work_string(
     chat: WaldiezChat,
-    chat_names: Dict[str, str],
     agent_names: Dict[str, str],
+    name_suffix: str,
 ) -> Tuple[str, str]:
     """Get the swarm after work string.
 
@@ -177,10 +185,10 @@ def get_swarm_after_work_string(
     ----------
     chat : WaldiezChat
         The chat.
-    chat_names : Dict[str, str]
-        A mapping of chat id to chat name.
     agent_names : Dict[str, str]
         A mapping of agent id to agent name.
+    name_suffix : str
+        The suffix to use for the function name.
     Returns
     -------
     Tuple[str, str]
@@ -189,12 +197,10 @@ def get_swarm_after_work_string(
     if not chat.after_work:
         return "AFTER_WORK(AfterWorkOption.TERMINATE)", ""
     additional_methods = ""
-    chat_name = chat_names[chat.id]
-    function_name = f"custom_after_work_{chat_name}"
-    after_work_string = chat.after_work.get_recipient_string(
-        agent_names=agent_names, function_name=function_name
+    after_work_string, function_content = chat.after_work.get_recipient(
+        agent_names=agent_names,
+        name_suffix=name_suffix,
     )
-    if chat.after_work.recipient_type == "callable":
-        additional_methods = "\n" + f"{after_work_string}"
-        after_work_string = f"{function_name}"
+    if chat.after_work.recipient_type == "callable" and function_content:
+        additional_methods = "\n" + f"{function_content}" + "\n"
     return after_work_string, additional_methods

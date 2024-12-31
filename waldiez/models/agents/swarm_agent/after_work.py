@@ -7,21 +7,23 @@ agent doesn’t suggest a tool call or a handoff.
 
 # pylint: disable=line-too-long
 
-from typing import Dict
+from typing import Dict, Optional, Tuple
 
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ...common import WaldiezBase, check_function
+from ...common import WaldiezBase, check_function, generate_function
 
 WaldiezSwarmAfterWorkRecipientType = Literal["agent", "option", "callable"]
 WaldiezSwarmAfterWorkOption = Literal["TERMINATE", "REVERT_TO_USER", "STAY"]
 
 
-# pylint: disable=line-too-long
 CUSTOM_AFTER_WORK = "custom_after_work"
 CUSTOM_AFTER_WORK_ARGS = ["last_speaker", "messages", "groupchat"]
-CUSTOM_AFTER_WORK_HINTS = "# type: (SwarmAgent, List[dict], GroupChat) -> Union[AfterWorkOption, SwarmAgent, str]"  # noqa: E501
+CUSTOM_AFTER_WORK_TYPES = (
+    ["SwarmAgent", "List[Dict[str, Any]]", "GroupChat"],
+    "Union[AfterWorkOption, SwarmAgent, str]",
+)
 
 
 class WaldiezSwarmAfterWork(WaldiezBase):
@@ -87,37 +89,50 @@ class WaldiezSwarmAfterWork(WaldiezBase):
 
     _recipient_string: str = ""
 
-    def get_recipient_string(
+    def get_recipient(
         self,
         agent_names: Dict[str, str],
-        function_name: str = "custom_after_work",
-    ) -> str:
+        name_prefix: Optional[str] = None,
+        name_suffix: Optional[str] = None,
+    ) -> Tuple[str, str]:
         """Get the recipient string.
 
         Parameters
         ----------
         agent_names : Dict[str, str]
             A mapping of agent id to agent name.
-        function_name : str, optional
-            The function name to use, by default "custom_after_work".
+        name_prefix : Optional[str], optional
+            The prefix for the function name, by default None.
+        name_suffix : Optional[str], optional
+            The suffix for the function name, by default None.
 
         Returns
         -------
-        str
-            The recipient string.
+        Tuple[str, str]
+            The recipient string and the function content if applicable.
         """
         if self.recipient_type == "option":
-            return f"AFTER_WORK(AfterWorkOption.{self.recipient})"
+            return f"AFTER_WORK(AfterWorkOption.{self.recipient})", ""
         if self.recipient_type == "agent":
             # the the recipient is passed as the agent name
             # (and not its id), care should be taken to ensure
             # the all the agents in the flow have unique names
             agent_instance = agent_names.get(self.recipient, self.recipient)
-            return f"AFTER_WORK({agent_instance})"
+            return f"AFTER_WORK({agent_instance})", ""
+
+        function_name = CUSTOM_AFTER_WORK
+        if name_prefix:
+            function_name = f"{name_prefix}_{function_name}"
+        if name_suffix:
+            function_name = f"{function_name}_{name_suffix}"
         return (
-            f"def {function_name}(last_speaker, messages, groupchat):"
-            "\n"
-            f"{self._recipient_string}"
+            f"AFTER_WORK({function_name})",
+            generate_function(
+                function_name=function_name,
+                function_args=CUSTOM_AFTER_WORK_ARGS,
+                function_body=self._recipient_string,
+                function_types=CUSTOM_AFTER_WORK_TYPES,
+            ),
         )
 
     @model_validator(mode="after")
@@ -140,7 +155,6 @@ class WaldiezSwarmAfterWork(WaldiezBase):
                 code_string=self.recipient,
                 function_name=CUSTOM_AFTER_WORK,
                 function_args=CUSTOM_AFTER_WORK_ARGS,
-                type_hints=CUSTOM_AFTER_WORK_HINTS,
             )
             if not is_valid or not error_or_body:
                 # pylint: disable=inconsistent-quotes

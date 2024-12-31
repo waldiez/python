@@ -2,17 +2,24 @@
 
 from typing import Any, Optional
 
-from pydantic import Field, ValidationInfo, field_validator, model_validator
+from pydantic import Field, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
 from ..common import WaldiezBase
-from .chat_message import WaldiezChatMessage, validate_message_dict
+from .chat_message import WaldiezChatMessage
 
 NESTED_CHAT_MESSAGE = "nested_chat_message"
 NESTED_CHAT_REPLY = "nested_chat_reply"
 NESTED_CHAT_ARGS = ["recipient", "messages", "sender", "config"]
-# pylint: disable=line-too-long
-NESTED_CHAT_HINTS = "# type: (ConversableAgent, list[dict], ConversableAgent, dict) -> Union[dict, str]"  # noqa: E501
+NESTED_CHAT_TYPES = (
+    [
+        "ConversableAgent",
+        "List[Dict[str, Any]]",
+        "ConversableAgent",
+        "Dict[str, Any]",
+    ],
+    "Union[Dict[str, Any], str]",
+)
 
 
 class WaldiezChatNested(WaldiezBase):
@@ -58,17 +65,13 @@ class WaldiezChatNested(WaldiezBase):
 
     @field_validator("message", "reply", mode="before")
     @classmethod
-    def validate_message(
-        cls, value: Any, info: ValidationInfo
-    ) -> WaldiezChatMessage:
+    def validate_message(cls, value: Any) -> WaldiezChatMessage:
         """Validate the message.
 
         Parameters
         ----------
         value : Any
             The value.
-        info : ValidationInfo
-            The validation info.
 
         Returns
         -------
@@ -80,11 +83,6 @@ class WaldiezChatNested(WaldiezBase):
         ValueError
             If the validation fails.
         """
-        function_name = (
-            NESTED_CHAT_MESSAGE
-            if info.field_name == "message"
-            else NESTED_CHAT_REPLY
-        )
         if not value:
             return WaldiezChatMessage(
                 type="none", use_carryover=False, content=None, context={}
@@ -94,24 +92,9 @@ class WaldiezChatNested(WaldiezBase):
                 type="string", use_carryover=False, content=value, context={}
             )
         if isinstance(value, dict):
-            return validate_message_dict(
-                value,
-                function_name=function_name,
-                function_args=NESTED_CHAT_ARGS,
-                type_hints=NESTED_CHAT_HINTS,
-            )
+            return WaldiezChatMessage.model_validate(value)
         if isinstance(value, WaldiezChatMessage):
-            return validate_message_dict(
-                {
-                    "type": value.type,
-                    "use_carryover": False,
-                    "content": value.content,
-                    "context": value.context,
-                },
-                function_name=function_name,
-                function_args=NESTED_CHAT_ARGS,
-                type_hints=NESTED_CHAT_HINTS,
-            )
+            return value
         raise ValueError(f"Invalid message type: {type(value)}")
 
     @model_validator(mode="after")
@@ -133,31 +116,23 @@ class WaldiezChatNested(WaldiezBase):
                 self._message_content = ""
             elif self.message.type == "string":
                 self._message_content = self.message.content
-            else:
-                self._message_content = validate_message_dict(
-                    value={
-                        "type": "method",
-                        "content": self.message.content,
-                    },
+            elif self.message.type == "method":
+                self._message_content = self.message.validate_method(
                     function_name=NESTED_CHAT_MESSAGE,
                     function_args=NESTED_CHAT_ARGS,
-                    type_hints=NESTED_CHAT_HINTS,
-                    skip_definition=True,
-                ).content
+                )
+            else:
+                self._message_content = self.message.content_body
         if self.reply is not None:
             if self.reply.type == "none":
                 self._reply_content = ""
             elif self.reply.type == "string":
                 self._reply_content = self.reply.content
-            else:
-                self._reply_content = validate_message_dict(
-                    value={
-                        "type": "method",
-                        "content": self.reply.content,
-                    },
+            elif self.reply.type == "method":
+                self._reply_content = self.reply.validate_method(
                     function_name=NESTED_CHAT_REPLY,
                     function_args=NESTED_CHAT_ARGS,
-                    type_hints=NESTED_CHAT_HINTS,
-                    skip_definition=True,
-                ).content
+                )
+            else:
+                self._reply_content = self.reply.content_body
         return self

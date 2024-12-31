@@ -44,20 +44,22 @@ def _get_pgvector_embedding_function_string(
     """
     to_import = ""
     embedding_function_arg = ""
-    embedding_function_body = ""
+    embedding_function_content = ""
     if agent.retrieve_config.use_custom_embedding:
         embedding_function_arg = f"custom_embedding_function_{agent_name}"
-        embedding_function_body = (
-            "\n" + f"def custom_embedding_function_{agent_name}():" + "\n"
-            f"{agent.retrieve_config.embedding_function_string}" + "\n"
+        embedding_function_content, embedding_function_arg = (
+            agent.retrieve_config.get_custom_embedding_function(
+                name_suffix=agent_name
+            )
         )
+        embedding_function_content = "\n" + embedding_function_content
     else:
         to_import = "from sentence_transformers import SentenceTransformer"
         embedding_function_arg = "SentenceTransformer("
         embedding_function_arg += (
             f'"{agent.retrieve_config.db_config.model}").encode'
         )
-    return embedding_function_arg, to_import, embedding_function_body
+    return embedding_function_arg, to_import, embedding_function_content
 
 
 def get_pgvector_db_args(

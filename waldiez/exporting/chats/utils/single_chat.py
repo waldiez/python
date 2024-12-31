@@ -23,6 +23,7 @@ def export_single_chat(
     serializer: Callable[[str], str],
     string_escape: Callable[[str], str],
     tabs: int,
+    is_async: bool,
 ) -> Tuple[str, str]:
     """Get the chat string when there is only one chat in the flow.
 
@@ -44,7 +45,8 @@ def export_single_chat(
         The string escape function.
     tabs : int
         The number of tabs to use for indentation.
-
+    is_async : bool
+        Whether the chat is asynchronous.
     Returns
     -------
     Tuple[str, str]
@@ -90,12 +92,13 @@ def export_single_chat(
     chat_args = update_summary_chat_args(chat_args, string_escape)
     if not chat_args:
         return get_empty_simple_chat_string(
-            tab,
             chat=chat,
             sender=sender,
             recipient=recipient,
             agent_names=agent_names,
             string_escape=string_escape,
+            tab=tab,
+            is_async=is_async,
         )
     return get_simple_chat_string(
         chat=chat,
@@ -107,6 +110,7 @@ def export_single_chat(
         serializer=serializer,
         string_escape=string_escape,
         tabs=tabs,
+        is_async=is_async,
     )
 
 
@@ -121,6 +125,7 @@ def get_simple_chat_string(
     serializer: Callable[..., str],
     string_escape: Callable[[str], str],
     tabs: int,
+    is_async: bool,
 ) -> Tuple[str, str]:
     """Get the chat string when there are chat arguments.
 
@@ -144,7 +149,8 @@ def get_simple_chat_string(
         The string escape function.
     tabs : int
         The number of tabs to use for indentation.
-
+    is_async : bool
+        Whether the chat is asynchronous.
     Returns
     -------
     Tuple[str, str]
@@ -152,8 +158,12 @@ def get_simple_chat_string(
     """
     tab = "    " * tabs
     sender_name = agent_names[sender.id]
+    initiate = "initiate_chat"
+    if is_async:
+        sender_name = f"await {sender_name}"
+        initiate = "a_initiate_chat"
     recipient_name = agent_names[recipient.id]
-    chat_string = "\n" + f"{tab}results = {sender_name}.initiate_chat(" + "\n"
+    chat_string = "\n" + f"{tab}results = {sender_name}.{initiate}(" + "\n"
     chat_string += f"{tab}    {recipient_name},"
     for key, value in chat_args.items():
         if isinstance(value, str):
@@ -178,19 +188,18 @@ def get_simple_chat_string(
 
 
 def get_empty_simple_chat_string(
-    tab: str,
     chat: WaldiezChat,
     sender: WaldiezAgent,
     recipient: WaldiezAgent,
     agent_names: Dict[str, str],
     string_escape: Callable[[str], str],
+    tab: str,
+    is_async: bool,
 ) -> Tuple[str, str]:
     """Get the chat string when there are no chat arguments.
 
     Parameters
     ----------
-    tab : str
-        The tab string.
     chat : WaldiezChat
         The chat.
     sender : WaldiezAgent
@@ -201,15 +210,21 @@ def get_empty_simple_chat_string(
         A mapping of agent id to agent name.
     string_escape : Callable[[str], str]
         The string escape function.
-
+    tab : str
+        The tab string.
+    is_async : bool
+        Whether the chat is asynchronous.
     Returns
     -------
     Tuple[str, str]
         The chat string and additional methods string if any
     """
     sender_name = agent_names[sender.id]
+    if is_async:
+        sender_name = f"await {sender_name}"
     recipient_name = agent_names[recipient.id]
-    content = "\n" + f"{tab}results = {sender_name}.initiate_chat(" + "\n"
+    initiate = "a_initiate_chat" if is_async else "initiate_chat"
+    content = "\n" + f"{tab}results = {sender_name}.{initiate}(" + "\n"
     content += f"{tab}    {recipient_name}," + "\n"
     message_arg, _ = get_chat_message(
         tab=tab,
@@ -260,6 +275,7 @@ def get_chat_message(
         sender.agent_type == "rag_user"
         and isinstance(sender, WaldiezRagUser)
         and chat.message.type == "rag_message_generator"
+        and chat.message.use_carryover is False
     ):
         message = f"{sender_name}.message_generator"
         return "\n" + f"{tab}    message={message},", additional_methods_string
@@ -284,5 +300,12 @@ def get_chat_message(
                 "\n" + f'{tab}    message="{message}",',
                 additional_methods_string,
             )
-        return "", additional_methods_string
+        if chat.message.type == "rag_message_generator":
+            additional_methods_string += (
+                method_content if method_content else ""
+            )
+            return (
+                "\n" + f"{tab}    message={message},",
+                additional_methods_string,
+            )
     return "", additional_methods_string  # pragma: no cover

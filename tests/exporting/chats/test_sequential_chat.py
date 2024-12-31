@@ -83,6 +83,7 @@ def test_sequential_chat() -> None:
         chat_names=chat_names,
         main_chats=main_chats,
         for_notebook=False,
+        is_async=False,
     )
     generated = exporter.generate()
     expected = """
@@ -104,6 +105,6 @@ def test_sequential_chat() -> None:
     assert generated == expected
     imports = exporter.get_imports()
     assert imports is not None
-    assert imports[0][0] == "from autogen import initiate_chats"
+    assert imports[0][0] == "from autogen.agentchat.chat import initiate_chats"
     # no nested chats in agents
     assert not exporter.get_after_export()

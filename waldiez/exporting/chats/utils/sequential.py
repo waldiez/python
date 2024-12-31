@@ -14,6 +14,7 @@ def export_sequential_chat(
     serializer: Callable[..., str],
     string_escape: Callable[[str], str],
     tabs: int,
+    is_async: bool,
 ) -> Tuple[str, str]:
     """Get the chats content, when there are more than one chats in the flow.
 
@@ -31,6 +32,8 @@ def export_sequential_chat(
         The string escape function.
     tabs : int
         The number of tabs to use for indentation.
+    is_async : bool
+        Whether the chat is asynchronous.
 
     Returns
     -------
@@ -87,6 +90,7 @@ def export_sequential_chat(
     ...     agent_names=agent_names,
     ...     serializer=serializer,
     ...     tabs=0,
+    ...     is_async=False,
     ... )
     results = initiate_chats([
         {
@@ -105,7 +109,7 @@ def export_sequential_chat(
     tab = "    " * tabs if tabs > 0 else ""
     content = "\n"
     additional_methods_string = ""
-    content = "\n" + f"{tab}results = initiate_chats(["
+    content += _get_initiate_chats_line(tab, is_async)
     for chat, sender, recipient in main_chats:
         chat_string, additional_methods = get_chat_dict_string(
             chat=chat,
@@ -121,3 +125,29 @@ def export_sequential_chat(
         content += "\n" + f"{tab}    {chat_string}"
     content += "\n" + "    " * tabs + "])\n"
     return content, additional_methods_string
+
+
+def _get_initiate_chats_line(
+    tab: str,
+    is_async: bool,
+) -> str:
+    """Get the initiate chats line.
+
+    Parameters
+    ----------
+    tab : str
+        The tab string.
+    is_async : bool
+        Whether the chat is asynchronous.
+
+    Returns
+    -------
+    str
+        The initiate chats line.
+    """
+    results_is = f"{tab}results = "
+    initiate = "initiate_chats"
+    if is_async:
+        results_is += "await "
+        initiate = "a_initiate_chats"
+    return results_is + initiate + "(["

@@ -133,8 +133,8 @@ def test_waldiez_chat_data_message() -> None:
     )
     # Then
     assert isinstance(chat_data.message, WaldiezChatMessage)
-    assert chat_data.message.type == "none"
-    assert chat_data.message.content is None
+    assert chat_data.message.type == "string"
+    assert chat_data.message.content == "42"
 
     # Given
     chat_data = WaldiezChatData(  # type: ignore
@@ -166,18 +166,28 @@ def test_waldiez_chat_data_message() -> None:
         "clear_history": False,
         "message": {
             "type": "string",
-            "content": 4,
-            "context": 5,
-            "use_carryover": 6,
+            "content": "text message",
+            "context": {
+                "problem": "Solve this task",
+                "not_a_solution": "null",
+                "n_results": 42,
+                "as_list": [1, 2, 3],
+            },
+            "use_carryover": True,
         },
     }
     # Then
     chat_data = WaldiezChatData(**chat_data_dict)  # type: ignore
     assert isinstance(chat_data.message, WaldiezChatMessage)
     assert chat_data.message.type == "string"
-    assert chat_data.message.content == ""
-    assert chat_data.message.context == {}
-    assert chat_data.message.use_carryover is False
+    assert chat_data.message.content == "text message"
+    assert chat_data.message.context == {
+        "problem": "Solve this task",
+        "not_a_solution": "null",
+        "n_results": 42,
+        "as_list": [1, 2, 3],
+    }
+    assert chat_data.message.use_carryover is True
 
 
 def test_waldiez_chat_summary() -> None:
