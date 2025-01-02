@@ -7,8 +7,10 @@ from typing_extensions import Annotated, Literal, Self
 
 from ...common import WaldiezBase, check_function, generate_function
 
-WaldiezSwarmTargetType = Literal["agent", "nested_chat"]
-WaldiezSwarmAvailableCheckType = Literal["string", "callable", "none"]
+WaldiezSwarmOnConditionTargetType = Literal["agent", "nested_chat"]
+WaldiezSwarmOnConditionAvailableCheckType = Literal[
+    "string", "callable", "none"
+]
 
 CUSTOM_ON_CONDITION_AVAILABLE = "custom_on_condition_available"
 CUSTOM_ON_CONDITION_AVAILABLE_ARGS = ["agent", "message"]
@@ -39,6 +41,10 @@ class WaldiezSwarmOnCondition(WaldiezBase):
         configuration, with the exception of a carryover configuration
         which is unique to Swarms.
 
+    target_type: Literal["agent", "nested_chat"]
+        The type of the target. Can be either 'agent' or 'nested_chat'.
+        Default is 'agent'.
+
     condition : str
         The condition for transitioning to the target agent
 
@@ -65,7 +71,7 @@ class WaldiezSwarmOnCondition(WaldiezBase):
         ),
     ]
     target_type: Annotated[
-        WaldiezSwarmTargetType,
+        WaldiezSwarmOnConditionTargetType,
         Field(
             "agent",
             alias="targetType",
@@ -85,7 +91,7 @@ class WaldiezSwarmOnCondition(WaldiezBase):
         ),
     ]
     available_check_type: Annotated[
-        WaldiezSwarmAvailableCheckType,
+        WaldiezSwarmOnConditionAvailableCheckType,
         Field(
             "none",
             alias="availableCheckType",
