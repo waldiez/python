@@ -22,7 +22,7 @@ classifiers = [
   "Intended Audience :: Developers",
 ]
 dependencies =[
-    "asyncer==0.8.0",
+    "asyncer==0.0.8",
     "pyautogen==0.6.1",
     "jupytext",
     "pydantic>=2.0",
