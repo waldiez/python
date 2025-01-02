@@ -7,6 +7,8 @@ from typing_extensions import Annotated, Literal, Self
 
 from ...common import WaldiezBase, check_function, generate_function
 
+WaldiezSwarmUpdateFunctionType = Literal["string", "callable"]
+
 CUSTOM_UPDATE_SYSTEM_MESSAGE = "custom_update_system_message"
 CUSTOM_UPDATE_SYSTEM_MESSAGE_ARGS = ["agent", "messages"]
 CUSTOM_UPDATE_SYSTEM_MESSAGE_TYPES = (
@@ -38,10 +40,11 @@ class WaldiezSwarmUpdateSystemMessage(WaldiezBase):
     """
 
     update_function_type: Annotated[
-        Literal["string", "callable"],
+        WaldiezSwarmUpdateFunctionType,
         Field(
             "string",
             title="Function Type",
+            alias="updateFunctionType",
             description=(
                 "The type of the update function. "
                 "Can be either 'string' or 'callable'."
@@ -54,6 +57,7 @@ class WaldiezSwarmUpdateSystemMessage(WaldiezBase):
         Field(
             ...,
             title="Update Function",
+            alias="updateFunction",
             description=(
                 "The string template or function definition to update "
                 "the agent's system message. Can be a string or a Callable.  "

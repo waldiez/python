@@ -70,6 +70,7 @@ class WaldiezSwarmAfterWork(WaldiezBase):
         WaldiezSwarmAfterWorkRecipientType,
         Field(
             "option",
+            alias="recipientType",
             title="Recipient Type",
             description=(
                 "The type of recipient. "

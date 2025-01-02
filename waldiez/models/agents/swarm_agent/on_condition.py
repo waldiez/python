@@ -7,6 +7,9 @@ from typing_extensions import Annotated, Literal, Self
 
 from ...common import WaldiezBase, check_function, generate_function
 
+WaldiezSwarmTargetType = Literal["agent", "nested_chat"]
+WaldiezSwarmAvailableCheckType = Literal["string", "callable", "none"]
+
 CUSTOM_ON_CONDITION_AVAILABLE = "custom_on_condition_available"
 CUSTOM_ON_CONDITION_AVAILABLE_ARGS = ["agent", "message"]
 CUSTOM_ON_CONDITION_AVAILABLE_TYPES = (
@@ -62,9 +65,10 @@ class WaldiezSwarmOnCondition(WaldiezBase):
         ),
     ]
     target_type: Annotated[
-        Literal["agent", "nested_chat"],
+        WaldiezSwarmTargetType,
         Field(
             "agent",
+            alias="targetType",
             title="Target Type",
             description=(
                 "The type of the target. "
@@ -81,9 +85,10 @@ class WaldiezSwarmOnCondition(WaldiezBase):
         ),
     ]
     available_check_type: Annotated[
-        Literal["string", "callable", "none"],
+        WaldiezSwarmAvailableCheckType,
         Field(
             "none",
+            alias="availableCheckType",
             title="Available Check Type",
             description=("The type of the `available` property to check. "),
         ),
