@@ -1,5 +1,7 @@
-# type: ignore
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: skip-file
+# type: ignore
 # isort: skip_file
 """Extra typer commands for CLI."""
 

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.agents.rag_user.mongo_utils.*."""
 
 from waldiez.exporting.agent.utils.rag_user.mongo_utils import (

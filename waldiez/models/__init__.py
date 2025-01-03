@@ -1,5 +1,6 @@
-"""Waldiez models package.
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Waldiez models.
 - Agents (Users, Assistants, Group Managers, etc.).
 - Chat (Messages, Summaries, etc.).
 - Model (LLM config, API type, etc.).

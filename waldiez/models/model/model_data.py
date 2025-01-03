@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# flake8: noqa E501
 """Waldiez Model Data."""
 
-# flake8: noqa E501
 from typing import Dict, Optional
 
 from pydantic import Field

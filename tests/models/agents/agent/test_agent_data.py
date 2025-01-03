@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.agent.agent_data.*."""
 
 from waldiez.models.agents.agent.agent_data import WaldiezAgentData

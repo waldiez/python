@@ -1,7 +1,9 @@
-"""Vector DB exporting utils for RAG user agents."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=line-too-long
+"""Vector DB exporting utils for RAG user agents."""
+
 from typing import Any, Set, Tuple
 
 from waldiez.models import WaldiezRagUser

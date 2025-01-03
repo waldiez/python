@@ -1,7 +1,8 @@
-"""Chats exporter."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=line-too-long
+"""Chats exporter."""
 
 from typing import Callable, Dict, List, Optional, Tuple, Union
 

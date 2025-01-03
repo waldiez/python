@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# pylint: disable=too-many-locals
 """Test waldiez.models.flow.*."""
 
 import pytest
@@ -251,6 +254,7 @@ def test_waldiez_flow() -> None:
                 silent=False,
                 real_source=None,
                 real_target=None,
+                prerequisites=[],
             ),
         ),
         WaldiezChat(
@@ -274,6 +278,7 @@ def test_waldiez_flow() -> None:
                 silent=False,
                 real_source=None,
                 real_target=None,
+                prerequisites=[],
             ),
         ),
         WaldiezChat(
@@ -297,6 +302,7 @@ def test_waldiez_flow() -> None:
                 silent=False,
                 real_source=None,
                 real_target=None,
+                prerequisites=[],
             ),
         ),
     ]
@@ -369,11 +375,11 @@ def test_waldiez_flow() -> None:
     assert not flow1.get_group_chat_members("wa-1")
     assert flow1.get_agent_connections("wa-1") == ["wa-2"]
     assert flow1.get_agent_connections("wa-2") == ["wa-1", "wa-3"]
-    assert flow1.get_agent_connections("wa-3") == ["wa-2", "wa-4"]
+    assert flow1.get_agent_connections("wa-3") == ["wa-4", "wa-2"]
     assert flow1.get_agent_connections("wa-3", False) == ["wa-2"]
     assert flow1.get_agent_connections("wa-2", False) == ["wa-1", "wa-3"]
     assert flow1.get_agent_connections("wa-1", False) == ["wa-2"]
-    assert flow1.get_group_chat_members("wa-3") == [assistant, rag_user]
+    assert flow1.get_group_chat_members("wa-3") == [rag_user, assistant]
 
     with pytest.raises(ValueError):
         # no chats
@@ -540,6 +546,7 @@ def test_waldiez_flow() -> None:
                 silent=False,
                 real_source=None,
                 real_target=None,
+                prerequisites=[],
             ),
         ),
     ]

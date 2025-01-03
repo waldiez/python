@@ -2,6 +2,11 @@
     "files.eol": "\n",
     "files.trimTrailingWhitespaceInRegexAndStrings": false,
     "python.envFile": "",
+    "search.exclude": {
+        "**/.venv": true,
+        "**/dist": true,
+        "**/out": true
+    },
     "pylint.args": ["--rcfile=pyproject.toml"],
     "pylint.importStrategy": "fromEnvironment",
     "editor.defaultFormatter": "ms-python.black-formatter",

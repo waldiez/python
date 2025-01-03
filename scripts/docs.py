@@ -1,4 +1,6 @@
-"""Build the documentation for my_package."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Build the documentation."""
 
 import subprocess  # nosemgrep # nosec
 import sys

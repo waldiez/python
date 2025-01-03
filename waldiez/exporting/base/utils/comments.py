@@ -1,5 +1,6 @@
-"""Comment related string generation functions.
-Functions
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Utilities for comments.
 ---------
 comment
     Get a comment string.

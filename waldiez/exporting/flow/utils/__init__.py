@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Utility functions for exporting waldiez to different formats."""
 
 from .agent_utils import (

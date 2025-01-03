@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez chat model."""
 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from pydantic import Field
 from typing_extensions import Annotated
@@ -96,6 +98,11 @@ class WaldiezChat(WaldiezBase):
         return self.data.target
 
     @property
+    def order(self) -> int:
+        """Get the order."""
+        return self.data.order
+
+    @property
     def nested_chat(self) -> WaldiezChatNested:
         """Get the nested chat."""
         return self.data.nested_chat
@@ -137,6 +144,36 @@ class WaldiezChat(WaldiezBase):
     def after_work(self) -> Optional[WaldiezSwarmAfterWork]:
         """Get the after work."""
         return self.data.after_work
+
+    @property
+    def chat_id(self) -> int:
+        """Get the chat ID."""
+        return self.data.get_chat_id()
+
+    @property
+    def prerequisites(self) -> List[int]:
+        """Get the chat prerequisites."""
+        return self.data.get_prerequisites()
+
+    def set_chat_id(self, value: int) -> None:
+        """Set the chat ID.
+
+        Parameters
+        ----------
+        value : int
+            The chat ID.
+        """
+        self.data.set_chat_id(value)
+
+    def set_prerequisites(self, value: List[int]) -> None:
+        """Set the chat prerequisites.
+
+        Parameters
+        ----------
+        value : List[int]
+            The chat prerequisites.
+        """
+        self.data.set_prerequisites(value)
 
     def get_message_function(
         self,
@@ -274,20 +311,23 @@ class WaldiezChat(WaldiezBase):
 
     def get_chat_args(
         self,
+        for_queue: bool,
         sender: Optional[WaldiezAgent] = None,
     ) -> Dict[str, Any]:
         """Get the chat arguments to use in autogen.
 
         Parameters
         ----------
-        sender : WaldiezAgent
+        for_queue : bool
+            Whether to get the chat arguments for a chat queue.
+        sender : WaldiezAgent, optional
             The sender agent, to check if it's a RAG user.
         Returns
         -------
         dict
             The chat arguments.
         """
-        args_dict = self.data.get_chat_args()
+        args_dict = self.data.get_chat_args(for_queue)
         if (
             isinstance(sender, WaldiezRagUser)
             and sender.agent_type == "rag_user"

@@ -1,7 +1,6 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.group_manager.speakers.*."""
-
-# flake8: noqa E501
-# pylint: disable=line-too-long
 
 import pytest
 
@@ -42,7 +41,7 @@ def test_waldiez_group_manager_speakers() -> None:
 
     # Then
     assert speakers_config.selection_method == "custom"
-    assert speakers_config.custom_method_string == ("    return last_speaker")
+    assert speakers_config.custom_method_string == "    return last_speaker"
 
     with pytest.raises(ValueError):
         WaldiezGroupManagerSpeakers(
@@ -58,7 +57,10 @@ def test_waldiez_group_manager_speakers() -> None:
         WaldiezGroupManagerSpeakers(
             selection_method="custom",
             selection_custom_method=(
-                "def invalid_custom_speaker_selection(last_speaker, groupchat):\n"
+                "def invalid_custom_speaker_selection("
+                "last_speaker,"
+                "groupchat"
+                "):\n"
                 "    return last_speaker"
             ),
             max_retries_for_selecting=3,

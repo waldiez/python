@@ -1,6 +1,7 @@
-"""Swarm agent data."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # https://docs.ag2.ai/docs/reference/agentchat/contrib/swarm_agent
+"""Swarm agent data."""
 
 from typing import List, Union
 

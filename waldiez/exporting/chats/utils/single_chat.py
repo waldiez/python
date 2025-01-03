@@ -1,7 +1,9 @@
-"""Utilities for exporting a single chat in a flow."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=line-too-long
+"""Utilities for exporting a single chat in a flow."""
+
 from typing import Any, Callable, Dict, Optional, Tuple
 
 from waldiez.models import (
@@ -11,7 +13,7 @@ from waldiez.models import (
     WaldiezRagUser,
 )
 
-from .helpers import get_chat_message_string, update_summary_chat_args
+from .common import get_chat_message_string, update_summary_chat_args
 
 
 def export_single_chat(
@@ -88,7 +90,7 @@ def export_single_chat(
     ```
     """
     tab = "    " * tabs if tabs > 0 else ""
-    chat_args = chat.get_chat_args(sender=sender)
+    chat_args = chat.get_chat_args(for_queue=False, sender=sender)
     chat_args = update_summary_chat_args(chat_args, string_escape)
     if not chat_args:
         return get_empty_simple_chat_string(

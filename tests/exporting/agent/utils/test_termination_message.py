@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# flake8: noqa E501
 """Test waldiez.exporting.agents.termination_message.*."""
 
-# flake8: noqa E501
 import pytest
 
 from waldiez.exporting.agent.utils.termination_message import (

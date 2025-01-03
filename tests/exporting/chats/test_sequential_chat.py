@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.chats.ChatsExporter with a sequential chat."""
 
 from waldiez.exporting.chats import ChatsExporter
@@ -92,12 +94,14 @@ def test_sequential_chat() -> None:
             "sender": agent1,
             "recipient": agent2,
             "summary_method": "last_msg",
+            "chat_id": 0,
             "message": "Hello, how are you?",
         },
         {
             "sender": agent2,
             "recipient": agent3,
             "summary_method": "last_msg",
+            "chat_id": 0,
             "message": "Hello, how are you?",
         },
     ])

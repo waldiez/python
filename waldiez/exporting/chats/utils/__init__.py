@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Utils for exporting chats."""
 
 from .nested import export_nested_chat_registration

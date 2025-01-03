@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """RAG User related exporting utils."""
 
 from typing import Callable, Dict, List, Set, Tuple, Union

@@ -1,4 +1,6 @@
-"""Build the `my_project` python package."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Build the waldiez package."""
 
 import shutil
 import subprocess  # nosemgrep # nosec

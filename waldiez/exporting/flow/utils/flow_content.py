@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Utils to generate the content of a flow."""
 
 from typing import Callable, List, Optional

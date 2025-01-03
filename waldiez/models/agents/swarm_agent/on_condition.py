@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Swarm condition model for handoff."""
 
 from typing import Any, Dict, Optional, Tuple, Union

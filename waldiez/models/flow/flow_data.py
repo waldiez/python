@@ -1,9 +1,11 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez flow data."""
 
 from typing import Any, Dict, List
 
-from pydantic import Field
-from typing_extensions import Annotated
+from pydantic import Field, model_validator
+from typing_extensions import Annotated, Self
 
 from ..agents import WaldiezAgents
 from ..chat import WaldiezChat
@@ -107,3 +109,52 @@ class WaldiezFlowData(WaldiezBase):
             title="Is Async",
         ),
     ]
+
+    @model_validator(mode="after")
+    def validate_flow_chats(self) -> Self:
+        """Validate the flow chats.
+
+        Returns
+        -------
+        WaldiezFlowData
+            The flow data.
+
+        Raises
+        ------
+        ValueError
+            If there is a chat with a prerequisite that does not exist.
+        """
+        self.chats = sorted(self.chats, key=lambda x: x.order)
+        # in async, ag2 uses the "chat_id" field (and it must be an int):
+        # ```
+        #    prerequisites = []
+        #    for chat_info in chat_queue:
+        #        if "chat_id" not in chat_info:
+        #            raise ValueError(
+        #               "Each chat must have a unique id for "
+        #               "async multi-chat execution."
+        #            )
+        #     chat_id = chat_info["chat_id"]
+        #     pre_chats = chat_info.get("prerequisites", [])
+        #     for pre_chat_id in pre_chats:
+        #         if not isinstance(pre_chat_id, int):
+        #             raise ValueError("Prerequisite chat id is not int.")
+        #         prerequisites.append((chat_id, pre_chat_id))
+        #    return prerequisites
+        # ```
+        id_to_chat_id: Dict[str, int] = {}
+        for index, chat in enumerate(self.chats):
+            id_to_chat_id[chat.id] = index
+            chat.set_chat_id(index)
+        # also update the chat prerequisites
+        #  we have ids(str), not chat_ids(int)
+        for chat in self.chats:
+            chat_prerequisites = []
+            for chat_id in chat.data.prerequisites:
+                if chat_id not in id_to_chat_id:
+                    raise ValueError(
+                        f"Chat with id {chat_id} not found in the flow."
+                    )
+                chat_prerequisites.append(id_to_chat_id[chat_id])
+            chat.set_prerequisites(chat_prerequisites)
+        return self

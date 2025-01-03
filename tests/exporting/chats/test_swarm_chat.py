@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.chats.ChatsExporter with a swarm chat."""
 
 import pytest
@@ -86,6 +88,7 @@ def test_swarm_chat() -> None:
                 recipient="REVERT_TO_USER",
                 recipient_type="option",
             ),
+            prerequisites=[],
         ),
     )
     after_work_callable = """
@@ -126,6 +129,7 @@ def custom_after_work(last_speaker, messages, groupchat):
                 recipient=after_work_callable,
                 recipient_type="callable",
             ),
+            prerequisites=[],
         ),
     )
     chat3 = WaldiezChat(
@@ -162,6 +166,7 @@ def custom_after_work(last_speaker, messages, groupchat):
                 recipient="wa-4",
                 recipient_type="agent",
             ),
+            prerequisites=[],
         ),
     )
     callable_message = """
@@ -201,6 +206,7 @@ def callable_message(sender, recipient, context):
             max_turns=4,
             max_rounds=3,
             after_work=None,
+            prerequisites=[],
         ),
     )
     all_agents = [agent1, agent2, agent3, agent4, agent5]

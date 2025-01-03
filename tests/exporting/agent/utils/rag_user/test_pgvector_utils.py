@@ -1,6 +1,7 @@
-"""Test waldiez.exporting.agents.rag_user.pgvector_utils.*."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=line-too-long
+"""Test waldiez.exporting.agents.rag_user.pgvector_utils.*."""
 
 from waldiez.exporting.agent.utils.rag_user.pgvector_utils import (
     get_pgvector_db_args,

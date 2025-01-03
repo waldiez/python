@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# pylint: disable=line-too-long,redefined-variable-type
 """Test waldiez.models.model.model_data.*."""
 
-# pylint: disable=line-too-long,redefined-variable-type
 import pytest
 
 from waldiez.models.model import (

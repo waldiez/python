@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.agents.code_execution."""
 
 from waldiez.exporting.agent.utils.code_execution import (

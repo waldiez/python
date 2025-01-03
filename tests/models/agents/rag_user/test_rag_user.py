@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.rag_user.rag_user.*."""
 
 from waldiez.models.agents.rag_user.rag_user import WaldiezRagUser

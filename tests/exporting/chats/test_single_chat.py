@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# pylint: disable=too-many-locals,duplicate-code
 """Test waldiez.exporting.chats.ChatsExporter with a single chat."""
 
 from waldiez.exporting.base import ExportPositions
@@ -13,7 +16,6 @@ from waldiez.models import (
 from waldiez.models.chat.chat_message import get_last_carryover_method_content
 
 
-# pylint: disable=too-many-locals
 def test_single_chat() -> None:
     """Test ChatsExporter with a single chat."""
     agent1_name = "agent1"

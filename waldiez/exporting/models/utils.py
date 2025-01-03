@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Model/LLM related string generation functions.
 
 Functions
@@ -124,7 +126,6 @@ def write_api_keys(
 """API keys for the {flow_name} models."""
 
 import os
-
 
 __{flow_name_upper}_MODEL_API_KEYS__ = {{'''
     for model in all_models:

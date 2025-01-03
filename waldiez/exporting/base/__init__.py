@@ -1,5 +1,5 @@
-# flake8: noqa E501
-# pylint: disable=line-too-long
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Base classes, mixins, and utilities for exporting data.
 
 Each exporter should inherit from the `BaseExporter` class and implement the

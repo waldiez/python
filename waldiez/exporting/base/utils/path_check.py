@@ -1,9 +1,10 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# pylint: disable=broad-except
 """Path check utility functions."""
 
 from pathlib import Path
 from typing import Optional, Union
-
-# pylint: disable=broad-except
 
 
 def _check_local_path(string: str) -> Optional[Path]:

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Common fixtures for tests."""
 
 import pytest
@@ -127,6 +129,7 @@ def get_runnable_flow() -> WaldiezFlow:
             ),
             real_source=None,
             real_target=None,
+            prerequisites=[],
         ),
     )
     agents = WaldiezAgents(

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Utility functions for generating agent related strings."""
 
 from .agent_class_name import get_agent_class_name

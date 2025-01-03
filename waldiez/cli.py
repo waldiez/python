@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# pylint: disable=missing-function-docstring,missing-param-doc,missing-raises-doc  # noqa: E501
 """Command line interface to convert or run a waldiez file."""
 
-# pylint: disable=missing-function-docstring,missing-param-doc,missing-raises-doc  # noqa: E501
 import json
 import logging
 import os

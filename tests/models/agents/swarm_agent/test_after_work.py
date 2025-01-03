@@ -1,7 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# pylint: disable=line-too-long
 """Test waldiez.models.agents.swarm.after_work.*."""
 
-# pylint: disable=line-too-long
-# flake8: noqa E501
 import pytest
 
 from waldiez.models.agents.swarm_agent.after_work import WaldiezSwarmAfterWork

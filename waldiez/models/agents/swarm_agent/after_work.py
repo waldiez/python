@@ -1,4 +1,6 @@
-"""Swarm after work model
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Swarm after work model.
 
 Handles the next step in the conversation when an
 agent doesn't suggest a tool call or a handoff.

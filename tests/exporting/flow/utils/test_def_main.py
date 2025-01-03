@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.flow.utils.def_main."""
 
 from waldiez.exporting.flow.utils.def_main import get_def_main
