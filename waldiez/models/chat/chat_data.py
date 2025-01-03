@@ -51,6 +51,10 @@ class WaldiezChatData(WaldiezBase):
         The real source of the chat (overrides the source).
     real_target : Optional[str]
         The real target of the chat (overrides the target).
+    max_rounds : int
+        Maximum number of conversation rounds (swarm).
+    after_work : Optional[WaldiezSwarmAfterWork]
+        The work to do after the chat (swarm).
 
     Functions
     ---------
