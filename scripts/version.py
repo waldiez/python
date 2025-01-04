@@ -7,16 +7,34 @@
 # >    and it should either return `x.y.z` or set the version to `x.y.z`.
 
 import argparse
-import sys
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).parent.parent
 
-try:
-    from waldiez._version import __version__
-except ImportError:
-    sys.path.append(str(ROOT_DIR))
-    from waldiez._version import __version__
+
+def read_version_from_file() -> str:
+    """Read the version from the _version.py file.
+
+    Returns
+    -------
+    str
+        The version string in the format x.y.z
+
+    Raises
+    ------
+    ValueError
+        If the version string was not found in the _version.py file
+    FileNotFoundError
+        If the _version.py file was not found
+    """
+    version_py_path = ROOT_DIR / "waldiez" / "_version.py"
+    if not version_py_path.exists():
+        raise FileNotFoundError("The _version.py file was not found")
+    with open(version_py_path, "r", encoding="utf-8") as file:
+        for line in file:
+            if line.startswith("__version__"):
+                return line.split(" = ")[1].strip().strip('"')
+    raise ValueError("The version string was not found in the _version.py file")
 
 
 def set_version(version_string: str) -> None:
@@ -113,7 +131,7 @@ def main() -> None:
         set_version(args.set)
         update_extras(args.set)
     elif args.get:
-        print(__version__)
+        print(read_version_from_file())
     else:
         parser.print_help()
 
