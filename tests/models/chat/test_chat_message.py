@@ -106,3 +106,13 @@ def test_waldiez_chat_message() -> None:
     )
     with pytest.raises(ValueError):
         chat_message.validate_method("function_name", ["arg1", "arg2"])
+
+    chat_message = WaldiezChatMessage(
+        type="string",
+        content="content",
+        context={"key": "value"},
+        use_carryover=False,
+    )
+
+    with pytest.raises(ValueError):
+        chat_message.validate_method("function_name", ["arg1", "arg2"])

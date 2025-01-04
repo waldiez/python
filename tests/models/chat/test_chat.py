@@ -40,6 +40,8 @@ def test_waldiez_chat() -> None:
     assert chat.target == "wa-2"
     assert chat.message.type == "string"
     assert chat.message.content == "Hello there"
+    assert chat.chat_id == 0
+    assert not chat.prerequisites
     assert isinstance(chat.nested_chat, WaldiezChatNested)
     assert chat.nested_chat.message is None
     assert chat.nested_chat.reply is None
