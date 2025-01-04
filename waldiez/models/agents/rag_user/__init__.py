@@ -1,7 +1,6 @@
-"""RAG user agent.
-
-It extends a user agent and has RAG related parameters.
-"""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""It extends a user agent and has RAG related parameters."""
 
 from .rag_user import WaldiezRagUser
 from .rag_user_data import WaldiezRagUserData

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Generic utils to be used for exporting."""
 
 from .comments import CommentKey, comment, get_comment

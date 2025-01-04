@@ -1,4 +1,6 @@
-"""Export group manger and group chat to string."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Export group manager and group chat to string."""
 
 from typing import Callable, Dict, List, Optional, Tuple
 

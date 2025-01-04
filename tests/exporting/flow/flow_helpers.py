@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Helpers for getting a flow."""
 
 from typing import Any, Dict, List, Optional
@@ -527,6 +529,7 @@ def get_chats(count: int = 4) -> List[WaldiezChat]:
         '    return "hello!"'
     )
     for index in range(count):
+        chat_id = f"wc-{index + 1}"
         context: Dict[str, Any] = {}
         if index in (0, 3):
             context["problem"] = "Solve tha task."
@@ -551,8 +554,13 @@ def get_chats(count: int = 4) -> List[WaldiezChat]:
                     "    return 'agent1'"
                 ),
             )
+        prerequisites = []
+        if index == 1:
+            prerequisites = ["wc-1"]
+        elif index > 2:
+            prerequisites = [f"wc-{idx + 1}" for idx in range(index - 1)]
         chat = WaldiezChat(
-            id=f"wc-{index + 1}",
+            id=chat_id,
             data=WaldiezChatData(
                 name=f"chat_{index + 1}",
                 description=f"Description of chat {index + 1}",
@@ -584,6 +592,7 @@ def get_chats(count: int = 4) -> List[WaldiezChat]:
                 real_source=None,
                 real_target=None,
                 after_work=chat_after_work,
+                prerequisites=prerequisites,
             ),
         )
         chats.append(chat)

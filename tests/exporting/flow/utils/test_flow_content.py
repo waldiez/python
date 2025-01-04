@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.flow.utils.flow_content."""
 
 from waldiez.exporting.flow.utils.flow_content import (

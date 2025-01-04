@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# flake8: noqa E501
 """Test waldiez.exporting.agents.rag_user.vector_db.*."""
 
-# flake8: noqa E501
 import os
 
 from waldiez.exporting.agent.utils.rag_user.vector_db import (

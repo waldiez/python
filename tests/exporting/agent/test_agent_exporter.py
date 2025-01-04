@@ -1,7 +1,8 @@
-"""Test waldiez.exporting.agent.AgentExporter."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=too-many-locals,too-many-statements,line-too-long
+"""Test waldiez.exporting.agent.AgentExporter."""
 
 import shutil
 from pathlib import Path

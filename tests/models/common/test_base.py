@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.common.base."""
 
 from waldiez.models.common.base import WaldiezBase

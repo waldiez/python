@@ -1,4 +1,6 @@
-"""Naming related string generation functions.
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Utilities for naming.
 
 Functions
 ---------

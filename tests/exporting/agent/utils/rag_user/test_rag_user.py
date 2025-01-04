@@ -1,7 +1,8 @@
-"""Test waldiez.exporting.agents.rag_user.rag_user.*."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # fmt: off
 # flake8: noqa E501
+"""Test waldiez.exporting.agents.rag_user.rag_user.*."""
 
 import os
 from typing import Optional, Tuple

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Utilities for chat content after exporting."""
 
 from typing import List, Tuple, Union

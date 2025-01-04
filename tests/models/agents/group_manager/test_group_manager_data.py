@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.group_manager.group_manager_data.*."""
 
 from waldiez.models.agents.group_manager.group_manager_data import (

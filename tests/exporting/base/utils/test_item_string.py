@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.base.utils.to_string.*."""
 
 from waldiez.exporting.base.utils.to_string import get_item_string

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.chat.chat.*."""
 
 from waldiez.models.agents.rag_user import WaldiezRagUser
@@ -38,10 +40,12 @@ def test_waldiez_chat() -> None:
     assert chat.target == "wa-2"
     assert chat.message.type == "string"
     assert chat.message.content == "Hello there"
+    assert chat.chat_id == 0
+    assert not chat.prerequisites
     assert isinstance(chat.nested_chat, WaldiezChatNested)
     assert chat.nested_chat.message is None
     assert chat.nested_chat.reply is None
-    chat_args = chat.get_chat_args()
+    chat_args = chat.get_chat_args(for_queue=True)
     assert chat_args == {
         "clear_history": False,
         "max_turns": 1,
@@ -50,6 +54,7 @@ def test_waldiez_chat() -> None:
         "solution": 4.2,
         "alternative_solution": 42,
         "not_a_solution": None,
+        "chat_id": 0,
     }
 
     # Given
@@ -127,7 +132,7 @@ def test_waldiez_chat_with_rag_user() -> None:
         ),
     )
     # When
-    chat_args = chat.get_chat_args(sender=agent)
+    chat_args = chat.get_chat_args(for_queue=False, sender=agent)
     # Then
     assert chat_args["n_results"] == 5
     assert chat_args["problem"] == "Solve this task"

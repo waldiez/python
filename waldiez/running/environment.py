@@ -1,6 +1,7 @@
-"""Environment related utilities."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=import-outside-toplevel,reimported
+"""Environment related utilities."""
 
 import importlib.util
 import os

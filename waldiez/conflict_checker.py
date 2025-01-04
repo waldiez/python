@@ -1,6 +1,7 @@
-"""Check for conflicts with 'autogen-agentchat' package."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=line-too-long
+"""Check for conflicts with 'autogen-agentchat' package."""
 
 import sys
 from importlib.metadata import PackageNotFoundError, version

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez flow model."""
 
 import uuid
@@ -150,6 +152,19 @@ class WaldiezFlow(WaldiezBase):
         return self.data.is_async
 
     @property
+    def is_swarm_flow(self) -> bool:
+        """Check if the flow is a swarm flow.
+
+        Returns
+        -------
+        bool
+            True if the flow is a swarm flow, False otherwise.
+        """
+        return any(
+            agent.agent_type == "swarm" for agent in self.data.agents.members
+        )
+
+    @property
     def ordered_flow(
         self,
     ) -> List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]]:
@@ -189,10 +204,7 @@ class WaldiezFlow(WaldiezBase):
         # we only keep the ones with order >=0
         # and sort them by this property
         ordered_flow: List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]] = []
-        sorted_chats_by_order = sorted(
-            self.data.chats, key=lambda chat: chat.data.order
-        )
-        for chat in sorted_chats_by_order:
+        for chat in self.data.chats:
             if chat.data.order < 0:
                 continue
             source = self.get_agent_by_id(chat.source)
@@ -263,6 +275,23 @@ class WaldiezFlow(WaldiezBase):
         )
         return [self.get_agent_by_id(member_id) for member_id in connections]
 
+    def get_initial_swarm_agent(self) -> Optional[WaldiezAgent]:
+        """Get the initial swarm agent.
+
+        Returns
+        -------
+        Optional[WaldiezAgent]
+            The initial swarm agent if found, None otherwise.
+        """
+        for chat in self.data.chats:
+            source_agent = self.get_agent_by_id(chat.source)
+            if source_agent.agent_type == "swarm":
+                return source_agent
+            target_agent = self.get_agent_by_id(chat.target)
+            if target_agent.agent_type == "swarm":
+                return target_agent
+        return None
+
     def get_swarm_chat_members(
         self,
         initial_agent: WaldiezAgent,
@@ -327,6 +356,7 @@ class WaldiezFlow(WaldiezBase):
         - all the managers have at least one member in the chat group
         - the ordered flow (chats with position >=0) is not empty
         - all agents' code execution config functions exist in the flow skills
+        - if swarm flow, there is at least one swarm agent
 
         Returns
         -------
@@ -352,4 +382,6 @@ class WaldiezFlow(WaldiezBase):
             raise ValueError("Skill IDs must be unique.")
         self.data.agents.validate_flow(model_ids, skills_ids)
         self._validate_agent_connections()
+        if self.is_swarm_flow and not self.get_initial_swarm_agent():
+            raise ValueError("There is no initial swarm agent.")
         return self

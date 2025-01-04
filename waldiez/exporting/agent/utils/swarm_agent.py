@@ -1,6 +1,7 @@
-"""Get the extras of a swarm agent."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=unused-argument
+"""Get the extras of a swarm agent."""
 
 from typing import Callable, Dict, Tuple
 

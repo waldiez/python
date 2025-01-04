@@ -1,6 +1,7 @@
-"""Test WaldiezRunner."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=protected-access
+"""Test WaldiezRunner."""
 
 import shutil
 from pathlib import Path

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.base.BaseExporter."""
 
 from typing import Any, List, Optional, Tuple, Union

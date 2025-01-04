@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.user_proxy.user_proxy.*."""
 
 from waldiez.models.agents.user_proxy.user_proxy import WaldiezUserProxy

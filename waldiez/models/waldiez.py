@@ -1,4 +1,6 @@
-"""Waldiez data class.
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Waldiez
 
 A Waldiez class contains all the information that is needed to generate
 and run an autogen workflow. It has the model/LLM configurations, the agent
@@ -260,7 +262,7 @@ class Waldiez:
         return env_vars
 
     def get_group_chat_members(self, agent: WaldiezAgent) -> List[WaldiezAgent]:
-        """Get the chat members that connect to a group chat manger agent.
+        """Get the chat members that connect to a group chat manager agent.
 
         Parameters
         ----------

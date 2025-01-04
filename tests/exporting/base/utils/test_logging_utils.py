@@ -1,6 +1,7 @@
-"""Test waldiez.exporting.base.utils.logging_utils.*."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=inconsistent-quotes, line-too-long
+"""Test waldiez.exporting.base.utils.logging_utils.*."""
 
 from waldiez.exporting.flow.utils.logging_utils import (
     get_logging_start_string,

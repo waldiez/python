@@ -1,4 +1,6 @@
-"""Function to convert an object to a formatted string with indentation.
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Utilities for converting items to strings.
 
 To be used with dicts and/or lists.
 """

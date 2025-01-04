@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Get the `is_termination_message` check for the agent."""
 
 from typing import Tuple

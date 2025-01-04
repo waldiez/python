@@ -1,6 +1,7 @@
-"""Test waldiez.models.chat.chat_data.*."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 
-# import pytest
+"""Test waldiez.models.chat.chat_data.*."""
 
 from waldiez.models.chat.chat_data import WaldiezChatData
 from waldiez.models.chat.chat_message import WaldiezChatMessage
@@ -80,7 +81,8 @@ def test_waldiez_chat_data() -> None:
         "summary_prompt": "Summarize this chat",
         "summary_role": "system",
     }
-    chat_args = chat_data.get_chat_args()
+    chat_args = chat_data.get_chat_args(for_queue=True)
+    assert chat_args["chat_id"] == 0
     assert chat_args["problem"] == "Solve this task"
     assert chat_args["solution"] == 4.2
     assert chat_args["alternative_solution"] == 42

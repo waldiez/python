@@ -1,4 +1,6 @@
-"""Group chat manger agent."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Group chat manager agent."""
 
 from .group_manager import WaldiezGroupManager
 from .group_manager_data import WaldiezGroupManagerData

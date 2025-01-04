@@ -1,6 +1,7 @@
-"""Nested chats exporting."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=too-many-locals
+"""Nested chats exporting."""
 
 from typing import Callable, Dict, List, Optional, Tuple
 
@@ -11,7 +12,7 @@ from waldiez.models import (
     WaldiezChat,
 )
 
-from .helpers import update_summary_chat_args
+from .common import update_summary_chat_args
 
 
 def export_nested_chat_registration(
@@ -161,7 +162,7 @@ def get_nested_chat_message_string(
     if sender_id != agent.id:
         sender_name = agent_names[sender_id]
     recipient_name = agent_names[recipient_id]
-    chat_dict = waldiez_chat.get_chat_args()
+    chat_dict = waldiez_chat.get_chat_args(for_queue=True)
     chat_dict = update_summary_chat_args(chat_dict, string_escape)
     chat_dict["recipient"] = recipient_name
     if sender_name:

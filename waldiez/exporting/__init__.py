@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Tools for exporting agents, models, skills and chats to strings."""
 
 from .flow import FlowExporter

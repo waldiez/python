@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Ensure unique names for agents, models, skills, and chats."""
 
 from typing import Callable, Dict, List, TypedDict

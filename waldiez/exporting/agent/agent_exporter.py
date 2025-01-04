@@ -1,6 +1,7 @@
-"""Export agents."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=too-many-return-statements,too-many-instance-attributes
+"""Export agents."""
 
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple, Union

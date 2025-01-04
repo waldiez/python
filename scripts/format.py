@@ -1,4 +1,6 @@
-"""Run python formatters."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Format the Python code."""
 
 import shutil
 import subprocess  # nosemgrep # nosec
@@ -31,6 +33,8 @@ def run_command(args: List[str]) -> None:
 
 def ensure_dev_requirements() -> None:
     """Ensure the development requirements are installed."""
+    if "--no-deps" in sys.argv:
+        return
     requirements_file = ROOT_DIR / "requirements" / "dev.txt"
     run_command(
         [

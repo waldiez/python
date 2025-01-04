@@ -1,409 +1,118 @@
-# """Test waldiez.models.chat.chat_message.*."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Test waldiez.models.chat.chat_message."""
 
-# from typing import Any, Dict, Optional, Union
+import pytest
 
-# import pytest
-# from typing_extensions import Literal
-
-# from waldiez.models.chat import (
-#     WaldiezChat,
-#     WaldiezChatData,
-#     WaldiezChatMessage,
-#     WaldiezChatNested,
-#     WaldiezChatSummary,
-# )
-# from waldiez.models.chat.chat_message import RAG_METHOD_WITH_CARRYOVER
-
-# # pylint: disable=line-too-long
-
-# nested_chat_common_args: Dict[str, Any] = {
-#     "function_name": "nested_chat_message",
-#     "function_args": ["recipient", "messages", "sender", "config"],
-# }
-
-# callable_message_common_args: Dict[str, Any] = {
-#     "function_name": "callable_message",
-#     "function_args": ["sender", "recipient", "context"],
-# }
+from waldiez.models.chat.chat_message import (
+    RAG_METHOD_WITH_CARRYOVER_BODY,
+    WaldiezChatMessage,
+    get_last_carryover_method_content,
+)
 
 
-# def test_waldiez_chat_message() -> None:
-#     """Test WaldiezChatMessage."""
-#     # Given
-#     message = WaldiezChatMessage(
-#         type="string",
-#         use_carryover=False,
-#         content="Hello there",
-#         context={},
-#     )
-#     # Then
-#     assert message.type == "string"
-#     assert message.content == "Hello there"
+def test_waldiez_chat_message() -> None:
+    """Test WaldiezChatMessage."""
+    chat_message = WaldiezChatMessage(  # type: ignore
+        type="string",
+        content="content",
+        context={"key": "value"},
+    )
+    assert chat_message.type == "string"
+    assert chat_message.content == "content"
+    assert chat_message.context == {"key": "value"}
 
-#     # Given
-#     message = WaldiezChatMessage(
-#         type="method",
-#         use_carryover=False,
-#         content="Hello there",
-#         context={},
-#     )
-#     # Then
-#     assert message.type == "method"
-#     assert message.content == "Hello there"
+    chat_message = WaldiezChatMessage(
+        type="method",
+        content="content",
+        context={"key": "value"},
+        use_carryover=False,
+    )
+    assert chat_message.type == "method"
+    assert chat_message.content_body == "content"
+    assert chat_message.context == {"key": "value"}
 
-#     # Given
-#     message = WaldiezChatMessage(
-#         type="none",
-#         use_carryover=False,
-#         content=None,
-#         context={},
-#     )
-#     # Then
-#     assert message.type == "none"
-#     assert message.content is None
+    chat_message = WaldiezChatMessage(
+        type="rag_message_generator",
+        content="content",
+        context={"key": "value"},
+        use_carryover=True,
+    )
+    assert chat_message.type == "rag_message_generator"
+    expected = get_last_carryover_method_content("content")
+    assert chat_message.content_body == expected
+    assert chat_message.context == {"key": "value"}
 
+    chat_message = WaldiezChatMessage(
+        type="rag_message_generator",
+        content=None,
+        context={"key": "value"},
+        use_carryover=True,
+    )
+    assert chat_message.type == "rag_message_generator"
+    expected = get_last_carryover_method_content("")
+    assert chat_message.content_body == expected
+    assert chat_message.context == {"key": "value"}
 
-# def test_validate_message_dict() -> None:
-#     """Test validate_message_dict."""
-#     # Given
-#     message_content = """
-# def nested_chat_message(recipient, messages, sender, config):
-#     return "Hello there"
-# """
-#     message_dict: Dict[
-#         Literal["type", "use_carryover", "content", "context"],
-#         Union[Optional[str], Optional[bool], Optional[Dict[str, Any]]],
-#     ] = {
-#         "type": "string",
-#         "use_carryover": False,
-#         "content": message_content,
-#     }
-#     # When
-#     message = validate_message_dict(
-#         message_dict,
-#         **nested_chat_common_args,
-#     )
-#     # Then
-#     assert message.type == "string"
-#     assert message.content == message_content
+    chat_message = WaldiezChatMessage(
+        type="rag_message_generator",
+        content="content",
+        context={"key": "value"},
+        use_carryover=False,
+    )
+    assert chat_message.type == "rag_message_generator"
+    assert chat_message.content_body == RAG_METHOD_WITH_CARRYOVER_BODY
 
-#     # Given
-#     message_dict = {
-#         "type": "string",
-#         "content": "Hello there",
-#         "use_carryover": True,
-#     }
-#     # Then
-#     message = validate_message_dict(
-#         message_dict,
-#         **callable_message_common_args,
-#     )
-#     assert message.type == "method"
-#     assert (
-#         message.content_body
-#         == '''
-#     """Get the message to send using the last carryover.
+    chat_message = WaldiezChatMessage(
+        type="none",
+        content=None,
+        context={"key": "value"},
+        use_carryover=False,
+    )
+    assert chat_message.type == "none"
+    assert chat_message.content_body == "None"
+    assert chat_message.context == {"key": "value"}
 
-#     Parameters
-#     ----------
-#     sender : ConversableAgent
-#         The source agent.
-#     recipient : ConversableAgent
-#         The target agent.
-#     context : Dict[str, Any]
-#         The context.
+    chat_message = WaldiezChatMessage(
+        type="string",
+        content=None,
+        context={"key": "value"},
+        use_carryover=False,
+    )
+    assert chat_message.type == "string"
+    assert chat_message.content_body == ""
 
-#     Returns
-#     -------
-#     Union[Dict[str, Any], str]
-#         The message to send using the last carryover.
-#     """
-#     carryover = context.get("carryover", "")
-#     if isinstance(carryover, list):
-#         carryover = carryover[-1]
-#     if not isinstance(carryover, str):
-#         if isinstance(carryover, list):
-#             carryover = carryover[-1]
-#         elif isinstance(carryover, dict):
-#             carryover = carryover.get("content", "")
-#     if not isinstance(carryover, str):
-#         carryover = ""
-#     final_message = "Hello there" + carryover
-#     return final_message
-# '''
-#     )
+    with pytest.raises(ValueError):
+        chat_message = WaldiezChatMessage(
+            type="invalid",  # type: ignore
+            content="content",
+            context={"key": "value"},
+            use_carryover=False,
+        )
 
-#     # Given
-#     message_dict = {
-#         "type": "string",
-#         "content": "",
-#         "use_carryover": True,
-#     }
-#     # Then
-#     message = validate_message_dict(
-#         message_dict,
-#         **callable_message_common_args,
-#     )
-#     assert message.type == "method"
-#     assert (
-#         message.content
-#         == '''
-#     """Get the message to send using the last carryover.
+    with pytest.raises(ValueError):
+        chat_message = WaldiezChatMessage(
+            type="method",
+            content=None,
+            use_carryover=False,
+            context={"key": "value"},
+        )
 
-#     Parameters
-#     ----------
-#     sender : ConversableAgent
-#         The source agent.
-#     recipient : ConversableAgent
-#         The target agent.
-#     context : Dict[str, Any]
-#         The context.
+    chat_message = WaldiezChatMessage(
+        type="string",
+        content=None,
+        context={"key": "value"},
+        use_carryover=False,
+    )
+    with pytest.raises(ValueError):
+        chat_message.validate_method("function_name", ["arg1", "arg2"])
 
-#     Returns
-#     -------
-#     Union[Dict[str, Any], str]
-#         The message to send using the last carryover.
-#     """
-#     carryover = context.get("carryover", "")
-#     if isinstance(carryover, list):
-#         carryover = carryover[-1]
-#     if not isinstance(carryover, str):
-#         if isinstance(carryover, list):
-#             carryover = carryover[-1]
-#         elif isinstance(carryover, dict):
-#             carryover = carryover.get("content", "")
-#     if not isinstance(carryover, str):
-#         carryover = ""
-#     return carryover
-# '''
-#     )
-#     # Given
-#     message_dict = {
-#         "type": "rag_message_generator",
-#         "content": "Hello there",
-#         "use_carryover": True,
-#     }
-#     # Then
-#     message = validate_message_dict(
-#         message_dict,
-#         **callable_message_common_args,
-#     )
-#     assert message.type == "method"
-#     assert message.content == RAG_METHOD_WITH_CARRYOVER
+    chat_message = WaldiezChatMessage(
+        type="string",
+        content="content",
+        context={"key": "value"},
+        use_carryover=False,
+    )
 
-#     # Given
-#     message_content = "Hello there"
-#     message_dict = {
-#         "type": "method",
-#         "content": message_content,
-#     }
-#     # Then
-#     with pytest.raises(ValueError):
-#         validate_message_dict(
-#             message_dict,
-#             **nested_chat_common_args,
-#         )
-
-#     # Given
-#     message_dict = {
-#         "type": "none",
-#         "content": None,
-#     }
-#     # When
-#     message = validate_message_dict(
-#         message_dict,
-#         **nested_chat_common_args,
-#     )
-#     # Then
-#     assert message.type == "none"
-#     assert message.content is None
-
-#     # Given
-#     message_dict = {
-#         "type": "method",
-#         "content": "",
-#     }
-#     # Then
-#     with pytest.raises(ValueError):
-#         validate_message_dict(
-#             message_dict,
-#             **nested_chat_common_args,
-#         )
-
-#     # Given
-#     message_dict = {
-#         "type": "invalid",
-#         "content": "",
-#     }
-#     # Then
-#     with pytest.raises(ValueError):
-#         validate_message_dict(
-#             message_dict,
-#             **nested_chat_common_args,
-#         )
-
-#     # Given
-#     message_dict = {
-#         "type": 4,  # type: ignore
-#         "content": "",
-#         "context": {},
-#     }
-#     with pytest.raises(ValueError):
-#         validate_message_dict(
-#             message_dict,
-#             **nested_chat_common_args,
-#         )
-
-
-# def test_rag_message_generator_message() -> None:
-#     """Test rag_message_generator_message."""
-#     # Given
-#     message_dict: Dict[
-#         Literal["type", "use_carryover", "content", "context"],
-#         Union[Optional[str], Optional[bool], Optional[Dict[str, Any]]],
-#     ] = {
-#         "type": "rag_message_generator",
-#         "use_carryover": False,
-#         "content": None,
-#         "context": {},
-#     }
-#     # When
-#     message = validate_message_dict(
-#         message_dict,
-#         **callable_message_common_args,
-#     )
-#     # Then
-#     assert message.type == "rag_message_generator"
-#     assert message.content is None
-#     assert message.context == {}
-
-#     # Given
-#     message_dict = {
-#         "type": "rag_message_generator",
-#         "content": "Hello there",
-#         "context": {},
-#     }
-#     # When
-#     message = validate_message_dict(
-#         message_dict,
-#         **callable_message_common_args,
-#     )
-#     # Then
-#     assert message.type == "rag_message_generator"
-#     assert message.content is None
-#     assert message.context == {}
-
-#     # Given
-#     message_dict = {
-#         "type": "rag_message_generator",
-#         "content": None,
-#         "context": {
-#             "n_results": 5,
-#         },
-#     }
-#     # When
-#     message = validate_message_dict(
-#         message_dict,
-#         **callable_message_common_args,
-#     )
-#     # Then
-#     assert message.type == "rag_message_generator"
-#     assert message.content is None
-#     assert message.context == {"n_results": 5}
-
-#     # Given
-#     message_dict = {
-#         "type": "rag_message_generator",
-#         "content": None,
-#         "context": {
-#             "n_results": "5",
-#         },
-#     }
-#     # When
-#     message = validate_message_dict(
-#         message_dict, **callable_message_common_args
-#     )
-#     # Then
-#     assert message.type == "rag_message_generator"
-#     assert message.content is None
-#     assert message.context == {"n_results": "5"}
-
-#     # Given
-#     chat = WaldiezChat(
-#         id="chat_id",
-#         data=WaldiezChatData(
-#             name="chat_name",
-#             description="Chat description",
-#             source="source",
-#             target="target",
-#             message=WaldiezChatMessage(
-#                 type="rag_message_generator",
-#                 use_carryover=False,
-#                 content=None,
-#                 context={
-#                     "n_results": "5",
-#                     "problem": "Solve this task",
-#                 },
-#             ),
-#             position=0,
-#             order=0,
-#             clear_history=False,
-#             nested_chat=WaldiezChatNested(
-#                 message=None,
-#                 reply=None,
-#             ),
-#             max_turns=1,
-#             silent=False,
-#             real_source=None,
-#             real_target=None,
-#             summary=WaldiezChatSummary(
-#                 method="last_msg",
-#                 prompt="Return the last message",
-#                 args={},
-#             ),
-#         ),
-#     )
-#     # When
-#     chat_args = chat.get_chat_args()
-#     # Then
-#     assert chat_args == {
-#         "clear_history": False,
-#         "max_turns": 1,
-#         "summary_method": "last_msg",
-#         "problem": "Solve this task",
-#         "silent": False,
-#         "n_results": 5,
-#     }
-
-#     # Given
-#     message_dict = {
-#         "type": "invalid",
-#         "content": None,
-#         "context": {
-#             "n_results": 3,
-#         },
-#     }
-#     # Then
-#     with pytest.raises(ValueError):
-#         WaldiezChatMessage(
-#             type="invalid",  # type: ignore
-#             content=None,
-#             context={"n_results": 3},
-#         )
-
-#     # Given
-#     message_dict = {
-#         "type": "rag_message_generator",
-#         "content": None,
-#         "context": {
-#             "problem": "Solve this task",
-#             "n_results": 5,
-#         },
-#     }
-#     # Then
-#     message = validate_message_dict(
-#         message_dict,
-#         **callable_message_common_args,
-#     )
-#     assert message.type == "rag_message_generator"
-#     assert message.content is None
+    with pytest.raises(ValueError):
+        chat_message.validate_method("function_name", ["arg1", "arg2"])

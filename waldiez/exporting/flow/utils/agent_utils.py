@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Handle agent contents before and after the agent(s) exports."""
 
 from typing import List, Tuple, Union

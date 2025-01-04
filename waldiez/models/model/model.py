@@ -1,4 +1,6 @@
-"""Waldiez model(llm) model."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Waldiez model model."""
 
 import os
 from typing import Any, Dict, List, Optional

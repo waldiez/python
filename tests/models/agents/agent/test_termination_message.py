@@ -1,7 +1,8 @@
-"""Test waldiez.models.agents.agent.termination_message.*."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=line-too-long
+"""Test waldiez.models.agents.agent.termination_message.*."""
 
 import pytest
 

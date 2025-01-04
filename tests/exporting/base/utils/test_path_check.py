@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.base.utils.path_check.*."""
 
 from waldiez.exporting.base.utils.path_check import get_path_string

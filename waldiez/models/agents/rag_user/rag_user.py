@@ -1,5 +1,7 @@
-# pylint: disable=line-too-long
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """RAG user agent.
+
 It extends a user agent and has RAG related parameters (`retrieve_config`).
 """
 

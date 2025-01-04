@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# pylint: disable=too-many-locals,duplicate-code
 """Test waldiez.exporting.chats.ChatsExporter with a single chat.
 
 With the agents also having nested chats.
@@ -195,6 +198,7 @@ def nested_chat_message(recipient, messages, sender, config):
 agent3_chat_queue = [
     {
         "summary_method": "last_msg",
+        "chat_id": 0,
         "recipient": agent1,
         "message": "Hello wa-1 from wa-3"
     },
@@ -210,6 +214,7 @@ agent3.register_nested_chats(
 agent4_chat_queue = [
     {
         "summary_method": "last_msg",
+        "chat_id": 0,
         "recipient": agent3,
         "sender": agent1,
         "message": "Hello wa-3 from wa-1"

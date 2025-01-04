@@ -1,4 +1,6 @@
-"""Build container image."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Build the container image."""
 
 import argparse
 import os

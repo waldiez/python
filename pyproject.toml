@@ -22,7 +22,7 @@ classifiers = [
   "Intended Audience :: Developers",
 ]
 dependencies =[
-    "asyncer==0.8.0",
+    "asyncer==0.0.8",
     "pyautogen==0.6.1",
     "jupytext",
     "pydantic>=2.0",
@@ -61,8 +61,8 @@ dev = [
     'pydocstyle==6.3.0',
     'pylint==3.3.3',
     'python-dotenv==1.0.1',
-    'ruff==0.8.4',
-    'types-PyYAML==6.0.12.20241221',
+    'ruff==0.8.5',
+    'types-PyYAML==6.0.12.20241230',
     'yamllint==1.35.1',
     'toml; python_version <= "3.10"',
     'types-toml== 0.10.8.20240310',

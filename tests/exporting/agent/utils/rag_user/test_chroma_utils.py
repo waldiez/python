@@ -1,6 +1,7 @@
-"""Test waldiez.exporting.agents.rag_user.chroma_utils.*."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
+"""Test waldiez.exporting.agents.rag_user.chroma_utils.*."""
 
 import os
 

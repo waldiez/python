@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+
 """Lint Python source code in the my_package and tests directories."""
 
 import shutil
@@ -31,6 +34,8 @@ def run_command(args: List[str]) -> None:
 
 def ensure_dev_requirements() -> None:
     """Ensure the development requirements are installed."""
+    if "--no-deps" in sys.argv:
+        return
     requirements_file = ROOT_DIR / "requirements" / "dev.txt"
     run_command(
         [
@@ -165,7 +170,13 @@ def run_pylint() -> None:
     """Run pylint."""
     ensure_command_exists("pylint")
     run_command(
-        [sys.executable, "-m", "pylint", "--rcfile=pyproject.toml", "."]
+        [
+            sys.executable,
+            "-m",
+            "pylint",
+            "--rcfile=pyproject.toml",
+            ".",
+        ]
     )
 
 

@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Chat data model."""
 
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import Field, field_validator, model_validator
 from typing_extensions import Annotated, Self
@@ -51,6 +53,10 @@ class WaldiezChatData(WaldiezBase):
         The real source of the chat (overrides the source).
     real_target : Optional[str]
         The real target of the chat (overrides the target).
+    max_rounds : int
+        Maximum number of conversation rounds (swarm).
+    after_work : Optional[WaldiezSwarmAfterWork]
+        The work to do after the chat (swarm).
 
     Functions
     ---------
@@ -150,6 +156,14 @@ class WaldiezChatData(WaldiezBase):
             description="The maximum number of turns for the chat.",
         ),
     ]
+    prerequisites: Annotated[
+        List[str],
+        Field(
+            title="Prerequisites",
+            description="The prerequisites (chat ids) for the chat (if async).",
+            default_factory=list,
+        ),
+    ]
     silent: Annotated[
         Optional[bool],
         Field(
@@ -195,11 +209,53 @@ class WaldiezChatData(WaldiezBase):
     ] = None
 
     _message_content: Optional[str] = None
+    _chat_id: int = 0
+    _prerequisites: List[int] = []
 
     @property
     def message_content(self) -> Optional[str]:
         """Get the message content."""
         return self._message_content
+
+    def get_chat_id(self) -> int:
+        """Get the chat id.
+
+        Returns
+        -------
+        int
+            The chat id.
+        """
+        return self._chat_id
+
+    def set_chat_id(self, value: int) -> None:
+        """Set the chat id.
+
+        Parameters
+        ----------
+        value : int
+            The chat id.
+        """
+        self._chat_id = value
+
+    def get_prerequisites(self) -> List[int]:
+        """Get the chat prerequisites.
+
+        Returns
+        -------
+        List[int]
+            The chat prerequisites (if async).
+        """
+        return self._prerequisites
+
+    def set_prerequisites(self, value: List[int]) -> None:
+        """Set the chat prerequisites.
+
+        Parameters
+        ----------
+        value : List[int]
+            The chat prerequisites to set.
+        """
+        self._prerequisites = value
 
     @model_validator(mode="after")
     def validate_chat_data(self) -> Self:
@@ -311,10 +367,15 @@ class WaldiezChatData(WaldiezBase):
                     extra_args[key] = value
         return extra_args
 
-    def get_chat_args(self) -> Dict[str, Any]:
+    def get_chat_args(self, for_queue: bool) -> Dict[str, Any]:
         """Get the chat arguments to use in autogen.
 
         Without the 'message' key.
+
+        Parameters
+        ----------
+        for_queue : bool
+            Whether to get the arguments for a chat queue.
 
         Returns
         -------
@@ -333,4 +394,8 @@ class WaldiezChatData(WaldiezBase):
         if isinstance(self.silent, bool):
             args["silent"] = self.silent
         args.update(self._get_context_args())
+        if for_queue:
+            args["chat_id"] = self._chat_id
+        if self._prerequisites:
+            args["prerequisites"] = self._prerequisites
         return args

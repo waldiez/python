@@ -1,5 +1,6 @@
-"""Waldiez exporter.
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""
 The role of the exporter is to export the model's data
 to an autogen's flow with one or more chats.
 

@@ -1,7 +1,8 @@
-"""Test waldiez.exporting.agent.utils.agent_imports."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=line-too-long
+"""Test waldiez.exporting.agent.utils.agent_imports."""
 
 from waldiez.exporting.agent.utils.agent_imports import get_agent_imports
 

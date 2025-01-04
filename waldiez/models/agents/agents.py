@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez agents model."""
 
 from typing import Iterator, List
@@ -24,7 +26,7 @@ class WaldiezAgents(WaldiezBase):
     assistants : List[WaldiezAssistant]
         Assistant agents.
     managers : List[WaldiezGroupManager]
-        Group chat mangers.
+        Group chat managers.
     rag_users : List[WaldiezRagUser]
         RAG user agents.
     """
@@ -49,7 +51,7 @@ class WaldiezAgents(WaldiezBase):
         List[WaldiezGroupManager],
         Field(
             title="Managers.",
-            description="Group chat mangers",
+            description="Group chat managers",
             default_factory=list,
         ),
     ]

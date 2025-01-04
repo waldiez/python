@@ -1,8 +1,9 @@
-"""Run tests in the my_package package."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # Requirement:
 # The (final) coverage report must be in the `coverage` directory.
 # It must be in the `lcov` format. (file `coverage/lcov.info`)
+"""Run the tests."""
 
 import os
 import shutil

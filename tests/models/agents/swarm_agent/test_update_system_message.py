@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.swarm.WaldiezSwarmUpdateSystemMessage."""
 
 import pytest
@@ -32,6 +34,7 @@ def custom_update_system_message(agent, messages):
     # pylint: disable=inconsistent-quotes
     expected_update_function_string = '    return "custom message"'
     assert update_system_message.update_function_type == "callable"
+    # pylint: disable=protected-access
     assert update_system_message._update_function == (
         expected_update_function_string
     )

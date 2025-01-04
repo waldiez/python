@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+# flake8: noqa E501
 """Test waldiez.models.agents.rag_user.retrieve_config.*."""
 
-# flake8: noqa E501
 import os
 import shutil
 from pathlib import Path

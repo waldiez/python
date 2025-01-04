@@ -1,4 +1,6 @@
-"""Test waldiez.exporting.agents.agent.*."""
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Test waldiez.exporting.agents.agent.get_agent_class_name."""
 
 from waldiez.exporting.agent.utils.agent_class_name import get_agent_class_name
 from waldiez.models import (

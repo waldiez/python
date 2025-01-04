@@ -1,6 +1,7 @@
-"""Swarm agent data."""
-
+# SPDX-License-Identifier: MIT.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 # https://docs.ag2.ai/docs/reference/agentchat/contrib/swarm_agent
+"""Swarm agent data."""
 
 from typing import List, Union
 
@@ -51,6 +52,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         List[Union[str, WaldiezSwarmUpdateSystemMessage]],
         Field(
             title="Update Agent State Before Reply",
+            alias="updateAgentStateBeforeReply",
             description=(
                 "A list of functions, including UPDATE_SYSTEM_MESSAGEs,"
                 "called to update the agent's state before it replies. "
@@ -65,6 +67,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         List[Union[WaldiezSwarmOnCondition, WaldiezSwarmAfterWork]],
         Field(
             title="Hand Offs",
+            alias="handOffs",
             description=(
                 "A list of hand offs to register. "
                 "There should only be at most one `AfterWork` per agent"

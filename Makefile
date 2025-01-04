@@ -35,22 +35,11 @@ help:
 
 .PHONY: format
 format:
-	isort .
-	autoflake --remove-all-unused-imports --remove-unused-variables --in-place .
-	black --config pyproject.toml .
-	ruff format --config pyproject.toml .
+	python scripts/format.py --no-deps
 
 .PHONY: lint
 lint:
-	isort --check-only .
-	black --check --config pyproject.toml .
-	mypy --config pyproject.toml .
-	flake8 --config=.flake8
-	pydocstyle --config pyproject.toml .
-	bandit -r -c pyproject.toml .
-	yamllint -c .yamllint.yaml .
-	ruff check --config pyproject.toml .
-	pylint --rcfile=pyproject.toml .
+	python scripts/lint.py --no-deps
 
 .PHONY: forlint
 forlint: format lint
