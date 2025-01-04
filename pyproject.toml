@@ -61,7 +61,7 @@ dev = [
     'pydocstyle==6.3.0',
     'pylint==3.3.3',
     'python-dotenv==1.0.1',
-    'ruff==0.8.5',
+    'ruff==0.8.6',
     'types-PyYAML==6.0.12.20241230',
     'yamllint==1.35.1',
     'toml; python_version <= "3.10"',
