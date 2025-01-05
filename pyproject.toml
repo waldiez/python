@@ -113,6 +113,7 @@ ag2_extras =[
 ]
 test = [
     'pytest==8.3.4',
+    'pytest-asyncio==0.25.1',
     'pytest-cov==6.0.0',
     'pytest-html==4.1.1',
     'pytest-sugar==1.0.0',
@@ -312,6 +313,8 @@ line-ending = "lf"
 
 # pytest
 [tool.pytest.ini_options]
+asyncio_mode = 'auto'
+asyncio_default_fixture_loop_scope='session'
 filterwarnings = [
   # DeprecationWarning:
   #   Type google._upb._message.MessageMapContainer uses PyType_Spec with a metaclass that has custom tp_new.
