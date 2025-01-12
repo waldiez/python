@@ -118,7 +118,7 @@ def test_get_is_termination_message() -> None:
             "termination": {
                 "type": "method",
                 "method_content": (
-                    "def is_termination_message(message):\n" "    return True"
+                    "def is_termination_message(message):\n    return True"
                 ),
             },
         },

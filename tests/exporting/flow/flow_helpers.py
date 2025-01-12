@@ -526,7 +526,7 @@ def get_chats(count: int = 4) -> List[WaldiezChat]:
     chats = []
     custom_message = (
         "def callable_message(sender, recipient, context):\n"
-        '    return "hello!"'
+        '    return "hello there!!"'
     )
     for index in range(count):
         chat_id = f"wc-{index + 1}"

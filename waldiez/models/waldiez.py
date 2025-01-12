@@ -243,7 +243,7 @@ class Waldiez:
         for model in self.models:
             if model.data.api_type in models_with_additional_requirements:
                 requirements.add(
-                    f"pyautogen[{model.data.api_type}]==" f"{autogen_version}"
+                    f"pyautogen[{model.data.api_type}]=={autogen_version}"
                 )
         return sorted(list(requirements))
 

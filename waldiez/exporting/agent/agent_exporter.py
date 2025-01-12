@@ -37,8 +37,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
         agent_names: Dict[str, str],
         model_names: Dict[str, str],
         skill_names: Dict[str, str],
-        all_chats: List[WaldiezChat],
-        chat_names: Dict[str, str],
+        chats: Tuple[List[WaldiezChat], Dict[str, str]],
         is_async: bool,
         group_chat_members: List[WaldiezAgent],
         for_notebook: bool,
@@ -78,8 +77,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
         self.skill_names = skill_names
         self.arguments_resolver = arguments_resolver
         self.group_chat_members = group_chat_members
-        self.chats = all_chats
-        self.chat_names = chat_names
+        self.chats = chats
         self.is_async = is_async
         self._agent_name = agent_names[agent.id]
         self._agent_class = get_agent_class_name(self.agent)
@@ -109,8 +107,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
             agent=self.agent,
             agent_names=self.agent_names,
             skill_names=self.skill_names,
-            all_chats=self.chats,
-            chat_names=self.chat_names,
+            chats=self.chats,
             is_async=self.is_async,
             serializer=self.serializer,
             string_escape=self.string_escape,

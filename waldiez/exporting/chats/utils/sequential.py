@@ -187,7 +187,7 @@ def _get_chat_dict_string(
             chat_string += "\n" + f'{tab}    "{key}": "{value}",'
         elif isinstance(value, dict):
             chat_string += (
-                "\n" f'{tab}    "{key}": {serializer(value, tabs=tabs + 1)},'
+                "\n" + f'{tab}    "{key}": {serializer(value, tabs=tabs + 1)},'
             )
         else:
             chat_string += "\n" + f'{tab}    "{key}": {value},'

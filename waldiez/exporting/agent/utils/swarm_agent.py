@@ -30,8 +30,7 @@ def get_swarm_extras(
     agent: WaldiezAgent,
     agent_names: Dict[str, str],
     skill_names: Dict[str, str],
-    all_chats: List[WaldiezChat],
-    chat_names: Dict[str, str],
+    chats: Tuple[List[WaldiezChat], Dict[str, str]],
     is_async: bool,
     serializer: Callable[..., str],
     string_escape: Callable[[str], str],
@@ -46,10 +45,8 @@ def get_swarm_extras(
         A mapping of agent IDs to agent names.
     skill_names : Dict[str, str]
         A mapping of skill IDs to skill names.
-    all_chats : List[WaldiezChat]
-        The list of all chats.
-    chat_names : Dict[str, str]
-        A mapping of chat IDs to chat names.
+    chats : Tuple[List[WaldiezChat], Dict[str, str]]
+        The list of all chats and the mapping of chat IDs to chat names.
     is_async : bool
         Whether the chat is asynchronous.
     serializer : Callable[..., str]
@@ -81,8 +78,8 @@ def get_swarm_extras(
     before_registration, after_agent = get_agent_handoff_registrations(
         agent=agent,
         agent_names=agent_names,
-        all_chats=all_chats,
-        chat_names=chat_names,
+        all_chats=chats[0],
+        chat_names=chats[1],
         is_async=is_async,
         serializer=serializer,
         string_escape=string_escape,
@@ -288,7 +285,7 @@ def get_agent_after_work_handoff(
     )
     registration = f"{agent_name}.register_hand_off({recipient})"
     if recipient_type == "callable" and function_content:
-        before_agent += f"\n{function_content}\n"
+        before_agent += "\n" + function_content + "\n"
     return registration, before_agent
 
 
@@ -386,7 +383,7 @@ def _get_agent_on_condition_handoff_to_agent(
         before_agent += "\n" + available_function + "\n"
     on_condition += "    )"
     registration += (
-        f"{agent_name}.register_hand_off(" + "\n" + f"{on_condition}" "\n)"
+        f"{agent_name}.register_hand_off(" + "\n" + f"{on_condition}\n)"
     )
     return before_agent, registration
 

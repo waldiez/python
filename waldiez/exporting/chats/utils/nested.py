@@ -117,7 +117,8 @@ def get_nested_chat_trigger_agent_names(
         The trigger agent names.
     """
     agents = [agent_names[agent_id] for agent_id in nested_chat.triggered_by]
-    trigger_string = f'{[", ".join(agents)]}'
+    agents_string = [", ".join(agents)]
+    trigger_string = f"{agents_string}"
     return trigger_string.replace("'", '"')
 
 
