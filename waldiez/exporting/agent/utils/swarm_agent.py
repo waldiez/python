@@ -383,7 +383,7 @@ def _get_agent_on_condition_handoff_to_agent(
         before_agent += "\n" + available_function + "\n"
     on_condition += "    )"
     registration += (
-        f"{agent_name}.register_hand_off(" + "\n" + f"{on_condition}\n)"
+        f"{agent_name}.register_hand_off(" + "\n" + on_condition + "\n)"
     )
     return before_agent, registration
 
@@ -422,15 +422,15 @@ def _get_agent_on_condition_handoff_to_nested_chat(
     chat_queue_var_name = f"{agent_names[agent.id]}_handoff_nested_chat_queue"
     if extra_methods:
         before_agent += "\n".join(extra_methods) + "\n"
-    before_agent += f"{chat_queue_var_name} = {chat_queue}\n"
+    before_agent += f"{chat_queue_var_name} = {chat_queue} " + "\n"
     on_condition = (
         "    ON_CONDITION(\n"
-        f"        target={{\n"
-        f"            'chat_queue': {chat_queue_var_name},\n"
-        f"            'config': None,\n"
-        f"            'reply_func_from_nested_chats': None,\n"
-        f"            'use_async': {is_async},\n"
-        f"        }}," + "\n"
+        "        target={\n"
+        f"            'chat_queue': {chat_queue_var_name}," + "\n"
+        "            'config': None,\n"
+        "            'reply_func_from_nested_chats': None,\n"
+        f"            'use_async': {is_async}," + "\n"
+        "        }," + "\n"
         f'        condition="{condition_string}",' + "\n"
     )
     if available and available_function:

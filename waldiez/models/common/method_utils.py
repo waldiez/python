@@ -158,9 +158,9 @@ def generate_function(
         function_string += "\n"
         for arg, arg_type in zip(function_args, function_types[0]):
             if types_as_comments:
-                function_string += f"    {arg},  # type: {arg_type}\n"
+                function_string += f"    {arg},  # type: {arg_type}" + "\n"
             else:
-                function_string += f"    {arg}: {arg_type},\n"
+                function_string += f"    {arg}: {arg_type}," + "\n"
         function_string += ")"
     if types_as_comments:
         function_string += ":\n"

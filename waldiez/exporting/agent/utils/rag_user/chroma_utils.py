@@ -36,7 +36,7 @@ def _get_chroma_client_string(agent: WaldiezRagUser) -> Tuple[str, str]:
         local_path = Path(agent.retrieve_config.db_config.local_storage_path)
         client_str += (
             "PersistentClient(\n"
-            f'    path=r"{local_path}",\n'
+            f'    path=r"{local_path}",' + "\n"
             "    settings=Settings(anonymized_telemetry=False),\n"
             ")"
         )

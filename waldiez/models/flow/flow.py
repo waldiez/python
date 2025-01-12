@@ -362,23 +362,29 @@ class WaldiezFlow(WaldiezBase):
         Tuple[List[WaldiezAgent], Optional[WaldiezAgent]]
             The list of swarm chat members and the user agent if any.
         """
-        members: List[WaldiezAgent] = []
-        user_agent: Optional[WaldiezAgent] = None
         if initial_agent.agent_type != "swarm":
-            return members, user_agent
-        members.append(initial_agent)
+            return [], None
+        members: List[WaldiezAgent] = [initial_agent]
+        user_agent: Optional[WaldiezAgent] = None
+        visited_agents = set()
+        visited_agents.add(initial_agent.id)
         connections = self.get_agent_connections(
             initial_agent.id,
             all_chats=True,
         )
-        for member_id in connections:
-            member = self.get_agent_by_id(member_id)
-            is_user = member.agent_type in ("user", "rag_user")
-            if is_user and not user_agent:
-                user_agent = member
-        for agent in self.data.agents.members:
-            if agent.agent_type == "swarm" and agent.id != initial_agent.id:
+        while connections:
+            agent_id = connections.pop()
+            if agent_id in visited_agents:
+                continue
+            agent = self.get_agent_by_id(agent_id)
+            visited_agents.add(agent_id)
+            if agent.agent_type == "swarm":
                 members.append(agent)
+                connections.extend(
+                    self.get_agent_connections(agent_id, all_chats=True)
+                )
+            if agent.agent_type in ["user", "rag_user"] and not user_agent:
+                user_agent = agent
         return members, user_agent
 
     def _validate_agent_connections(self) -> None:

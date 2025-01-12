@@ -13,11 +13,11 @@ def test_get_pylint_ignore_comment() -> None:
     no_rules_string = ",".join(PYLINT_RULES)
     assert (
         get_pylint_ignore_comment(False)
-        == f"# pylint: disable={no_rules_string}\n"
+        == f"# pylint: disable={no_rules_string}" + "\n"
     )
     assert (
         get_pylint_ignore_comment(True)
-        == f"\n# pylint: disable={no_rules_string}\n"
+        == "\n" + f"# pylint: disable={no_rules_string}" + "\n"
     )
     assert get_pylint_ignore_comment(
         True, ["invalid-name", "line-too-long"]

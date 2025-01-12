@@ -85,7 +85,7 @@ def get_agent_llm_config_arg(
     """
     tab = "    " * tabs if tabs > 0 else ""
     if not agent.data.model_ids:
-        return f"{tab}llm_config=False,\n"
+        return f"{tab}llm_config=False," + "\n"
     content = f"{tab}llm_config=" + "{\n"
     content += f'{tab}    "config_list": ['
     got_at_least_one_model = False
@@ -96,7 +96,7 @@ def get_agent_llm_config_arg(
             content += "\n" + f"{tab}        {model_name}_llm_config,"
             got_at_least_one_model = True
     if not got_at_least_one_model:  # pragma: no cover
-        return f"{tab}llm_config=False,\n"
+        return f"{tab}llm_config=False," + "\n"
     content += "\n" + f"{tab}    ]," + "\n"
     content += tab + "},\n"
     return content
@@ -151,7 +151,7 @@ def get_{flow_name}_model_api_key(model_name: str) -> str:
     str
         The api key for the model.
     """
-    entry = __{flow_name_upper}_MODEL_API_KEYS__.get(model_name, "")
+    entry = __{flow_name_upper}_MODEL_API_KEYS__.get(model_name, {{}})
     if not entry:
         return ""
     env_key = entry.get("env_key", "")
