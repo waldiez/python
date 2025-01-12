@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Flow Exporter class.
 
@@ -409,6 +409,8 @@ class FlowExporter(BaseExporter, ExporterMixin):
                 agent_names=self.agent_names,
                 model_names=self.model_names,
                 skill_names=self.skill_names,
+                chats=(self.chats, self.chat_names),
+                is_async=self.waldiez.is_async,
                 for_notebook=self.for_notebook,
                 output_dir=self.output_dir,
                 group_chat_members=group_chat_members,

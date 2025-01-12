@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # Requirement:
 # The (final) coverage report must be in the `coverage` directory.
@@ -50,6 +50,12 @@ def run_pytest() -> None:
             "--cov-report=term-missing",
             "--cov-report",
             "lcov:coverage/lcov.info",
+            "--cov-report",
+            "html:coverage/html",
+            "--cov-report",
+            "xml:coverage/coverage.xml",
+            "--junitxml=coverage/xunit.xml",
+            "tests",
         ],
         check=True,
         cwd=ROOT_DIR,

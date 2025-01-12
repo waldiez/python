@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # https://docs.ag2.ai/docs/reference/agentchat/contrib/swarm_agent
 """Swarm agent data."""
@@ -29,7 +29,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         called to update the agent's state before it replies. Each function
         is called when the agent is selected and before it speaks.
 
-    hand_offs : List[Union[WaldiezSwarmOnCondition, WaldiezSwarmAfterWork]]
+    handoffs : List[Union[WaldiezSwarmOnCondition, WaldiezSwarmAfterWork]]
         A list of hand offs to register.
 
     Notes
@@ -63,11 +63,10 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
             default_factory=list,
         ),
     ]
-    hand_offs: Annotated[
+    handoffs: Annotated[
         List[Union[WaldiezSwarmOnCondition, WaldiezSwarmAfterWork]],
         Field(
-            title="Hand Offs",
-            alias="handOffs",
+            title="Handoffs",
             description=(
                 "A list of hand offs to register. "
                 "There should only be at most one `AfterWork` per agent"
@@ -78,7 +77,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
     ]
 
     @model_validator(mode="after")
-    def validate_hand_offs(self) -> Self:
+    def validate_handoffs(self) -> Self:
         """Validate the hand offs.
 
         Returns
@@ -93,7 +92,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         """
         after_works = [
             hand_off
-            for hand_off in self.hand_offs
+            for hand_off in self.handoffs
             if isinstance(hand_off, WaldiezSwarmAfterWork)
         ]
         if len(after_works) > 1:
@@ -101,7 +100,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
                 "Each agent should have at most one `AfterWork` "
                 "and (if any) it should be at the end of the list."
             )
-        if after_works and after_works[0] != self.hand_offs[-1]:
-            self.hand_offs.remove(after_works[0])
-            self.hand_offs.append(after_works[0])
+        if after_works and after_works[0] != self.handoffs[-1]:
+            self.handoffs.remove(after_works[0])
+            self.handoffs.append(after_works[0])
         return self

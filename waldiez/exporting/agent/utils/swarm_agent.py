@@ -1,12 +1,15 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=unused-argument
-"""Get the extras of a swarm agent."""
+"""Get the extras for a swarm agent."""
 
-from typing import Callable, Dict, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
+from waldiez.exporting.chats.utils.nested import get_nested_chat_queue
 from waldiez.models import (
     WaldiezAgent,
+    WaldiezAgentNestedChat,
+    WaldiezChat,
     WaldiezSwarmAfterWork,
     WaldiezSwarmAgent,
     WaldiezSwarmOnCondition,
@@ -27,6 +30,9 @@ def get_swarm_extras(
     agent: WaldiezAgent,
     agent_names: Dict[str, str],
     skill_names: Dict[str, str],
+    chats: Tuple[List[WaldiezChat], Dict[str, str]],
+    is_async: bool,
+    serializer: Callable[..., str],
     string_escape: Callable[[str], str],
 ) -> Tuple[str, str, str]:
     """Get the extras of a swarm agent.
@@ -39,6 +45,12 @@ def get_swarm_extras(
         A mapping of agent IDs to agent names.
     skill_names : Dict[str, str]
         A mapping of skill IDs to skill names.
+    chats : Tuple[List[WaldiezChat], Dict[str, str]]
+        The list of all chats and the mapping of chat IDs to chat names.
+    is_async : bool
+        Whether the chat is asynchronous.
+    serializer : Callable[..., str]
+        The serializer to get the string representation of an object.
     string_escape : Callable[[str], str]
         The function to escape the string quotes and newlines.
     Returns
@@ -66,6 +78,10 @@ def get_swarm_extras(
     before_registration, after_agent = get_agent_handoff_registrations(
         agent=agent,
         agent_names=agent_names,
+        all_chats=chats[0],
+        chat_names=chats[1],
+        is_async=is_async,
+        serializer=serializer,
         string_escape=string_escape,
     )
     before_agent += before_registration
@@ -99,8 +115,8 @@ def get_function_arg(
             arg_string += "\n" + f"{tab}{tab}{skill_name},"
             added_skills = True
     if added_skills:
-        arg_string += "\n"
-    arg_string += f"{tab}],\n"
+        arg_string += "\n" + tab
+    arg_string += "],\n"
     return arg_string
 
 
@@ -164,14 +180,18 @@ def get_update_agent_state_before_reply_arg(
                 added_functions = True
                 arg_string += "\n" + f"{tab}{tab}{skill_name},"
     if added_functions:
-        arg_string = arg_string + "\n"
-    arg_string += f"{tab}],\n"
+        arg_string = arg_string + "\n" + tab
+    arg_string += "],\n"
     return arg_string, before_agent
 
 
 def get_agent_handoff_registrations(
     agent: WaldiezSwarmAgent,
     agent_names: Dict[str, str],
+    all_chats: List[WaldiezChat],
+    chat_names: Dict[str, str],
+    is_async: bool,
+    serializer: Callable[..., str],
     string_escape: Callable[[str], str],
 ) -> Tuple[str, str]:
     """Get the agent handoff registrations of a swarm agent.
@@ -182,6 +202,14 @@ def get_agent_handoff_registrations(
         The swarm agent to get the agent handoff registrations for.
     agent_names : Dict[str, str]
         A mapping of agent IDs to agent names.
+    all_chats : List[WaldiezChat]
+        The list of all chats.
+    chat_names : Dict[str, str]
+        A mapping of chat IDs to chat names.
+    is_async : bool
+        Whether the chat is asynchronous.
+    serializer : Callable[..., str]
+        The serializer to get the string representation of an object.
     string_escape : Callable[[str], str]
         The function to escape the string quotes and newlines.
 
@@ -198,7 +226,7 @@ def get_agent_handoff_registrations(
     agent_name = agent_names[agent.id]
     registrations = []
     before_agent = ""
-    for hand_off in agent.hand_offs:
+    for hand_off in agent.handoffs:
         if isinstance(hand_off, WaldiezSwarmAfterWork):
             # AFTER_WORK
             registration, before_handoff = get_agent_after_work_handoff(
@@ -211,9 +239,14 @@ def get_agent_handoff_registrations(
         else:
             # ON_CONDITION
             registration, before_handoff = get_agent_on_condition_handoff(
+                agent=agent,
                 hand_off=hand_off,
                 agent_names=agent_names,
                 agent_name=agent_name,
+                all_chats=all_chats,
+                chat_names=chat_names,
+                is_async=is_async,
+                serializer=serializer,
                 string_escape=string_escape,
             )
             if registration:
@@ -252,26 +285,41 @@ def get_agent_after_work_handoff(
     )
     registration = f"{agent_name}.register_hand_off({recipient})"
     if recipient_type == "callable" and function_content:
-        before_agent += f"\n{function_content}\n"
+        before_agent += "\n" + function_content + "\n"
     return registration, before_agent
 
 
 def get_agent_on_condition_handoff(
+    agent: WaldiezSwarmAgent,
     hand_off: WaldiezSwarmOnCondition,
     agent_names: Dict[str, str],
     agent_name: str,
+    all_chats: List[WaldiezChat],
+    chat_names: Dict[str, str],
+    is_async: bool,
+    serializer: Callable[..., str],
     string_escape: Callable[[str], str],
 ) -> Tuple[str, str]:
     """Get the agent's on condition hand off registration.
 
     Parameters
     ----------
+    agent : WaldiezSwarmAgent
+        The agent to get the registration for.
     hand_off : WaldiezSwarmAfterWork
         The hand off to get the registration for.
     agent_names : Dict[str, str]
         A mapping of agent IDs to agent names.
     agent_name : str
         The name of the agent to register the hand off.
+    all_chats : List[WaldiezChat]
+        The list of all chats.
+    chat_names : Dict[str, str]
+        A mapping of chat IDs to chat names.
+    is_async : bool
+        Whether the chat is asynchronous.
+    serializer : Callable[..., str]
+        The serializer to get the string representation of an object.
     string_escape : Callable[[str], str]
         The function to escape the string quotes and newlines.
 
@@ -282,24 +330,115 @@ def get_agent_on_condition_handoff(
     """
     before_agent = ""
     registration = ""
-    target_type = hand_off.target_type
     available, available_function = hand_off.get_available(
         name_suffix=agent_name,
     )
-    if target_type == "agent" and isinstance(hand_off.target, str):
+    if hand_off.target_type == "agent" and isinstance(hand_off.target, str):
         recipient = agent_names[hand_off.target]
-        condition_string = string_escape(hand_off.condition)
-        on_condition = (
-            "    ON_CONDITION(\n"
-            f"        target={recipient}," + "\n"
-            f'        condition="{condition_string}",' + "\n"
+        results = _get_agent_on_condition_handoff_to_agent(
+            recipient=recipient,
+            agent_name=agent_name,
+            available=available,
+            available_function=available_function,
         )
-        if available and available_function:
-            on_condition += f"        available={available},\n"
-            before_agent += f"\n{available_function}\n"
-        on_condition += "    )"
-        registration += (
-            f"{agent_name}.register_hand_off(" "\n" f"{on_condition}" "\n)"
+        before_agent += results[0]
+        registration = results[1]
+    # else: # target_type == "nested_chat"
+    if hand_off.target_type == "nested_chat" and isinstance(
+        hand_off.target, dict
+    ):
+        results = _get_agent_on_condition_handoff_to_nested_chat(
+            agent=agent,
+            target=hand_off.target,
+            agent_names=agent_names,
+            available=available,
+            available_function=available_function,
+            all_chats=all_chats,
+            chat_names=chat_names,
+            is_async=is_async,
+            serializer=serializer,
+            string_escape=string_escape,
         )
-    # else: TODO: handle nested chats.
+        registration = results[0]
+        before_agent += results[1]
     return registration, before_agent
+
+
+def _get_agent_on_condition_handoff_to_agent(
+    recipient: str,
+    agent_name: str,
+    available: str,
+    available_function: str,
+) -> Tuple[str, str]:
+    before_agent = ""
+    registration = ""
+    condition_string = f"Transfer to {recipient}"
+    on_condition = (
+        "    ON_CONDITION(\n"
+        f"        target={recipient}," + "\n"
+        f'        condition="{condition_string}",' + "\n"
+    )
+    if available and available_function:
+        on_condition += f"        available={available}," + "\n"
+        before_agent += "\n" + available_function + "\n"
+    on_condition += "    )"
+    registration += (
+        f"{agent_name}.register_hand_off(" + "\n" + f"{on_condition}\n)"
+    )
+    return before_agent, registration
+
+
+# pylint: disable=too-many-locals
+def _get_agent_on_condition_handoff_to_nested_chat(
+    target: Dict[str, Any],
+    agent: WaldiezAgent,
+    agent_names: Dict[str, str],
+    available: str,
+    available_function: str,
+    all_chats: List[WaldiezChat],
+    chat_names: Dict[str, str],
+    is_async: bool,
+    serializer: Callable[..., str],
+    string_escape: Callable[[str], str],
+) -> Tuple[str, str]:
+    try:
+        nested_chat = WaldiezAgentNestedChat.model_validate(target)
+    except BaseException:  # pylint: disable=broad-except
+        return "", ""
+    chat_queue, extra_methods = get_nested_chat_queue(
+        nested_chat=nested_chat,
+        agent=agent,
+        agent_names=agent_names,
+        chat_names=chat_names,
+        all_chats=all_chats,
+        serializer=serializer,
+        string_escape=string_escape,
+    )
+    if not chat_queue:
+        return "", ""
+    before_agent = ""
+    registration = ""
+    condition_string = "Transfer to nested chat"
+    chat_queue_var_name = f"{agent_names[agent.id]}_handoff_nested_chat_queue"
+    if extra_methods:
+        before_agent += "\n".join(extra_methods) + "\n"
+    before_agent += f"{chat_queue_var_name} = {chat_queue}\n"
+    on_condition = (
+        "    ON_CONDITION(\n"
+        f"        target={{\n"
+        f"            'chat_queue': {chat_queue_var_name},\n"
+        f"            'config': None,\n"
+        f"            'reply_func_from_nested_chats': None,\n"
+        f"            'use_async': {is_async},\n"
+        f"        }}," + "\n"
+        f'        condition="{condition_string}",' + "\n"
+    )
+    if available and available_function:
+        on_condition += f"        available={available}," + "\n"
+        before_agent += "\n" + available_function + "\n"
+    on_condition += "    )"
+    registration += (
+        f"{agent_names[agent.id]}.register_hand_off(" + "\n" + f"{on_condition}"
+        "\n)"
+    )
+    return before_agent, registration

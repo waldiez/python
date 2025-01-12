@@ -11,7 +11,7 @@ requires-python = '>=3.10,<3.13'
 dynamic = ["version"]
 classifiers = [
   "Development Status :: 3 - Alpha",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies =[
     "asyncer==0.0.8",
-    "pyautogen==0.6.1",
+    "pyautogen==0.7.0",
     "jupytext",
     "pydantic>=2.0",
     # together(ag2 extra) 1.2.0 depends on typer<0.13 and >=0.9
@@ -61,7 +61,7 @@ dev = [
     'pydocstyle==6.3.0',
     'pylint==3.3.3',
     'python-dotenv==1.0.1',
-    'ruff==0.8.5',
+    'ruff==0.9.1',
     'types-PyYAML==6.0.12.20241230',
     'yamllint==1.35.1',
     'toml; python_version <= "3.10"',
@@ -93,26 +93,27 @@ dev = [
 ag2_extras =[
     'pgvector>=0.3.6',
     'psycopg[binary]>=3.2.3',
-    'pyautogen[anthropic]==0.6.1',
-    'pyautogen[bedrock]==0.6.1',
-    'autogen[captainagent]==0.6.1; platform_system == "Linux"',
-    'pyautogen[gemini]==0.6.1',
-    'pyautogen[groq]==0.6.1',
-    'pyautogen[lmm]==0.6.1',
-    'pyautogen[mistral]==0.6.1',
-    'pyautogen[neo4j]==0.6.1',
-    'pyautogen[retrievechat-mongodb]==0.6.1',
-    'pyautogen[retrievechat-pgvector]==0.6.1',
-    'pyautogen[retrievechat-qdrant]==0.6.1; python_version < "3.13"',
+    'pyautogen[anthropic]==0.7.0',
+    'pyautogen[bedrock]==0.7.0',
+    'autogen[captainagent]==0.7.0; platform_system == "Linux"',
+    'pyautogen[gemini]==0.7.0',
+    'pyautogen[groq]==0.7.0',
+    'pyautogen[lmm]==0.7.0',
+    'pyautogen[mistral]==0.7.0',
+    'pyautogen[neo4j]==0.7.0',
+    'pyautogen[retrievechat-mongodb]==0.7.0',
+    'pyautogen[retrievechat-pgvector]==0.7.0',
+    'pyautogen[retrievechat-qdrant]==0.7.0; python_version < "3.13"',
     'qdrant-client[fastembed]; python_version >= "3.13"',
-    'pyautogen[retrievechat]==0.6.1',
-    'pyautogen[together]==0.6.1',
-    'pyautogen[together]==0.6.1',
-    'pyautogen[websurfer]==0.6.1',
+    'pyautogen[retrievechat]==0.7.0',
+    'pyautogen[together]==0.7.0',
+    'pyautogen[together]==0.7.0',
+    'pyautogen[websurfer]==0.7.0',
     'pymongo==4.10.1',
 ]
 test = [
     'pytest==8.3.4',
+    'pytest-asyncio==0.25.2',
     'pytest-cov==6.0.0',
     'pytest-html==4.1.1',
     'pytest-sugar==1.0.0',
@@ -312,6 +313,8 @@ line-ending = "lf"
 
 # pytest
 [tool.pytest.ini_options]
+asyncio_mode = 'auto'
+asyncio_default_fixture_loop_scope='session'
 filterwarnings = [
   # DeprecationWarning:
   #   Type google._upb._message.MessageMapContainer uses PyType_Spec with a metaclass that has custom tp_new.

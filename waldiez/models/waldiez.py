@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez
 
@@ -243,7 +243,7 @@ class Waldiez:
         for model in self.models:
             if model.data.api_type in models_with_additional_requirements:
                 requirements.add(
-                    f"pyautogen[{model.data.api_type}]==" f"{autogen_version}"
+                    f"pyautogen[{model.data.api_type}]=={autogen_version}"
                 )
         return sorted(list(requirements))
 

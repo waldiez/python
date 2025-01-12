@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=too-many-locals
 """Nested chats exporting."""
@@ -117,7 +117,8 @@ def get_nested_chat_trigger_agent_names(
         The trigger agent names.
     """
     agents = [agent_names[agent_id] for agent_id in nested_chat.triggered_by]
-    trigger_string = f'{[", ".join(agents)]}'
+    agents_string = [", ".join(agents)]
+    trigger_string = f"{agents_string}"
     return trigger_string.replace("'", '"')
 
 
@@ -222,7 +223,8 @@ def get_nested_chat_queue(
     Returns
     -------
     Tuple[str, List[str]]
-        The nested chat queue and the methods to include.
+        The nested chat queue and the methods to include
+        (methods: message string and method name if the message is a method).
     """
     message_methods_to_include = []
     chat_messages_str = "[\n"

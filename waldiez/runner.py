@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Run a waldiez flow.
 The flow is first converted to an autogen flow with agents, chats and skills.
@@ -273,7 +273,9 @@ class WaldiezRunner:
             If the workflow is already running.
         """
         if self.waldiez.is_async:
-            return syncify(self.a_run)(output_path, uploads_root)
+            return syncify(self.a_run, raise_sync_error=False)(
+                output_path, uploads_root
+            )
         if self._running is True:
             raise RuntimeError("Workflow already running")
         self._running = True

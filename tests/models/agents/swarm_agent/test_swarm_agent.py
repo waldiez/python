@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.swarm.WaldiezSwarmAgent."""
 
@@ -64,7 +64,7 @@ def custom_update_system_message(agent, messages):
             update_system_message1,
             update_system_message2,
         ],
-        hand_offs=[on_condition1, on_condition2, after_work],
+        handoffs=[on_condition1, on_condition2, after_work],
     )
     agent = WaldiezSwarmAgent(
         id="wa-1",

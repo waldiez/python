@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.exporting.chats.ChatsExporter with a swarm chat."""
 
@@ -268,9 +268,7 @@ def callable_message(sender, recipient, context):
     assert generated == expected
     chat_imports = exporter.get_imports()
     assert chat_imports
-    assert chat_imports[0][0] == (
-        "from autogen.agentchat.contrib.swarm import initiate_swarm_chat"
-    )
+    assert chat_imports[0][0] == ("from autogen import initiate_swarm_chat")
     with pytest.raises(ValueError):
         # no swarm agent in chat
         export_swarm_chat(
@@ -318,7 +316,7 @@ def callable_message(sender, recipient, context):
     messages_string = get_swarm_messages_string(
         chat=chat4, string_escape=exporter.string_escape
     )
-    assert messages_string == ""
+    assert messages_string == '"Start the chat."'
     agents_string, user_string = get_swarm_agents_strings(
         swarm_members=swarm_members,
         sender=agent1,

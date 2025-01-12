@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez Message Model."""
 
@@ -103,6 +103,42 @@ class WaldiezChatMessage(WaldiezBase):
     def content_body(self) -> Optional[str]:
         """Get the content body."""
         return self._content_body
+
+    @model_validator(mode="after")
+    def validate_context_vars(self) -> Self:
+        """Try to detect bools nulls and numbers from the context values.
+
+        Returns
+        -------
+        WaldiezChatMessage
+            The validated instance.
+        """
+        for key, value in self.context.items():
+            if isinstance(value, str):
+                if value.lower() == "true":
+                    self.context[key] = True
+                elif value.lower() == "false":
+                    self.context[key] = False
+                elif value.lower() in ["null", "none"]:
+                    self.context[key] = None
+                else:
+                    self.context[key] = self._number_or_string(value)
+        return self
+
+    @staticmethod
+    def _number_or_string(value: Any) -> Any:
+        try:
+            int_value = int(value)
+            if str(int_value) == value:
+                return int_value
+        except ValueError:
+            try:
+                float_value = float(value)
+                if str(float_value) == value:
+                    return float_value
+            except ValueError:
+                pass
+        return value
 
     @model_validator(mode="after")
     def validate_content(self) -> Self:

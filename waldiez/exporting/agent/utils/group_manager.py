@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Export group manager and group chat to string."""
 
@@ -179,9 +179,8 @@ def _get_speakers_selection_repeat_string(
     speakers_string = ""
     if isinstance(agent.data.speakers.allow_repeat, bool):
         speakers_string += (
-            "    allow_repeat_speaker="
-            f"{agent.data.speakers.allow_repeat},"
-            "\n"
+            f"    allow_repeat_speaker={agent.data.speakers.allow_repeat},"
+            + "\n"
         )
     elif isinstance(agent.data.speakers.allow_repeat, list):
         # get the names of the agents

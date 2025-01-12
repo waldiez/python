@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Helpers for getting a flow."""
 
@@ -476,7 +476,7 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
                 "ws-1",
             ],
             # we need to check if use this or get this from the chats
-            hand_offs=[
+            handoffs=[
                 WaldiezSwarmOnCondition(
                     target="wa-1",
                     target_type="agent",
@@ -526,7 +526,7 @@ def get_chats(count: int = 4) -> List[WaldiezChat]:
     chats = []
     custom_message = (
         "def callable_message(sender, recipient, context):\n"
-        '    return "hello!"'
+        '    return "hello there!!"'
     )
     for index in range(count):
         chat_id = f"wc-{index + 1}"

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Get the imports needed for the agent."""
 
@@ -41,7 +41,8 @@ def get_agent_imports(agent_class: str) -> Set[str]:
             "AFTER_WORK, "
             "ON_CONDITION, "
             "AfterWorkOption, "
-            "SwarmAgent"
+            "SwarmAgent, "
+            "SwarmResult"
         )
     else:
         imports.add("from autogen import ConversableAgent")

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=line-too-long
@@ -134,9 +134,9 @@ class ChatsExporter(BaseExporter, ExporterMixin):
         if len(self.main_chats) == 1:
             _, sender, recipient = self.main_chats[0]
             if sender.agent_type == "swarm" or recipient.agent_type == "swarm":
-                import_string = "from autogen.agentchat.contrib.swarm import initiate_swarm_chat"
+                import_string = "from autogen import initiate_swarm_chat"
                 if self.is_async:
-                    import_string = "from autogen.agentchat.contrib.swarm import a_initiate_swarm_chat"
+                    import_string = "from autogen import a_initiate_swarm_chat"
                 return [(import_string, ImportPosition.THIRD_PARTY)]
             # no additional imports, it is `sender.initiate_chat(....)`
             return None

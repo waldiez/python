@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Swarm after work model.
 
@@ -83,7 +83,7 @@ class WaldiezSwarmAfterWork(WaldiezBase):
                 "If 'callable', it should have the signature: "
                 "def custom_after_work("
                 "    last_speaker: SwarmAgent,"
-                "    messages: List[dict],"
+                "    messages: List[Dict[str, Any]],"
                 "    groupchat: GroupChat,"
                 ") -> Union[AfterWorkOption, SwarmAgent, str]:"
             ),

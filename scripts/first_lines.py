@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 
 # pylint: disable=broad-except,too-many-try-statements
@@ -14,7 +14,7 @@ from typing import List, Tuple
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
 START_YEAR = 2024
-LICENSE_LINE = "# SPDX-License-Identifier: MIT."
+LICENSE_LINE = "# SPDX-License-Identifier: Apache-2.0."
 HOLDER = "Waldiez and contributors."
 DIRECTORIES_TO_SCAN = [
     str(ROOT_DIR / "waldiez"),

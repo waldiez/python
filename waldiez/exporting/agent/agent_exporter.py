@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=too-many-return-statements,too-many-instance-attributes
 """Export agents."""
@@ -6,7 +6,7 @@
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from waldiez.models import WaldiezAgent
+from waldiez.models import WaldiezAgent, WaldiezChat
 
 from ..base import (
     AgentPosition,
@@ -37,6 +37,8 @@ class AgentExporter(BaseExporter, ExporterMixin):
         agent_names: Dict[str, str],
         model_names: Dict[str, str],
         skill_names: Dict[str, str],
+        chats: Tuple[List[WaldiezChat], Dict[str, str]],
+        is_async: bool,
         group_chat_members: List[WaldiezAgent],
         for_notebook: bool,
         arguments_resolver: Callable[[WaldiezAgent], List[str]],
@@ -54,6 +56,12 @@ class AgentExporter(BaseExporter, ExporterMixin):
             The model ids to names mapping.
         skill_names : Dict[str, str]
             The skill ids to names mapping.
+        all_chats : List[WaldiezChat]
+            All the chats in the flow.
+        chat_names : Dict[str, str]
+            The chat ids to names mapping.
+        is_async : bool
+            Whether the whole flow is async.
         for_notebook : bool
             Whether the exporter is for a notebook.
         output_dir : Optional[Union[str, Path]], optional
@@ -69,6 +77,8 @@ class AgentExporter(BaseExporter, ExporterMixin):
         self.skill_names = skill_names
         self.arguments_resolver = arguments_resolver
         self.group_chat_members = group_chat_members
+        self.chats = chats
+        self.is_async = is_async
         self._agent_name = agent_names[agent.id]
         self._agent_class = get_agent_class_name(self.agent)
         # content, argument, import
@@ -97,6 +107,9 @@ class AgentExporter(BaseExporter, ExporterMixin):
             agent=self.agent,
             agent_names=self.agent_names,
             skill_names=self.skill_names,
+            chats=self.chats,
+            is_async=self.is_async,
+            serializer=self.serializer,
             string_escape=self.string_escape,
         )
         # before_agent, termination_arg

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Utility functions for exporting sequential chats."""
 
@@ -187,7 +187,7 @@ def _get_chat_dict_string(
             chat_string += "\n" + f'{tab}    "{key}": "{value}",'
         elif isinstance(value, dict):
             chat_string += (
-                "\n" f'{tab}    "{key}": {serializer(value, tabs=tabs + 1)},'
+                "\n" + f'{tab}    "{key}": {serializer(value, tabs=tabs + 1)},'
             )
         else:
             chat_string += "\n" + f'{tab}    "{key}": {value},'

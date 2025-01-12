@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Get the standard imports for the flow exporter."""
 
@@ -122,7 +122,7 @@ def get_the_imports_string(
     if is_async:
         final_string += "\nimport anyio"
     if got_import_autogen:
-        final_string += "\nimport autogen\n"
+        final_string += "\nimport autogen  # type: ignore\n"
     if autogen_imports:
         final_string += "\n".join(autogen_imports) + "\n"
     if third_party_imports:

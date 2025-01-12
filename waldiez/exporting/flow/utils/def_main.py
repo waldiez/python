@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Get the main function."""
 
@@ -53,7 +53,7 @@ def get_def_main(flow_chats: str, is_async: bool) -> str:
     content += "        pprint(asdict(result))\n\n\n"
     content += 'if __name__ == "__main__":\n'
     if is_async:
-        content += "    anyio.run(call_main())\n"
+        content += "    anyio.run(call_main)\n"
     else:
         content += "    call_main()\n"
     return content

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT.
+# SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=line-too-long
@@ -43,5 +43,5 @@ def test_get_agent_imports() -> None:
     }
     assert swarm_agent_imports == {
         "import autogen",
-        "from autogen import AFTER_WORK, ON_CONDITION, AfterWorkOption, SwarmAgent",
+        "from autogen import AFTER_WORK, ON_CONDITION, AfterWorkOption, SwarmAgent, SwarmResult",
     }
