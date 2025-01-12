@@ -69,7 +69,7 @@ def set_version(version_string: str) -> None:
     found_version = False
     for index, line in enumerate(lines):
         if line.startswith("__version__"):
-            lines[index] = f'__version__ = "{new_version}"\n'
+            lines[index] = f'__version__ = "{new_version}"' + "\n"
             found_version = True
             break
     if not found_version:
@@ -109,9 +109,9 @@ def update_extras(version_string: str) -> None:
         lines = file.readlines()
     for index, line in enumerate(lines):
         if "waldiez_studio" in line:
-            lines[index] = f'    "waldiez_studio=={version_string}",\n'
+            lines[index] = f'    "waldiez_studio=={version_string}",' + "\n"
         elif "waldiez_jupyter" in line:
-            lines[index] = f'    "waldiez_jupyter=={version_string}",\n'
+            lines[index] = f'    "waldiez_jupyter=={version_string}",' + "\n"
     with open(pyproject_toml_path, "w", encoding="utf-8", newline="\n") as file:
         file.writelines(lines)
 

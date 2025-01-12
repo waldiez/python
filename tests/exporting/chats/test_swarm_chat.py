@@ -137,7 +137,7 @@ def custom_after_work(last_speaker, messages, groupchat):
         data=WaldiezChatData(
             name="chat3",
             description="A simple chat.",
-            source="wa-2",
+            source="wa-3",
             target="wa-4",
             position=-1,
             order=-1,
@@ -145,7 +145,7 @@ def custom_after_work(last_speaker, messages, groupchat):
             message=WaldiezChatMessage(
                 type="string",
                 use_carryover=False,
-                content="Hello wa-4 from wa-2!",
+                content="Hello wa-4 from wa-3!",
                 context={},
             ),
             summary=WaldiezChatSummary(
