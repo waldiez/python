@@ -83,7 +83,7 @@ class WaldiezSwarmAfterWork(WaldiezBase):
                 "If 'callable', it should have the signature: "
                 "def custom_after_work("
                 "    last_speaker: SwarmAgent,"
-                "    messages: List[dict],"
+                "    messages: List[Dict[str, Any]],"
                 "    groupchat: GroupChat,"
                 ") -> Union[AfterWorkOption, SwarmAgent, str]:"
             ),

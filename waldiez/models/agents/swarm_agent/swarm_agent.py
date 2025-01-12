@@ -72,7 +72,7 @@ class WaldiezSwarmAgent(WaldiezAgent):
         return self.data.update_agent_state_before_reply
 
     @property
-    def hand_offs(
+    def handoffs(
         self,
     ) -> List[Union[WaldiezSwarmOnCondition, WaldiezSwarmAfterWork]]:
         """Get the hand offs to register.
@@ -82,4 +82,4 @@ class WaldiezSwarmAgent(WaldiezAgent):
         List[str]
             The hand offs to register.
         """
-        return self.data.hand_offs
+        return self.data.handoffs

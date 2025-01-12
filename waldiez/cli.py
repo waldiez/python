@@ -11,6 +11,7 @@ import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
+import anyio
 import typer
 from typing_extensions import Annotated
 
@@ -89,6 +90,10 @@ def run(
     ),
 ) -> None:
     """Run a Waldiez flow."""
+    # swarm without a user,
+    # creates a new user (this has a default code execution with docker)
+    # temp (until we handle/detect docker setup)
+    os.environ["AUTOGEN_USE_DOCKER"] = "0"
     output_path = _get_output_path(output, force)
     with file.open("r", encoding="utf-8") as _file:
         try:
@@ -98,7 +103,10 @@ def run(
             raise typer.Exit(code=1) from error
     waldiez = Waldiez.from_dict(data)
     runner = WaldiezRunner(waldiez)
-    results = runner.run(output_path=output_path)
+    if waldiez.is_async:
+        results = anyio.run(runner.a_run, output_path)
+    else:
+        results = runner.run(output_path=output_path)
     logger = _get_logger()
     if isinstance(results, list):
         logger.info("Results:")

@@ -62,9 +62,9 @@ def test_waldiez_chat_data() -> None:
     assert chat_data.message.content == "Hello there"
     assert chat_data.message.context == {
         "problem": "Solve this task",
-        "solution": "4.2",
-        "alternative_solution": "42",
-        "not_a_solution": "null",
+        "solution": 4.2,
+        "alternative_solution": 42,
+        "not_a_solution": None,
     }
     assert isinstance(chat_data.nested_chat.message, WaldiezChatMessage)
     assert chat_data.nested_chat.message.type == "string"
@@ -185,7 +185,7 @@ def test_waldiez_chat_data_message() -> None:
     assert chat_data.message.content == "text message"
     assert chat_data.message.context == {
         "problem": "Solve this task",
-        "not_a_solution": "null",
+        "not_a_solution": None,
         "n_results": 42,
         "as_list": [1, 2, 3],
     }

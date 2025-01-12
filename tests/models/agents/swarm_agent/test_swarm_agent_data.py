@@ -65,7 +65,7 @@ def test_waldiez_swarm_data() -> None:
             update_system_message2,
             update_system_message3,
         ],
-        hand_offs=[on_condition, after_work],
+        handoffs=[on_condition, after_work],
     )
     assert swarm_data.functions == ["function1", "function2"]
 
@@ -95,5 +95,5 @@ def test_waldiez_swarm_data_invalid() -> None:
                     update_function=("invalid data"),
                 ),
             ],
-            hand_offs=[],
+            handoffs=[],
         )

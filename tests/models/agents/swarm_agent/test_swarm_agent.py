@@ -64,7 +64,7 @@ def custom_update_system_message(agent, messages):
             update_system_message1,
             update_system_message2,
         ],
-        hand_offs=[on_condition1, on_condition2, after_work],
+        handoffs=[on_condition1, on_condition2, after_work],
     )
     agent = WaldiezSwarmAgent(
         id="wa-1",

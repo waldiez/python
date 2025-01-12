@@ -204,6 +204,11 @@ class WaldiezFlow(WaldiezBase):
         # we only keep the ones with order >=0
         # and sort them by this property
         ordered_flow: List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]] = []
+        # if swarm, we only keep the first chat
+        if self.is_swarm_flow:
+            ordered_flow = self._get_swarm_flow()
+        if ordered_flow:
+            return ordered_flow
         for chat in self.data.chats:
             if chat.data.order < 0:
                 continue
@@ -217,6 +222,49 @@ class WaldiezFlow(WaldiezBase):
                 target = self.get_agent_by_id(chat.target)
                 ordered_flow.append((chat, source, target))
         return ordered_flow
+
+    def _get_swarm_flow(
+        self,
+    ) -> List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]]:
+        # valid "first" chat:
+        # - source is a user|rag_user and target is a swarm
+        # - source is a swarm and target is a swarm
+        valid_chats = []
+        for _chat in self.data.chats:
+            target = self.get_agent_by_id(_chat.target)
+            source = self.get_agent_by_id(_chat.source)
+            if (
+                source.agent_type in ["user", "rag_user"]
+                and target.agent_type == "swarm"
+            ):
+                valid_chats.append(_chat)
+            if source.agent_type == "swarm" and target.agent_type == "swarm":
+                valid_chats.append(_chat)
+        if not valid_chats:
+            return []
+        chat: Optional[WaldiezChat] = None
+        # first check the order
+        by_order = sorted(
+            filter(lambda chat: chat.data.order >= 0, valid_chats),
+            key=lambda chat: chat.data.order,
+        )
+        if not by_order:
+            # let's order by position
+            by_position = sorted(
+                valid_chats,
+                key=lambda chat: chat.data.position,
+            )
+            if by_position:
+                chat = by_position[0]
+            else:
+                chat = valid_chats[0]
+        else:
+            chat = by_order[0]
+        if chat:
+            source = self.get_agent_by_id(chat.source)
+            target = self.get_agent_by_id(chat.target)
+            return [(chat, source, target)]
+        return []
 
     def get_agent_connections(
         self, agent_id: str, all_chats: bool = True
@@ -283,6 +331,12 @@ class WaldiezFlow(WaldiezBase):
         Optional[WaldiezAgent]
             The initial swarm agent if found, None otherwise.
         """
+        first_chat = self.ordered_flow[0]
+        if (
+            first_chat[1].agent_type == "swarm"
+            or first_chat[2].agent_type == "swarm"
+        ):
+            return first_chat[1]
         for chat in self.data.chats:
             source_agent = self.get_agent_by_id(chat.source)
             if source_agent.agent_type == "swarm":
@@ -317,13 +371,14 @@ class WaldiezFlow(WaldiezBase):
             initial_agent.id,
             all_chats=True,
         )
-        # only swarm agents in the group
         for member_id in connections:
             member = self.get_agent_by_id(member_id)
-            if member.agent_type == "swarm":
-                members.append(member)
-            if member.agent_type == "user" and not user_agent:
+            is_user = member.agent_type in ("user", "rag_user")
+            if is_user and not user_agent:
                 user_agent = member
+        for agent in self.data.agents.members:
+            if agent.agent_type == "swarm" and agent.id != initial_agent.id:
+                members.append(agent)
         return members, user_agent
 
     def _validate_agent_connections(self) -> None:

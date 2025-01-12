@@ -222,7 +222,8 @@ def get_nested_chat_queue(
     Returns
     -------
     Tuple[str, List[str]]
-        The nested chat queue and the methods to include.
+        The nested chat queue and the methods to include
+        (methods: message string and method name if the message is a method).
     """
     message_methods_to_include = []
     chat_messages_str = "[\n"

@@ -476,7 +476,7 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
                 "ws-1",
             ],
             # we need to check if use this or get this from the chats
-            hand_offs=[
+            handoffs=[
                 WaldiezSwarmOnCondition(
                     target="wa-1",
                     target_type="agent",

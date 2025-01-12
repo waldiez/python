@@ -171,7 +171,7 @@ def get_swarm_messages_string(
         messages_string += f'"{escaped_message}"'
         messages_string += "}]"
     else:
-        messages_string = ""
+        messages_string = '"Start the chat."'
     return messages_string
 
 

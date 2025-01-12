@@ -43,5 +43,5 @@ def test_get_agent_imports() -> None:
     }
     assert swarm_agent_imports == {
         "import autogen",
-        "from autogen import AFTER_WORK, ON_CONDITION, AfterWorkOption, SwarmAgent",
+        "from autogen import AFTER_WORK, ON_CONDITION, AfterWorkOption, SwarmAgent, SwarmResult",
     }
