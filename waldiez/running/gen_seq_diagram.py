@@ -1,54 +1,114 @@
-import pandas as pd
-import json
+# SPDX-License-Identifier: Apache-2.0.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Generate a Mermaid sequence diagram from a file containing event data."""
 
-# Function to escape newlines in text for Mermaid diagram
-def escape_mermaid_text(text):
-    """Replace newline characters with <br/> for Mermaid compatibility."""
+import json
+from pathlib import Path
+from typing import Any, Dict, Set, Union
+
+import pandas as pd
+
+
+def escape_mermaid_text(text: str) -> str:
+    """Replace newline characters with <br/> for Mermaid compatibility.
+
+    Parameters
+    ----------
+    text : str
+        The text to escape.
+
+    Returns
+    -------
+    str
+        The escaped text with newline characters replaced by <br/>.
+    """
     return text.replace("\n", "<br/>")
 
-# Constants for the sequence diagram initialization
+
+MAX_LEN = 100
 SEQ_TXT = """
 %%{init: {'sequence': {'actorSpacing': 10, 'width': 150}}}%%
 sequenceDiagram
 """
 
-def process_events(df_events):
-    """Process the events DataFrame and generate a Mermaid sequence diagram text."""
-    
+
+def get_json_state(json_state: Any) -> Dict[str, Any]:
+    """Get the JSON state of the event.
+
+    Parameters
+    ----------
+    json_state : Union[str, dict]
+        The JSON state of the event.
+
+    Returns
+    -------
+    dict
+        The JSON state of the event.
+    """
+    if isinstance(json_state, dict):
+        return json_state
+    if isinstance(json_state, str):
+        try:
+            return json.loads(json_state)
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
+# pylint: disable=too-many-locals
+def process_events(df_events: pd.DataFrame) -> str:
+    """Process the events DataFrame and generate a Mermaid sequence diagram.
+
+    Parameters
+    ----------
+    df_events : pd.DataFrame
+        The DataFrame containing the events data.
+    Returns
+    -------
+    str
+        The Mermaid sequence diagram text.
+    """
+
     # Set to store participants (senders and recipients)
-    participants = set()
+    participants: Set[str] = set()
+    recipient: str
 
     # Initialize the sequence diagram text
     seq_text = SEQ_TXT
 
     # Loop through each event in the DataFrame
-    for i in range(len(df_events['json_state'])):
+    for i in range(len(df_events["json_state"])):
         # Parse the JSON state of the event
-        df_j = json.loads(df_events['json_state'][i])
-
+        df_j = get_json_state(df_events["json_state"][i])
         # Skip events that are not relevant (e.g., replies or missing messages)
-        if ('message' in df_j.keys()) and (df_events['event_name'][i] != 'reply_func_executed'):
-            
-            sender = df_j['sender']
-            recipient = df_events['source_name'][i]
+        if ("message" in df_j.keys()) and (
+            df_events["event_name"][i] != "reply_func_executed"
+        ):
+            sender = df_j["sender"]
+            recipient = df_events["source_name"][i]
 
             # Extract message content if available
-            if "content" in str(df_j['message']):
-                message = "Content: " + str(df_j['message']["content"])
+            if (
+                isinstance(df_j["message"], dict)
+                and "content" in df_j["message"]
+            ):
+                message = "Content: " + str(df_j["message"]["content"])
             else:
-                message = df_j['message']
-            
-            # Escape the message for Mermaid compatibility and truncate long messages
+                message = str(df_j["message"])
+
+            # Escape the message for Mermaid compatibility and
+            # truncate long messages
             message = escape_mermaid_text(message)
             max_len = 100
             if len(message) > max_len:
-                message = message[:max_len] + '...'
+                message = message[:max_len] + "..."
 
             # Add sender and recipient to participants set
             participants.add(recipient)
             participants.add(sender)
 
-            # Split message into main message and context if "Content" is present
+            # Split message into main message and context
+            # if "Content" is present
             if "Content: " in message:
                 message_parts = message.split("Content: ")
                 main_message = message_parts[0].strip()
@@ -61,29 +121,62 @@ def process_events(df_events):
     # Add participants to the Mermaid diagram
     participants_text = ""
     for participant in participants:
-        alias = "".join(word.capitalize() for word in participant.split("_"))
-        participants_text += f"    participant {participant} as {participant.replace('_', ' ').title()}\n"
-    
+        participant_title = participant.replace("_", " ").title()
+        participants_text += (
+            f"    participant {participant} as {participant_title}" + "\n"
+        )
     # Prepend the participants to the sequence diagram text
-    mermaid_text = SEQ_TXT + participants_text + seq_text[len(SEQ_TXT):]
-
+    mermaid_text = SEQ_TXT + participants_text + seq_text[len(SEQ_TXT) :]
     return mermaid_text
 
-def save_diagram(mermaid_text, output_path="sequence_diagram.mmd"):
-    """Save the Mermaid diagram to a .mmd file."""
-    with open(output_path, "w", encoding="utf-8") as file:
+
+def save_diagram(mermaid_text: str, output_path: Union[str, Path]) -> None:
+    """Save the Mermaid diagram to a .mmd file.
+
+    Parameters
+    ----------
+    mermaid_text : str
+        The Mermaid sequence diagram text.
+    output_path : Union[str, Path]
+        The path to save the Mermaid diagram.
+    """
+    with open(output_path, "w", encoding="utf-8", newline="\n") as file:
         file.write(mermaid_text)
 
-def generate_sequence_diagram(file_path, output_path="sequence_diagram.mmd"):
-    """Main function to generate the Mermaid diagram."""
-    # Load the events data from the CSV file
-    df_events = pd.read_csv(file_path)
+
+def generate_sequence_diagram(
+    file_path: Union[str, Path], output_path: Union[str, Path]
+) -> None:
+    """Main function to generate the Mermaid diagram.
+
+    Parameters
+    ----------
+    file_path : Union[str, Path]
+        The path to the JSON or CSV file containing the events data.
+    output_path : Union[str, Path]
+        The path to save the Mermaid diagram.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the input file is not found.
+    ValueError
+        If the input file is not a JSON or CSV file.
+    """
+    if isinstance(file_path, str):
+        file_path = Path(file_path)
+    if not file_path.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
+    if file_path.suffix not in [".json", ".csv"]:
+        raise ValueError("Input file must be a JSON or CSV file.")
+    is_csv = file_path.suffix == ".csv"
+    if is_csv:
+        df_events = pd.read_csv(file_path)
+    else:
+        df_events = pd.read_json(file_path)
 
     # Generate the Mermaid sequence diagram text
     mermaid_text = process_events(df_events)
 
     # Save the Mermaid diagram to a file
     save_diagram(mermaid_text, output_path)
-
-    print(f"Sequence diagram has been successfully generated and saved to '{output_path}'.")
-

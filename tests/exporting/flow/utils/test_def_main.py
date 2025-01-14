@@ -14,7 +14,7 @@ def test_get_def_main() -> None:
     assert "async def main():" in result
     assert "flow chats content" in result
     assert "runtime_logging.stop()" in result
-    assert "sqlite_to_csv" in result
+    assert "get_sqlite_out" in result
     assert "return results" in result
     assert 'if __name__ == "__main__":' in result
     assert "anyio.run" in result

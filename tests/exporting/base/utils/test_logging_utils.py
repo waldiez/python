@@ -6,8 +6,8 @@
 from waldiez.exporting.flow.utils.logging_utils import (
     get_logging_start_string,
     get_logging_stop_string,
-    get_sqlite_to_csv_call_string,
-    get_sqlite_to_csv_string,
+    get_sqlite_out,
+    get_sqlite_out_call,
 )
 
 
@@ -53,12 +53,12 @@ def test_get_logging_stop_string() -> None:
     assert result == "    runtime_logging.stop()\n"
 
 
-def test_get_sqlite_to_csv_call_string() -> None:
-    """Test get_sqlite_to_csv_call_string."""
+def test_get_sqlite_out_call() -> None:
+    """Test get_sqlite_out_call."""
     # Given
     tabs = 0
     # When
-    result = get_sqlite_to_csv_call_string(tabs)
+    result = get_sqlite_out_call(tabs)
     # Then
     assert result == (
         'if not os.path.exists("logs"):\n'
@@ -73,19 +73,19 @@ def test_get_sqlite_to_csv_call_string() -> None:
         '    "function_calls",\n'
         "]:\n"
         '    dest = os.path.join("logs", f"{table}.csv")\n'
-        '    sqlite_to_csv("flow.db", table, dest)\n'
+        '    get_sqlite_out("flow.db", table, dest)\n'
     )
 
 
-def test_get_sqlite_to_csv_string() -> None:
-    """Test get_sqlite_to_csv_string."""
+def test_get_sqlite_out() -> None:
+    """Test test_get_sqlite_out."""
     # When
-    result = get_sqlite_to_csv_string()
+    result = get_sqlite_out()
     # Then
     assert result == (
         "\n\n"
-        "def sqlite_to_csv(dbname: str, table: str, csv_file: str) -> None:\n"
-        '    """Convert a sqlite table to a csv file.\n\n'
+        "def get_sqlite_out(dbname: str, table: str, csv_file: str) -> None:\n"
+        '    """Convert a sqlite table to csv and json files.\n\n'
         "    Parameters\n"
         "    ----------\n"
         "    dbname : str\n"
@@ -108,8 +108,11 @@ def test_get_sqlite_to_csv_string() -> None:
         "    data = [dict(zip(column_names, row)) for row in rows]\n"
         "    conn.close()\n"
         '    with open(csv_file, "w", newline="", encoding="utf-8") as file:\n'
-        "        _csv_writer = csv.DictWriter(file, fieldnames=column_names)\n"
-        "        _csv_writer.writeheader()\n"
-        "        _csv_writer.writerows(data)\n"
+        "        csv_writer = csv.DictWriter(file, fieldnames=column_names)\n"
+        "        csv_writer.writeheader()\n"
+        "        csv_writer.writerows(data)\n"
+        '    json_file = csv_file.replace(".csv", ".json")\n'
+        '    with open(json_file, "w", encoding="utf-8") as file:\n'
+        "        json.dump(data, file, indent=4, ensure_ascii=False)\n"
         "\n\n"
     )

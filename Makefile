@@ -16,12 +16,14 @@ help:
 	@echo " lint             Lint the code"
 	@echo " forlint          Alias for 'make format && make lint'"
 	@echo " export           Export *.waldiez files in ./examples to {.py,.ipynb}"
-	@echo " requirements	 Generate requirements/*.txt files"
+	@echo " requirements     Generate requirements/*.txt files"
 	@echo " test             Run the tests"
 	@echo " test_models      Run tests on the 'models' directory"
 	@echo " test-models      Alias for 'make test_models'"
 	@echo " test_exporting   Run tests on the 'exporting' directory"
 	@echo " test-exporting   Alias for 'make test_exporting'"
+	@echo " test_running     Run tests on the 'running' directory"
+	@echo " test-running     Alias for 'make test_running'"
 	@echo " docs             Generate the documentation"
 	@echo " docs-live        Generate the documentation in 'live' mode"
 	@echo " clean            Remove unneeded files (__pycache__, .mypy_cache, etc.)"
@@ -69,7 +71,7 @@ test: .before_test
 	python -m pytest \
 		-c pyproject.toml \
 		--cov=${.PACKAGE_NAME} \
-        --cov-branch \
+		--cov-branch \
 		--cov-report=term-missing:skip-covered \
 		--cov-report html:${.REPORTS_DIR}/html \
 		--cov-report xml:${.REPORTS_DIR}/coverage.xml \
@@ -83,7 +85,7 @@ test_models: .before_test
 		-c pyproject.toml -vv \
 		--cov-report=term-missing:skip-covered \
 		--cov=${.PACKAGE_NAME}/models \
-        --cov-branch \
+		--cov-branch \
 		${.TESTS_DIR}/models
 
 .PHONY: test-models
@@ -95,11 +97,23 @@ test_exporting: .before_test
 		-c pyproject.toml -vv \
 		--cov-report=term-missing:skip-covered \
 		--cov=${.PACKAGE_NAME}/exporting \
-        --cov-branch \
+		--cov-branch \
 		${.TESTS_DIR}/exporting
 
 .PHONY: test-exporting
 test-exporting: test_exporting
+
+.PHONY: test_running
+test_running: .before_test
+	python -m pytest \
+		-c pyproject.toml -vv \
+		--cov-report=term-missing:skip-covered \
+		--cov=${.PACKAGE_NAME}/running \
+		--cov-branch \
+		${.TESTS_DIR}/running
+
+.PHONY: test-running
+test-running: test_running
 
 .PHONY: docs
 docs:
