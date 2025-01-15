@@ -8,6 +8,7 @@ from waldiez.exporting.base import ImportPosition
 
 BUILTIN_IMPORTS = [
     "import csv",
+    "import json",
     "import os",
     "import sqlite3",
     "from dataclasses import asdict",

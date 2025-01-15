@@ -83,7 +83,7 @@ def test_waldiez_runner(
     output_path = tmp_path / "output.py"
     runner = WaldiezRunner(waldiez)
     with IOStream.set_default(CustomIOStream()):
-        runner.run(output_path=output_path)
+        runner.run(output_path=output_path, skip_mmd=True)
     std_out = capsys.readouterr().out
     assert "Starting workflow" in std_out
     assert (tmp_path / "waldiez_out").exists()

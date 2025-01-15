@@ -163,6 +163,7 @@ class WaldiezRunner:
         self,
         output_path: Optional[Union[str, Path]],
         uploads_root: Optional[Union[str, Path]],
+        skip_mmd: bool = False,
     ) -> Union["ChatResult", List["ChatResult"]]:
         """Run the Waldiez workflow.
 
@@ -172,7 +173,8 @@ class WaldiezRunner:
             The output path.
         uploads_root : Optional[Union[str, Path]]
             The runtime uploads root.
-
+        skip_mmd : bool
+            Whether to skip the Mermaid diagram generation.
         Returns
         -------
         Union[ChatResult, List[ChatResult]]
@@ -207,13 +209,20 @@ class WaldiezRunner:
             results = module.main()
             sys.path.pop(0)
             reset_env_vars(old_vars)
-        after_run(temp_dir, output_path, printer)
+        after_run(
+            temp_dir=temp_dir,
+            output_path=output_path,
+            printer=printer,
+            flow_name=self.waldiez.name,
+            skip_mmd=skip_mmd,
+        )
         return results
 
     async def _a_run(
         self,
         output_path: Optional[Union[str, Path]],
         uploads_root: Optional[Union[str, Path]],
+        skip_mmd: bool = False,
     ) -> Union["ChatResult", List["ChatResult"]]:
         """Run the Waldiez workflow asynchronously."""
         temp_dir = Path(tempfile.mkdtemp())
@@ -245,13 +254,20 @@ class WaldiezRunner:
             results = await module.main()
             sys.path.pop(0)
             reset_env_vars(old_vars)
-        after_run(temp_dir, output_path, printer)
+        after_run(
+            temp_dir=temp_dir,
+            output_path=output_path,
+            printer=printer,
+            flow_name=self.waldiez.name,
+            skip_mmd=skip_mmd,
+        )
         return results
 
     def run(
         self,
         output_path: Optional[Union[str, Path]] = None,
         uploads_root: Optional[Union[str, Path]] = None,
+        skip_mmd: bool = False,
     ) -> Union["ChatResult", List["ChatResult"]]:
         """Run the Waldiez workflow.
 
@@ -261,6 +277,8 @@ class WaldiezRunner:
             The output path, by default None.
         uploads_root : Optional[Union[str, Path]], optional
             The uploads root, to get user-uploaded files, by default None.
+        skip_mmd : bool, optional
+            Whether to skip the Mermaid diagram generation, by default False.
 
         Returns
         -------
@@ -281,7 +299,7 @@ class WaldiezRunner:
         self._running = True
         file_path = output_path or self._file_path
         try:
-            return self._run(file_path, uploads_root)
+            return self._run(file_path, uploads_root, skip_mmd)
         finally:
             self._running = False
 

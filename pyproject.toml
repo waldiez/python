@@ -23,6 +23,7 @@ classifiers = [
 ]
 dependencies =[
     "asyncer==0.0.8",
+    "pandas>=2",
     "pyautogen==0.7.0",
     "jupytext",
     "pydantic>=2.0",
@@ -57,6 +58,7 @@ dev = [
     'flake8==7.1.1',
     'isort==5.13.2',
     'mypy==1.14.1',
+    "pandas-stubs",
     'pre-commit==4.0.1',
     'pydocstyle==6.3.0',
     'pylint==3.3.3',

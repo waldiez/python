@@ -72,20 +72,20 @@ def get_logging_stop_string(tabs: int = 0) -> str:
 
 
 # pylint: disable=differing-param-doc,differing-type-doc
-def get_sqlite_to_csv_string() -> str:
-    """Get the sqlite to csv conversion code string.
+def get_sqlite_out() -> str:
+    """Get the sqlite to csv and json conversion code string.
 
     Returns
     -------
     str
-        The sqlite to csv conversion code string.
+        The sqlite to csv and json conversion code string.
 
     Example
     -------
     ```python
-    >>> get_sqlite_to_csv_string()
-    def sqlite_to_csv(dbname: str, table: str, csv_file: str) -> None:
-        \"\"\"Convert a sqlite table to a csv file.
+    >>> get_sqlite_outputs()
+    def get_sqlite_out(dbname: str, table: str, csv_file: str) -> None:
+        \"\"\"Convert a sqlite table to csv and json files.
 
         Parameters
         ----------
@@ -104,16 +104,19 @@ def get_sqlite_to_csv_string() -> str:
         data = [dict(zip(column_names, row)) for row in rows]
         conn.close()
         with open(csv_file, "w", newline="", encoding="utf-8") as file:
-            _csv_writer = csv.DictWriter(file, fieldnames=column_names)
-            _csv_writer.writeheader()
-            _csv_writer.writerows(data)
+            csv_writer = csv.DictWriter(file, fieldnames=column_names)
+            csv_writer.writeheader()
+            csv_writer.writerows(data)
+        json_file = csv_file.replace(".csv", ".json")
+        with open(json_file, "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=4, ensure_ascii=False)
     ```
     """
     content = "\n\n"
     content += (
-        "def sqlite_to_csv(dbname: str, table: str, csv_file: str) -> None:\n"
+        "def get_sqlite_out(dbname: str, table: str, csv_file: str) -> None:\n"
     )
-    content += '    """Convert a sqlite table to a csv file.\n\n'
+    content += '    """Convert a sqlite table to csv and json files.\n\n'
     content += "    Parameters\n"
     content += "    ----------\n"
     content += "    dbname : str\n"
@@ -139,16 +142,19 @@ def get_sqlite_to_csv_string() -> str:
         '    with open(csv_file, "w", newline="", encoding="utf-8") as file:\n'
     )
     content += (
-        "        _csv_writer = csv.DictWriter(file, fieldnames=column_names)\n"
+        "        csv_writer = csv.DictWriter(file, fieldnames=column_names)\n"
     )
-    content += "        _csv_writer.writeheader()\n"
-    content += "        _csv_writer.writerows(data)\n"
+    content += "        csv_writer.writeheader()\n"
+    content += "        csv_writer.writerows(data)\n"
+    content += '    json_file = csv_file.replace(".csv", ".json")\n'
+    content += '    with open(json_file, "w", encoding="utf-8") as file:\n'
+    content += "        json.dump(data, file, indent=4, ensure_ascii=False)\n"
     content += "\n\n"
     return content
 
 
-def get_sqlite_to_csv_call_string(tabs: int = 0) -> str:
-    """Get the sqlite to csv conversion call string.
+def get_sqlite_out_call(tabs: int = 0) -> str:
+    """Get the sqlite to csv and json conversion call string.
 
     Parameters
     ----------
@@ -163,7 +169,7 @@ def get_sqlite_to_csv_call_string(tabs: int = 0) -> str:
     Example
     -------
     ```python
-    >>> get_sqlite_to_csv_call_string()
+    >>> get_sqlite_out_call()
     if not os.path.exists("logs"):
         os.makedirs("logs")
     for table in [
@@ -176,7 +182,7 @@ def get_sqlite_to_csv_call_string(tabs: int = 0) -> str:
         "function_calls",
     ]:
         dest = os.path.join("logs", f"{table}.csv")
-        sqlite_to_csv("flow.db", table, dest)
+        get_sqlite_out("flow.db", table, dest)
     ```
     """
     table_names = [
@@ -197,5 +203,5 @@ def get_sqlite_to_csv_call_string(tabs: int = 0) -> str:
         content += tab + f'    "{table}",' + "\n"
     content += tab + "]:\n"
     content += tab + '    dest = os.path.join("logs", f"{table}.csv")' + "\n"
-    content += tab + '    sqlite_to_csv("flow.db", table, dest)\n'
+    content += tab + '    get_sqlite_out("flow.db", table, dest)\n'
     return content
