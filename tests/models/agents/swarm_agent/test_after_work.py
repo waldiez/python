@@ -37,6 +37,17 @@ def test_waldiez_swarm_after_work_stay() -> None:
     assert recipient_string == "AFTER_WORK(AfterWorkOption.STAY)"
 
 
+def test_waldiez_swarm_after_work_swarm_manager() -> None:
+    """Test WaldiezSwarmAfterWork."""
+    after_work = WaldiezSwarmAfterWork(
+        recipient="SWARM_MANAGER", recipient_type="option"
+    )
+    assert after_work.recipient == "SWARM_MANAGER"
+    assert after_work.recipient_type == "option"
+    recipient_string, _ = after_work.get_recipient({})
+    assert recipient_string == "AFTER_WORK(AfterWorkOption.SWARM_MANAGER)"
+
+
 def test_waldiez_swarm_after_work_agent() -> None:
     """Test WaldiezSwarmAfterWork."""
     after_work = WaldiezSwarmAfterWork(

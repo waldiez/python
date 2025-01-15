@@ -17,7 +17,9 @@ from typing_extensions import Annotated, Literal, Self
 from ...common import WaldiezBase, check_function, generate_function
 
 WaldiezSwarmAfterWorkRecipientType = Literal["agent", "option", "callable"]
-WaldiezSwarmAfterWorkOption = Literal["TERMINATE", "REVERT_TO_USER", "STAY"]
+WaldiezSwarmAfterWorkOption = Literal[
+    "TERMINATE", "REVERT_TO_USER", "STAY", "SWARM_MANAGER"
+]
 
 
 CUSTOM_AFTER_WORK = "custom_after_work"
@@ -38,14 +40,14 @@ class WaldiezSwarmAfterWork(WaldiezBase):
         The agent_id to hand off to, an AfterWork option,
         or the custom after work method.
         If it is an AfterWork option, it can be one of
-        ('TERMINATE', 'REVERT_TO_USER', 'STAY')
+        ('TERMINATE', 'REVERT_TO_USER', 'STAY', 'SWARM_MANAGER').
 
     recipient_type : WaldiezSwarmAfterWorkRecipientType
         The type of recipient.
         Can be 'agent', 'option', or 'callable'.
         If 'agent', the recipient is a SwarmAgent.
         If 'option', the recipient is an AfterWorkOption :
-            ('TERMINATE', 'REVERT_TO_USER', 'STAY').
+            ('TERMINATE', 'REVERT_TO_USER', 'STAY', 'SWARM_MANAGER').
         If 'callable', it should have the signature:
         def custom_after_work(
             last_speaker: SwarmAgent,
@@ -79,7 +81,7 @@ class WaldiezSwarmAfterWork(WaldiezBase):
                 "Can be 'agent', 'option', or 'callable'. "
                 "If 'agent', the recipient is a SwarmAgent.  "
                 "If 'option', the recipient is an AfterWorkOption :"
-                "    ('TERMINATE', 'REVERT_TO_USER', 'STAY'). "
+                "    ('TERMINATE', 'REVERT_TO_USER', 'STAY', 'SWARM_MANAGER'). "
                 "If 'callable', it should have the signature: "
                 "def custom_after_work("
                 "    last_speaker: SwarmAgent,"
@@ -166,6 +168,11 @@ class WaldiezSwarmAfterWork(WaldiezBase):
                 )
             self._recipient_string = error_or_body
         elif self.recipient_type == "option":
-            if self.recipient not in ["TERMINATE", "REVERT_TO_USER", "STAY"]:
+            if self.recipient not in [
+                "TERMINATE",
+                "REVERT_TO_USER",
+                "STAY",
+                "SWARM_MANAGER",
+            ]:
                 raise ValueError("Invalid option.")
         return self
