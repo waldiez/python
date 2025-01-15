@@ -21,6 +21,7 @@
         "addopts",
         "agentchat",
         "asyncer",
+        "asyncio",
         "autoflake",
         "autogen",
         "automl",
