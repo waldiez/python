@@ -29,6 +29,7 @@ from waldiez.models import (
     WaldiezRagUserVectorDbConfig,
     WaldiezSkill,
     WaldiezSkillData,
+    WaldiezSwarmOnConditionAvailable,
     WaldiezUserProxy,
     WaldiezUserProxyData,
 )
@@ -255,6 +256,10 @@ def test_waldiez_flow() -> None:
                 real_source=None,
                 real_target=None,
                 prerequisites=[],
+                available=WaldiezSwarmOnConditionAvailable(
+                    type="none",
+                    value=None,
+                ),
             ),
         ),
         WaldiezChat(
@@ -279,6 +284,10 @@ def test_waldiez_flow() -> None:
                 real_source=None,
                 real_target=None,
                 prerequisites=[],
+                available=WaldiezSwarmOnConditionAvailable(
+                    type="none",
+                    value=None,
+                ),
             ),
         ),
         WaldiezChat(
@@ -303,6 +312,10 @@ def test_waldiez_flow() -> None:
                 real_source=None,
                 real_target=None,
                 prerequisites=[],
+                available=WaldiezSwarmOnConditionAvailable(
+                    type="none",
+                    value=None,
+                ),
             ),
         ),
     ]
@@ -547,6 +560,10 @@ def test_waldiez_flow() -> None:
                 real_source=None,
                 real_target=None,
                 prerequisites=[],
+                available=WaldiezSwarmOnConditionAvailable(
+                    type="none",
+                    value=None,
+                ),
             ),
         ),
     ]

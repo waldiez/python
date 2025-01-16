@@ -4,32 +4,13 @@
 
 from typing import Any, Dict, Optional, Tuple, Union
 
-from pydantic import Field, model_validator
-from typing_extensions import Annotated, Literal, Self
+from pydantic import Field
+from typing_extensions import Annotated, Literal
 
-from ...common import WaldiezBase, check_function, generate_function
+from ...common import WaldiezBase
+from .available import WaldiezSwarmOnConditionAvailable
 
 WaldiezSwarmOnConditionTargetType = Literal["agent", "nested_chat"]
-WaldiezSwarmOnConditionAvailableCheckType = Literal[
-    "string", "callable", "none"
-]
-
-CUSTOM_ON_CONDITION_AVAILABLE = "custom_on_condition_available"
-CUSTOM_ON_CONDITION_AVAILABLE_ARGS = ["agent", "message"]
-CUSTOM_ON_CONDITION_AVAILABLE_TYPES = (
-    ["Agent", "Dict[str, Any]"],
-    "bool",
-)
-
-# In ag2 it used as:
-#
-# if on_condition.available is not None:
-#     if isinstance(on_condition.available, Callable):
-#         is_available = on_condition.available(
-#           agent, next(iter(agent.chat_messages.values()))
-#         )
-#     elif isinstance(on_condition.available, str):
-#         is_available = agent.get_context(on_condition.available) or False
 
 
 class WaldiezSwarmOnCondition(WaldiezBase):
@@ -92,41 +73,17 @@ class WaldiezSwarmOnCondition(WaldiezBase):
             description="The condition for transitioning to the target agent",
         ),
     ]
-    available_check_type: Annotated[
-        WaldiezSwarmOnConditionAvailableCheckType,
-        Field(
-            "none",
-            alias="availableCheckType",
-            title="Available Check Type",
-            description=("The type of the `available` property to check. "),
-        ),
-    ] = "none"
     available: Annotated[
-        Optional[str],
+        WaldiezSwarmOnConditionAvailable,
         Field(
-            None,
+            default_factory=WaldiezSwarmOnConditionAvailable,
             title="Available",
             description=(
                 "Optional condition to determine if this ON_CONDITION "
-                "is available. Can be a Callable or a string.  If a string, "
-                " it will look up the value of the context variable with that "
-                "name, which should be a bool."
+                "is available."
             ),
         ),
     ]
-
-    _available_string: str = ""
-
-    @property
-    def available_string(self) -> str:
-        """Get the available string.
-
-        Returns
-        -------
-        str
-            The available string.
-        """
-        return self._available_string
 
     def get_available(
         self,
@@ -146,52 +103,7 @@ class WaldiezSwarmOnCondition(WaldiezBase):
         Tuple[str, str]
             The available string or function name and code if available.
         """
-        if self.available_check_type == "none" or not self.available:
-            return "", ""
-        if self.available_check_type == "string":
-            return self.available_string, ""
-        function_name = CUSTOM_ON_CONDITION_AVAILABLE
-        if name_prefix:
-            function_name = f"{name_prefix}_{function_name}"
-        if name_suffix:
-            function_name = f"{function_name}_{name_suffix}"
-        return function_name, generate_function(
-            function_name=function_name,
-            function_args=CUSTOM_ON_CONDITION_AVAILABLE_ARGS,
-            function_types=CUSTOM_ON_CONDITION_AVAILABLE_TYPES,
-            function_body=self.available_string,
+        return self.available.get_available(
+            name_prefix,
+            name_suffix,
         )
-
-    @model_validator(mode="after")
-    def validate_available(self) -> Self:
-        """Validate the available property.
-
-        Returns
-        -------
-        Self
-            The validated instance.
-
-        Raises
-        ------
-        ValueError
-            If the validation fails.
-        """
-        if self.available_check_type == "callable":
-            if not self.available:
-                raise ValueError("No callable provided.")
-            is_valid, error_or_body = check_function(
-                code_string=self.available,
-                function_name=CUSTOM_ON_CONDITION_AVAILABLE,
-                function_args=CUSTOM_ON_CONDITION_AVAILABLE_ARGS,
-            )
-            if not is_valid or not error_or_body:
-                raise ValueError(f"Invalid callable: {error_or_body}")
-            self._available_string = error_or_body
-        elif self.available_check_type == "string":
-            if not self.available:
-                raise ValueError("No context variable name provided.")
-            self._available_string = self.available
-        else:
-            self._available_string = ""
-            self.available = None
-        return self

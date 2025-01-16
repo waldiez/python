@@ -37,6 +37,7 @@ from waldiez.models import (
     WaldiezSwarmAgent,
     WaldiezSwarmAgentData,
     WaldiezSwarmOnCondition,
+    WaldiezSwarmOnConditionAvailable,
     WaldiezSwarmUpdateSystemMessage,
     WaldiezUserProxy,
     WaldiezUserProxyData,
@@ -460,6 +461,7 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
                 recall_threshold=1.5,
                 max_num_retrievals=10,
             ),
+            is_initial=True,
             functions=["ws-1"],
             update_agent_state_before_reply=[
                 WaldiezSwarmUpdateSystemMessage(
@@ -481,25 +483,31 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
                     target="wa-1",
                     target_type="agent",
                     condition="go to agent 1",
-                    available=None,
-                    available_check_type="none",
+                    available=WaldiezSwarmOnConditionAvailable(
+                        type="none",
+                        value=None,
+                    ),
                 ),
                 WaldiezSwarmOnCondition(
                     target="wa-2",
                     target_type="agent",
                     condition="go to agent 2",
-                    available="bool_variable",
-                    available_check_type="string",
+                    available=WaldiezSwarmOnConditionAvailable(
+                        type="string",
+                        value="bool_variable",
+                    ),
                 ),
                 WaldiezSwarmOnCondition(
                     target="wa-3",
                     target_type="agent",
                     condition="go to agent 3",
-                    available=(
-                        "def custom_on_condition_available(agent, message):\n"
-                        "    return True"
+                    available=WaldiezSwarmOnConditionAvailable(
+                        type="callable",
+                        value=(
+                            "def custom_on_condition_available(agent, message):\n"  # noqa: E501
+                            "    return True"
+                        ),
                     ),
-                    available_check_type="callable",
                 ),
                 WaldiezSwarmAfterWork(
                     recipient_type="option",
@@ -591,6 +599,10 @@ def get_chats(count: int = 4) -> List[WaldiezChat]:
                 nested_chat=nested_chat,
                 real_source=None,
                 real_target=None,
+                available=WaldiezSwarmOnConditionAvailable(
+                    type="none",
+                    value=None,
+                ),
                 after_work=chat_after_work,
                 prerequisites=prerequisites,
             ),

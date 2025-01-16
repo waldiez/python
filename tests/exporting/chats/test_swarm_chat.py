@@ -23,6 +23,7 @@ from waldiez.models import (
     WaldiezFlow,
     WaldiezFlowData,
     WaldiezSwarmAfterWork,
+    WaldiezSwarmOnConditionAvailable,
 )
 
 
@@ -88,6 +89,10 @@ def test_swarm_chat() -> None:
                 recipient="REVERT_TO_USER",
                 recipient_type="option",
             ),
+            available=WaldiezSwarmOnConditionAvailable(
+                type="string",
+                value="variable1",
+            ),
             prerequisites=[],
         ),
     )
@@ -129,6 +134,10 @@ def custom_after_work(last_speaker, messages, groupchat):
                 recipient=after_work_callable,
                 recipient_type="callable",
             ),
+            available=WaldiezSwarmOnConditionAvailable(
+                type="none",
+                value=None,
+            ),
             prerequisites=[],
         ),
     )
@@ -165,6 +174,10 @@ def custom_after_work(last_speaker, messages, groupchat):
             after_work=WaldiezSwarmAfterWork(
                 recipient="wa-4",
                 recipient_type="agent",
+            ),
+            available=WaldiezSwarmOnConditionAvailable(
+                type="none",
+                value=None,
             ),
             prerequisites=[],
         ),
@@ -206,6 +219,10 @@ def callable_message(sender, recipient, context):
             max_turns=4,
             max_rounds=3,
             after_work=None,
+            available=WaldiezSwarmOnConditionAvailable(
+                type="string",
+                value="variable1",
+            ),
             prerequisites=[],
         ),
     )

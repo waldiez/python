@@ -5,6 +5,9 @@
 import pytest
 
 from waldiez.models.agents.swarm_agent.after_work import WaldiezSwarmAfterWork
+from waldiez.models.agents.swarm_agent.available import (
+    WaldiezSwarmOnConditionAvailable,
+)
 from waldiez.models.agents.swarm_agent.on_condition import (
     WaldiezSwarmOnCondition,
 )
@@ -25,7 +28,10 @@ def test_waldiez_swarm_data() -> None:
     on_condition = WaldiezSwarmOnCondition(
         target="agent2",
         condition="go to agent2",
-        available="context_var1",
+        available=WaldiezSwarmOnConditionAvailable(
+            type="string",
+            value="context_var1",
+        ),
     )
     update_system_message1 = WaldiezSwarmUpdateSystemMessage(
         update_function_type="string",

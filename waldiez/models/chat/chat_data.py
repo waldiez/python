@@ -7,7 +7,10 @@ from typing import Any, Dict, List, Optional, Union
 from pydantic import Field, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
-from ..agents.swarm_agent import WaldiezSwarmAfterWork
+from ..agents.swarm_agent import (
+    WaldiezSwarmAfterWork,
+    WaldiezSwarmOnConditionAvailable,
+)
 from ..common import WaldiezBase, check_function
 from .chat_message import (
     CALLABLE_MESSAGE,
@@ -207,6 +210,23 @@ class WaldiezChatData(WaldiezBase):
             description="The work to do after the chat (swarm).",
         ),
     ] = None
+    contextVariables: Annotated[
+        Optional[Dict[str, Any]],
+        Field(
+            None,
+            alias="contextVariables",
+            title="Context Variables",
+            description="The context variables to use in the chat.",
+        ),
+    ] = None
+    available: Annotated[
+        WaldiezSwarmOnConditionAvailable,
+        Field(
+            default_factory=WaldiezSwarmOnConditionAvailable,
+            title="Available",
+            description="The available condition for the chat.",
+        ),
+    ]
 
     _message_content: Optional[str] = None
     _chat_id: int = 0

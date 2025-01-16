@@ -2,13 +2,12 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.swarm.WaldiezSwarmAgent."""
 
-from waldiez.models.agents.swarm_agent.after_work import WaldiezSwarmAfterWork
-from waldiez.models.agents.swarm_agent.on_condition import (
-    WaldiezSwarmOnCondition,
-)
-from waldiez.models.agents.swarm_agent.swarm_agent import WaldiezSwarmAgent
-from waldiez.models.agents.swarm_agent.swarm_agent_data import (
+from waldiez.models.agents.swarm_agent import (
+    WaldiezSwarmAfterWork,
+    WaldiezSwarmAgent,
     WaldiezSwarmAgentData,
+    WaldiezSwarmOnCondition,
+    WaldiezSwarmOnConditionAvailable,
 )
 from waldiez.models.agents.swarm_agent.update_system_message import (
     WaldiezSwarmUpdateSystemMessage,
@@ -35,14 +34,18 @@ def custom_update_system_message(agent, messages):
     on_condition1 = WaldiezSwarmOnCondition(
         target="agent2",
         condition="go to agent2",
-        available_check_type="string",
-        available="is_var_bool_true",
+        available=WaldiezSwarmOnConditionAvailable(
+            type="string",
+            value="is_var_bool_true",
+        ),
     )
     on_condition2 = WaldiezSwarmOnCondition(
         target="agent3",
         condition="go to agent3",
-        available_check_type="none",
-        available="any",
+        available=WaldiezSwarmOnConditionAvailable(
+            type="none",
+            value="any",
+        ),
     )
     agent_data = WaldiezSwarmAgentData(
         system_message="system message",

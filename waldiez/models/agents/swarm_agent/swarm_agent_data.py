@@ -21,6 +21,8 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
 
     Attributes
     ----------
+    is_initial: bool
+        Whether the agent is the initial agent.
     functions : List[str]
         A list of functions (skill ids) to register with the agent.
 
@@ -38,6 +40,15 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
     at the end the list of hand offs.
     """
 
+    is_initial: Annotated[
+        bool,
+        Field(
+            False,
+            title="Is Initial",
+            alias="isInitial",
+            description=("Whether the agent is the initial agent."),
+        ),
+    ]
     functions: Annotated[
         List[str],
         Field(
