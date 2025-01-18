@@ -11,6 +11,9 @@ from waldiez.models.agents.swarm_agent.available import (
 from waldiez.models.agents.swarm_agent.on_condition import (
     WaldiezSwarmOnCondition,
 )
+from waldiez.models.agents.swarm_agent.on_condition_target import (
+    WaldiezSwarmOnConditionTarget,
+)
 from waldiez.models.agents.swarm_agent.swarm_agent_data import (
     WaldiezSwarmAgentData,
 )
@@ -26,7 +29,7 @@ def test_waldiez_swarm_data() -> None:
         recipient="TERMINATE",
     )
     on_condition = WaldiezSwarmOnCondition(
-        target="agent2",
+        target=WaldiezSwarmOnConditionTarget(id="agent2", order=1),
         condition="go to agent2",
         available=WaldiezSwarmOnConditionAvailable(
             type="string",

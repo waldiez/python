@@ -17,6 +17,7 @@ from .available import (
     WaldiezSwarmOnConditionAvailable,
 )
 from .on_condition import WaldiezSwarmOnCondition
+from .on_condition_target import WaldiezSwarmOnConditionTarget
 from .swarm_agent import WaldiezSwarmAgent
 from .swarm_agent_data import WaldiezSwarmAgentData
 from .update_system_message import (
@@ -42,6 +43,7 @@ __all__ = [
     "WaldiezSwarmAgentData",
     "WaldiezSwarmAfterWorkRecipientType",
     "WaldiezSwarmOnCondition",
+    "WaldiezSwarmOnConditionTarget",
     "WaldiezSwarmOnConditionAvailable",
     "WaldiezSwarmUpdateSystemMessage",
 ]

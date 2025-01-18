@@ -38,6 +38,7 @@ from waldiez.models import (
     WaldiezSwarmAgentData,
     WaldiezSwarmOnCondition,
     WaldiezSwarmOnConditionAvailable,
+    WaldiezSwarmOnConditionTarget,
     WaldiezSwarmUpdateSystemMessage,
     WaldiezUserProxy,
     WaldiezUserProxyData,
@@ -480,7 +481,10 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
             # we need to check if use this or get this from the chats
             handoffs=[
                 WaldiezSwarmOnCondition(
-                    target="wa-1",
+                    target=WaldiezSwarmOnConditionTarget(
+                        id="wa-1",
+                        order=1,
+                    ),
                     target_type="agent",
                     condition="go to agent 1",
                     available=WaldiezSwarmOnConditionAvailable(
@@ -489,7 +493,10 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
                     ),
                 ),
                 WaldiezSwarmOnCondition(
-                    target="wa-2",
+                    target=WaldiezSwarmOnConditionTarget(
+                        id="wa-2",
+                        order=2,
+                    ),
                     target_type="agent",
                     condition="go to agent 2",
                     available=WaldiezSwarmOnConditionAvailable(
@@ -498,7 +505,10 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
                     ),
                 ),
                 WaldiezSwarmOnCondition(
-                    target="wa-3",
+                    target=WaldiezSwarmOnConditionTarget(
+                        id="wa-3",
+                        order=3,
+                    ),
                     target_type="agent",
                     condition="go to agent 3",
                     available=WaldiezSwarmOnConditionAvailable(

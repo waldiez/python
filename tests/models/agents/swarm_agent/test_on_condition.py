@@ -7,20 +7,21 @@ import pytest
 from waldiez.models.agents.swarm_agent import (
     WaldiezSwarmOnCondition,
     WaldiezSwarmOnConditionAvailable,
+    WaldiezSwarmOnConditionTarget,
 )
 
 
 def test_waldiez_swarm_on_condition() -> None:
     """Test WaldiezSwarmOnCondition."""
     on_condition = WaldiezSwarmOnCondition(
-        target="target",
+        target=WaldiezSwarmOnConditionTarget(id="target", order=1),
         condition="condition",
         available=WaldiezSwarmOnConditionAvailable(
             value=None,
             type="none",
         ),
     )
-    assert on_condition.target == "target"
+    assert on_condition.target.id == "target"
     assert on_condition.condition == "condition"
     assert on_condition.available.value is None
     assert on_condition.available.type == "none"
@@ -31,14 +32,14 @@ def test_waldiez_swarm_on_condition_available_string() -> None:
     # this means, that in the context,
     # there should be a variable called "available" which is a boolean value
     on_condition = WaldiezSwarmOnCondition(
-        target="target",
+        target=WaldiezSwarmOnConditionTarget(id="target", order=1),
         condition="condition",
         available=WaldiezSwarmOnConditionAvailable(
             value="available",
             type="string",
         ),
     )
-    assert on_condition.target == "target"
+    assert on_condition.target.id == "target"
     assert on_condition.condition == "condition"
     assert on_condition.available.value == "available"
     assert on_condition.available.type == "string"
@@ -51,7 +52,7 @@ def custom_on_condition_available(agent, message):
     return True
 """
     on_condition = WaldiezSwarmOnCondition(
-        target="target",
+        target=WaldiezSwarmOnConditionTarget(id="target", order=1),
         condition="condition",
         available=WaldiezSwarmOnConditionAvailable(
             value=callable_body,
@@ -74,7 +75,7 @@ def test_waldiez_swarm_on_condition_invalid_callable_body() -> None:
     """Test WaldiezSwarmOnCondition."""
     with pytest.raises(ValueError):
         WaldiezSwarmOnCondition(
-            target="target",
+            target=WaldiezSwarmOnConditionTarget(id="target", order=1),
             condition="condition",
             available=WaldiezSwarmOnConditionAvailable(
                 value="INVALID",
@@ -87,7 +88,7 @@ def test_waldiez_swarm_on_condition_invalid_callable_no_body() -> None:
     """Test WaldiezSwarmOnCondition."""
     with pytest.raises(ValueError):
         WaldiezSwarmOnCondition(
-            target="target",
+            target=WaldiezSwarmOnConditionTarget(id="target", order=1),
             condition="condition",
             available=WaldiezSwarmOnConditionAvailable(
                 value=None,
@@ -105,7 +106,7 @@ def test_waldiez_swarm_on_condition_invalid_callable_signature() -> None:
 
     with pytest.raises(ValueError):
         WaldiezSwarmOnCondition(
-            target="target",
+            target=WaldiezSwarmOnConditionTarget(id="target", order=1),
             condition="condition",
             available=WaldiezSwarmOnConditionAvailable(
                 value=callable_body,
@@ -118,7 +119,7 @@ def test_waldiez_swarm_on_condition_invalid_type() -> None:
     """Test WaldiezSwarmOnCondition."""
     with pytest.raises(ValueError):
         WaldiezSwarmOnCondition(
-            target="target",
+            target=WaldiezSwarmOnConditionTarget(id="target", order=1),
             condition="condition",
             available=WaldiezSwarmOnConditionAvailable(
                 value="INVALID",

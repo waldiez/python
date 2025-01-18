@@ -8,6 +8,7 @@ from waldiez.models.agents.swarm_agent import (
     WaldiezSwarmAgentData,
     WaldiezSwarmOnCondition,
     WaldiezSwarmOnConditionAvailable,
+    WaldiezSwarmOnConditionTarget,
 )
 from waldiez.models.agents.swarm_agent.update_system_message import (
     WaldiezSwarmUpdateSystemMessage,
@@ -32,7 +33,7 @@ def custom_update_system_message(agent, messages):
         recipient_type="option", recipient="STAY"
     )
     on_condition1 = WaldiezSwarmOnCondition(
-        target="agent2",
+        target=WaldiezSwarmOnConditionTarget(id="agent2", order=1),
         condition="go to agent2",
         available=WaldiezSwarmOnConditionAvailable(
             type="string",
@@ -40,7 +41,7 @@ def custom_update_system_message(agent, messages):
         ),
     )
     on_condition2 = WaldiezSwarmOnCondition(
-        target="agent3",
+        target=WaldiezSwarmOnConditionTarget(id="agent3", order=2),
         condition="go to agent3",
         available=WaldiezSwarmOnConditionAvailable(
             type="none",

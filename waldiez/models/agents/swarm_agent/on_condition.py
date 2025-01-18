@@ -2,13 +2,14 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Swarm condition model for handoff."""
 
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 from pydantic import Field
 from typing_extensions import Annotated, Literal
 
 from ...common import WaldiezBase
 from .available import WaldiezSwarmOnConditionAvailable
+from .on_condition_target import WaldiezSwarmOnConditionTarget
 
 WaldiezSwarmOnConditionTargetType = Literal["agent", "nested_chat"]
 
@@ -18,11 +19,8 @@ class WaldiezSwarmOnCondition(WaldiezBase):
 
     Attributes
     ----------
-    target : Union[Dict[str, Any], str]
-        The agent to hand off to or the nested chat configuration
-        If a Dict, it should follow the convention of the nested chat
-        configuration, with the exception of a carryover configuration
-        which is unique to Swarms.
+    target : WaldiezSwarmOnConditionTarget
+        The agent or nested chat configuration to hand off to.
 
     target_type: Literal["agent", "nested_chat"]
         The type of the target. Can be either 'agent' or 'nested_chat'.
@@ -41,15 +39,11 @@ class WaldiezSwarmOnCondition(WaldiezBase):
     """
 
     target: Annotated[
-        Union[Dict[str, Any], str],
+        WaldiezSwarmOnConditionTarget,
         Field(
-            ...,
             title="Target",
             description=(
-                "The agent to hand off to or the nested chat configuration"
-                "If a Dict, it should follow the convention of the nested "
-                "chat configuration, with the exception of a carryover "
-                "configuration which is unique to Swarms."
+                "The agent or nested chat configuration to hand off to."
             ),
         ),
     ]
