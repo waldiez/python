@@ -40,10 +40,16 @@ def get_def_main(flow_chats: str, is_async: bool) -> str:
     else:
         content += "def call_main() -> None:\n"
     content += '    """Run the main function and print the results."""\n'
+    # fmt: off
     if is_async:
-        content += "    results = await main()\n"
+        content += (
+            "    results: Union[ChatResult, List[ChatResult]] = await main()\n"
+        )
     else:
-        content += "    results = main()\n"
+        content += (
+            "    results: Union[ChatResult, List[ChatResult]] = main()\n"
+        )
+    # fmt: on
     content += "    if not isinstance(results, list):\n"
     content += "        results = [results]\n"
     content += "    for result in results:\n"
