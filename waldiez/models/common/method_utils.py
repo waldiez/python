@@ -110,18 +110,58 @@ def _validate_function_body(
                             f" in function {node.name}"
                         ),
                     )
-            function_body_lines = code_string.splitlines()[
-                node.lineno - 1 : node.end_lineno
-            ]
-            function_body = "\n".join(function_body_lines[1:])
-            if function_body.startswith("\n"):
-                function_body = function_body[1:]
+            if not node.body:
+                return False, "No body found in the function"
+            function_body = get_function_body(code_string, node)
             return True, function_body
     error_msg = (
         f"No method with name `{function_name}`"
         f" and arguments `{function_args}` found"
     )
     return False, error_msg
+
+
+def get_function_body(
+    code_string: str,
+    node: ast.FunctionDef,
+) -> str:
+    """Get the function body, including docstring and comments inside.
+
+    Parameters
+    ----------
+    code_string : str
+        The code string.
+    node : ast.FunctionDef
+        The function node.
+
+    Returns
+    -------
+    str
+        The function body.
+
+    Raises
+    ------
+    ValueError
+        If no body found in the function.
+    """
+    lines = code_string.splitlines()
+    signature_start_line = node.lineno - 1
+    body_start_line = node.body[0].lineno - 1
+    signature_end_line = signature_start_line
+    for i in range(signature_start_line, body_start_line):
+        if ")" in lines[i]:
+            signature_end_line = i
+            break
+    function_body_lines = lines[signature_end_line + 1 :]
+    last_line = function_body_lines[-1]
+    if not last_line.strip() and len(function_body_lines) > 1:
+        function_body_lines = function_body_lines[:-1]
+    function_body = "\n".join(function_body_lines)
+    while function_body.startswith("\n"):
+        function_body = function_body[1:]
+    while function_body.endswith("\n"):
+        function_body = function_body[:-1]
+    return function_body
 
 
 def generate_function(

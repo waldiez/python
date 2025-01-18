@@ -8,7 +8,7 @@ from pydantic import Field
 from typing_extensions import Annotated, Literal
 
 from ...common import WaldiezBase
-from .available import WaldiezSwarmOnConditionAvailable
+from .on_condition_available import WaldiezSwarmOnConditionAvailable
 from .on_condition_target import WaldiezSwarmOnConditionTarget
 
 WaldiezSwarmOnConditionTargetType = Literal["agent", "nested_chat"]

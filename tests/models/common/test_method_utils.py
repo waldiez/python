@@ -168,6 +168,78 @@ def nested_chat_reply_(recipient, messages, sender, config):
     assert "No method with name" in body
 
 
+def test_check_function_with_docstring() -> None:
+    """Test check_function."""
+    # Given
+    code_string = '''
+def callable_message(sender, recipient, context):
+    """
+    A callable message.
+    """
+    return "Hello"
+'''
+    function_name = CALLABLE_MESSAGE
+    function_args = CALLABLE_MESSAGE_ARGS
+    # When
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        function_args=function_args,
+    )
+    # Then
+    assert valid
+    assert (
+        body
+        == '''    """
+    A callable message.
+    """
+    return "Hello"'''
+    )
+
+
+def test_check_function_with_empty_body() -> None:
+    """Test check_function."""
+    # Given
+    code_string = """
+def callable_message(sender, recipient, context):
+
+"""
+    function_name = CALLABLE_MESSAGE
+    function_args = CALLABLE_MESSAGE_ARGS
+    # When
+    valid, _ = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        function_args=function_args,
+    )
+    # Then
+    assert not valid
+
+
+def test_check_function_with_new_lines() -> None:
+    """Test check_function."""
+    # Given
+    code_string = """
+def callable_message(sender, recipient, context):
+
+
+    return "Hello"
+
+
+"""
+    function_name = CALLABLE_MESSAGE
+    function_args = CALLABLE_MESSAGE_ARGS
+    # When
+    valid, body = check_function(
+        code_string=code_string,
+        function_name=function_name,
+        function_args=function_args,
+    )
+    # Then
+    assert valid
+    assert body == '    return "Hello"'
+
+
 def test_generate_function() -> None:
     """Test generate_function."""
     # Given

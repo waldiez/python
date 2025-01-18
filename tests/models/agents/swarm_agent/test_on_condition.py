@@ -61,7 +61,7 @@ def custom_on_condition_available(agent, message):
     )
     expected_available_string = (
         "def custom_on_condition_available(\n"
-        "    agent: Agent,\n"
+        "    agent: ConversableAgent,\n"
         "    message: Dict[str, Any],\n"
         ") -> bool:\n    return True\n"
     )

@@ -10,13 +10,13 @@ from .after_work import (
     WaldiezSwarmAfterWorkOption,
     WaldiezSwarmAfterWorkRecipientType,
 )
-from .available import (
+from .on_condition import WaldiezSwarmOnCondition
+from .on_condition_available import (
     CUSTOM_ON_CONDITION_AVAILABLE,
     CUSTOM_ON_CONDITION_AVAILABLE_ARGS,
     CUSTOM_ON_CONDITION_AVAILABLE_TYPES,
     WaldiezSwarmOnConditionAvailable,
 )
-from .on_condition import WaldiezSwarmOnCondition
 from .on_condition_target import WaldiezSwarmOnConditionTarget
 from .swarm_agent import WaldiezSwarmAgent
 from .swarm_agent_data import WaldiezSwarmAgentData

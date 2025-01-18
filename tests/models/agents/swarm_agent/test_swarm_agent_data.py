@@ -5,11 +5,11 @@
 import pytest
 
 from waldiez.models.agents.swarm_agent.after_work import WaldiezSwarmAfterWork
-from waldiez.models.agents.swarm_agent.available import (
-    WaldiezSwarmOnConditionAvailable,
-)
 from waldiez.models.agents.swarm_agent.on_condition import (
     WaldiezSwarmOnCondition,
+)
+from waldiez.models.agents.swarm_agent.on_condition_available import (
+    WaldiezSwarmOnConditionAvailable,
 )
 from waldiez.models.agents.swarm_agent.on_condition_target import (
     WaldiezSwarmOnConditionTarget,

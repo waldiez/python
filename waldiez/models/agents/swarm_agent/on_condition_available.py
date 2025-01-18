@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0.
+# Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez Swarm Agent ON_CONDITION Available Model."""
 
 from typing import Optional, Tuple
@@ -14,7 +16,7 @@ WaldiezSwarmOnConditionAvailableCheckType = Literal[
 CUSTOM_ON_CONDITION_AVAILABLE = "custom_on_condition_available"
 CUSTOM_ON_CONDITION_AVAILABLE_ARGS = ["agent", "message"]
 CUSTOM_ON_CONDITION_AVAILABLE_TYPES = (
-    ["Agent", "Dict[str, Any]"],
+    ["ConversableAgent", "Dict[str, Any]"],
     "bool",
 )
 
@@ -89,7 +91,7 @@ class WaldiezSwarmOnConditionAvailable(WaldiezBase):
         if self.type == "none" or not self.value:
             return "", ""
         if self.type == "string":
-            return self.available_string, ""
+            return self._available_string, ""
         function_name = CUSTOM_ON_CONDITION_AVAILABLE
         if name_prefix:
             function_name = f"{name_prefix}_{function_name}"
@@ -99,7 +101,7 @@ class WaldiezSwarmOnConditionAvailable(WaldiezBase):
             function_name=function_name,
             function_args=CUSTOM_ON_CONDITION_AVAILABLE_ARGS,
             function_types=CUSTOM_ON_CONDITION_AVAILABLE_TYPES,
-            function_body=self.available_string,
+            function_body=self._available_string,
         )
 
     @model_validator(mode="after")

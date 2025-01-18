@@ -284,10 +284,12 @@ def get_chat_nested_string(
     if message.type == "string":
         return string_escape(message.content), None
     chat_name = chat_names[chat.id]
-    function_args = "recipient, messages, sender, config"
-    function_name = "nested_chat_reply" if is_reply else "nested_chat_message"
-    new_function_name = f"{function_name}_{chat_name}"
-    function_def = "\n" + f"def {new_function_name}({function_args}):"
-    attribute_name = "reply_content" if is_reply else "message_content"
-    function_content = getattr(chat.data.nested_chat, attribute_name)
-    return new_function_name, function_def + "\n" + function_content + "\n"
+    if is_reply:
+        function_content, function_name = chat.get_nested_chat_message_function(
+            name_suffix=chat_name
+        )
+    else:
+        function_content, function_name = chat.get_nested_chat_message_function(
+            name_suffix=chat_name
+        )
+    return function_name, function_content
