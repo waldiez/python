@@ -513,6 +513,7 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
                     condition="go to agent 3",
                     available=WaldiezSwarmOnConditionAvailable(
                         type="callable",
+                        # pylint: disable=line-too-long
                         value=(
                             "def custom_on_condition_available(agent, message):\n"  # noqa: E501
                             "    return True"

@@ -129,11 +129,7 @@ class WaldiezChat(WaldiezBase):
     @property
     def context_variables(self) -> Dict[str, Any]:
         """Get the context variables."""
-        if isinstance(self.data.message, str):  # pragma: no cover
-            # it can never be a string (just for the linter)
-            # we manage this on the validation part in the model
-            return {}
-        return self.data.message.context
+        return self.data.context_variables or {}
 
     @property
     def max_rounds(self) -> int:

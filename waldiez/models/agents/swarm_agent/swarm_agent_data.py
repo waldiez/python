@@ -101,7 +101,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         ValueError
             If there are more than one `AfterWork`s.
         """
-        after_works = [
+        after_works: List[WaldiezSwarmAfterWork] = [
             hand_off
             for hand_off in self.handoffs
             if isinstance(hand_off, WaldiezSwarmAfterWork)
@@ -111,7 +111,15 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
                 "Each agent should have at most one `AfterWork` "
                 "and (if any) it should be at the end of the list."
             )
-        if after_works and after_works[0] != self.handoffs[-1]:
-            self.handoffs.remove(after_works[0])
-            self.handoffs.append(after_works[0])
+        on_conditions: List[WaldiezSwarmOnCondition] = [
+            hand_off
+            for hand_off in self.handoffs
+            if isinstance(hand_off, WaldiezSwarmOnCondition)
+        ]
+        on_conditions = sorted(on_conditions, key=lambda x: x.target.order)
+        handoffs = on_conditions + after_works
+        if after_works and after_works[0] != handoffs[-1]:
+            handoffs.remove(after_works[0])
+            handoffs.append(after_works[0])
+        self.handoffs = handoffs
         return self

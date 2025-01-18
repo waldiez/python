@@ -210,7 +210,7 @@ class WaldiezChatData(WaldiezBase):
             description="The work to do after the chat (swarm).",
         ),
     ] = None
-    contextVariables: Annotated[
+    context_variables: Annotated[
         Optional[Dict[str, Any]],
         Field(
             None,
@@ -348,6 +348,32 @@ class WaldiezChatData(WaldiezBase):
             type="none", use_carryover=False, content=None, context={}
         )
 
+    @field_validator("context_variables", mode="after")
+    @classmethod
+    def validate_context_variables(cls, value: Any) -> Optional[Dict[str, Any]]:
+        """Validate the context variables.
+
+        Parameters
+        ----------
+        value : Any
+            The context variables value.
+
+        Returns
+        -------
+        Optional[Dict[str, Any]]
+            The validated context variables value.
+
+        Raises
+        ------
+        ValueError
+            If the validation fails.
+        """
+        if value is None:
+            return None
+        if not isinstance(value, dict):
+            raise ValueError("Context variables must be a dictionary.")
+        return get_context_dict(value)
+
     @property
     def summary_args(self) -> Optional[Dict[str, Any]]:
         """Get the summary args."""
@@ -373,18 +399,7 @@ class WaldiezChatData(WaldiezBase):
         """
         extra_args: Dict[str, Any] = {}
         if isinstance(self.message, WaldiezChatMessage):
-            for key, value in self.message.context.items():
-                if str(value).lower() in ("none", "null"):
-                    extra_args[key] = None
-                elif str(value).isdigit():
-                    extra_args[key] = int(value)
-                elif str(value).replace(".", "").isdigit():
-                    try:
-                        extra_args[key] = float(value)
-                    except ValueError:  # pragma: no cover
-                        extra_args[key] = value
-                else:
-                    extra_args[key] = value
+            extra_args.update(get_context_dict(self.message.context))
         return extra_args
 
     def get_chat_args(self, for_queue: bool) -> Dict[str, Any]:
@@ -419,3 +434,37 @@ class WaldiezChatData(WaldiezBase):
         if self._prerequisites:
             args["prerequisites"] = self._prerequisites
         return args
+
+
+def get_context_dict(context: Dict[str, Any]) -> Dict[str, Any]:
+    """Get the context dictionary.
+
+    Try to determine the type of the context variables.
+
+    Parameters
+    ----------
+    context : Dict[str, Any]
+        The context variables.
+
+    Returns
+    -------
+    Dict[str, Any]
+        The context variables with the detected types.
+    """
+    new_dict: Dict[str, Any] = {}
+    for key, value in context.items():
+        value_lower = str(value).lower()
+        if value_lower in ("none", "null"):
+            new_dict[key] = None
+        elif value_lower in ("true", "false"):
+            new_dict[key] = value.lower() == "true"
+        elif str(value).isdigit():
+            new_dict[key] = int(value)
+        elif str(value).replace(".", "").isdigit():
+            try:
+                new_dict[key] = float(value)
+            except ValueError:  # pragma: no cover
+                new_dict[key] = value
+        else:
+            new_dict[key] = value
+    return new_dict

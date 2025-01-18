@@ -129,4 +129,10 @@ class WaldiezSwarmOnConditionAvailable(WaldiezBase):
             if not is_valid:
                 raise ValueError(error_or_body)
             self._available_string = error_or_body
+        if self.type == "string":
+            if not self.value:
+                raise ValueError(
+                    "A string is expected, but no value was provided."
+                )
+            self._available_string = self.value
         return self

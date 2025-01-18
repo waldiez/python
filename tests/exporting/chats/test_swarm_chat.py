@@ -69,7 +69,7 @@ def test_swarm_chat() -> None:
                 type="string",
                 use_carryover=False,
                 content="Hello wa-2 from wa-1!",
-                context={"variable1": "value1"},
+                context={},
             ),
             summary=WaldiezChatSummary(
                 method=None,
@@ -80,6 +80,9 @@ def test_swarm_chat() -> None:
                 message=None,
                 reply=None,
             ),
+            context_variables={
+                "variable1": "value1",
+            },
             silent=False,
             real_source=None,
             real_target=None,

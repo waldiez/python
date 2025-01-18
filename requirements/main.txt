@@ -1,6 +1,6 @@
 asyncer==0.0.8
 jupytext
 pandas>=2
-pyautogen==0.7.0
+pyautogen==0.7.1
 pydantic>=2.0
 typer>=0.9,<0.13

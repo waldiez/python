@@ -3,12 +3,11 @@
 # pylint: disable=unused-argument
 """Get the extras for a swarm agent."""
 
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple
 
 from waldiez.exporting.chats.utils.nested import get_nested_chat_queue
 from waldiez.models import (
     WaldiezAgent,
-    WaldiezAgentNestedChat,
     WaldiezChat,
     WaldiezSwarmAfterWork,
     WaldiezSwarmAgent,
@@ -24,6 +23,9 @@ from waldiez.models import (
 # update_agent_state_before_reply (List[Callable]):
 # - A list of functions, including UPDATE_SYSTEM_MESSAGEs,
 #   called to update the agent before it replies.
+
+# Additional methods:
+# register_hand_off(hand_offs: List[AfterWork|OnCondition]):
 
 
 def get_swarm_extras(
@@ -218,31 +220,20 @@ def get_agent_handoff_registrations(
     Tuple[str, str]
         the contents before and after the agent.
     """
-    # examples:
-    # agent_3.register_hand_off(ON_CONDITION(agent_4, "Transfer to Agent 4"))
-    # agent_4.register_hand_off([AFTER_WORK(agent_5)])
-    # agent_5.register_hand_off(AFTER_WORK(AfterWorkOption.TERMINATE))
-    # agent_6.register_hand_off(AFTER_WORK(custom_after_work_6)) # custom
     agent_name = agent_names[agent.id]
     registrations = []
     before_agent = ""
+    after_agent = ""
+    if not agent.handoffs:
+        return before_agent, after_agent
+    tab = "    "
+    after_agent = f"{agent_name}.register_hand_off(" + "\n" + f"{tab}[" + "\n"
     for hand_off in agent.handoffs:
-        if isinstance(hand_off, WaldiezSwarmAfterWork):
-            # AFTER_WORK
-            registration, before_handoff = get_agent_after_work_handoff(
-                hand_off=hand_off,
-                agent_names=agent_names,
-                agent_name=agent_name,
-            )
-            registrations.append(registration)
-            before_agent += before_handoff
-        else:
-            # ON_CONDITION
+        if isinstance(hand_off, WaldiezSwarmOnCondition):
             registration, before_handoff = get_agent_on_condition_handoff(
                 agent=agent,
                 hand_off=hand_off,
                 agent_names=agent_names,
-                agent_name=agent_name,
                 all_chats=all_chats,
                 chat_names=chat_names,
                 is_async=is_async,
@@ -252,7 +243,15 @@ def get_agent_handoff_registrations(
             if registration:
                 registrations.append(registration)
             before_agent += before_handoff
-    after_agent = "\n".join(registrations) + "\n" if registrations else ""
+        elif isinstance(hand_off, WaldiezSwarmAfterWork):
+            registration, before_handoff = get_agent_after_work_handoff(
+                hand_off=hand_off,
+                agent_names=agent_names,
+                agent_name=agent_name,
+            )
+            registrations.append(registration)
+            before_agent += before_handoff
+    after_agent += "\n".join(registrations) + "\n" + f"{tab}]" + "\n" + ")"
     return before_agent, after_agent
 
 
@@ -278,12 +277,13 @@ def get_agent_after_work_handoff(
         The registration and the content before the agent.
     """
     before_agent = ""
+    tab = "    "
     recipient_type = hand_off.recipient_type
     recipient, function_content = hand_off.get_recipient(
         agent_names=agent_names,
         name_suffix=agent_name,
     )
-    registration = f"{agent_name}.register_hand_off({recipient})"
+    registration = f"{tab}{tab}{recipient},"
     if recipient_type == "callable" and function_content:
         before_agent += "\n" + function_content + "\n"
     return registration, before_agent
@@ -293,7 +293,6 @@ def get_agent_on_condition_handoff(
     agent: WaldiezSwarmAgent,
     hand_off: WaldiezSwarmOnCondition,
     agent_names: Dict[str, str],
-    agent_name: str,
     all_chats: List[WaldiezChat],
     chat_names: Dict[str, str],
     is_async: bool,
@@ -310,8 +309,6 @@ def get_agent_on_condition_handoff(
         The hand off to get the registration for.
     agent_names : Dict[str, str]
         A mapping of agent IDs to agent names.
-    agent_name : str
-        The name of the agent to register the hand off.
     all_chats : List[WaldiezChat]
         The list of all chats.
     chat_names : Dict[str, str]
@@ -331,26 +328,35 @@ def get_agent_on_condition_handoff(
     before_agent = ""
     registration = ""
     available, available_function = hand_off.get_available(
-        name_suffix=agent_name,
+        name_suffix=agent_names[agent.id],
     )
-    if hand_off.target_type == "agent" and isinstance(hand_off.target, str):
-        recipient = agent_names[hand_off.target]
+    if available and not available_function:
+        available = f'"{string_escape(available)}"'
+    if hand_off.target_type == "agent":
+        recipient = agent_names[hand_off.target.id]
+        condition = (
+            string_escape(hand_off.condition) or f"Transfer to {recipient}"
+        )
         results = _get_agent_on_condition_handoff_to_agent(
             recipient=recipient,
-            agent_name=agent_name,
             available=available,
+            condition=condition,
             available_function=available_function,
         )
         before_agent += results[0]
         registration = results[1]
     # else: # target_type == "nested_chat"
-    if hand_off.target_type == "nested_chat" and isinstance(
-        hand_off.target, dict
-    ):
+    if hand_off.target_type == "nested_chat":
+        condition = _get_condition_string(
+            condition=hand_off.condition,
+            chat_id=hand_off.target.id,
+            all_chats=all_chats,
+            agent_names=agent_names,
+        )
         results = _get_agent_on_condition_handoff_to_nested_chat(
             agent=agent,
-            target=hand_off.target,
             agent_names=agent_names,
+            condition=hand_off.condition,
             available=available,
             available_function=available_function,
             all_chats=all_chats,
@@ -359,40 +365,37 @@ def get_agent_on_condition_handoff(
             serializer=serializer,
             string_escape=string_escape,
         )
-        registration = results[0]
-        before_agent += results[1]
+        before_agent += results[0]
+        registration = results[1]
     return registration, before_agent
 
 
 def _get_agent_on_condition_handoff_to_agent(
     recipient: str,
-    agent_name: str,
     available: str,
+    condition: str,
     available_function: str,
 ) -> Tuple[str, str]:
     before_agent = ""
-    registration = ""
-    condition_string = f"Transfer to {recipient}"
+    tab = "    "
     on_condition = (
-        "    ON_CONDITION(\n"
-        f"        target={recipient}," + "\n"
-        f'        condition="{condition_string}",' + "\n"
+        f"{tab}{tab}ON_CONDITION(" + "\n"
+        f"{tab}{tab}{tab}target={recipient}," + "\n"
+        f'{tab}{tab}{tab}condition="{condition}",' + "\n"
     )
-    if available and available_function:
-        on_condition += f"        available={available}," + "\n"
+    if available:
+        on_condition += f"{tab}{tab}{tab}available={available}," + "\n"
+    if available_function:
         before_agent += "\n" + available_function + "\n"
-    on_condition += "    )"
-    registration += (
-        f"{agent_name}.register_hand_off(" + "\n" + on_condition + "\n)"
-    )
-    return before_agent, registration
+    on_condition += f"{tab}{tab}),"
+    return before_agent, on_condition
 
 
 # pylint: disable=too-many-locals
 def _get_agent_on_condition_handoff_to_nested_chat(
-    target: Dict[str, Any],
     agent: WaldiezAgent,
     agent_names: Dict[str, str],
+    condition: str,
     available: str,
     available_function: str,
     all_chats: List[WaldiezChat],
@@ -401,12 +404,10 @@ def _get_agent_on_condition_handoff_to_nested_chat(
     serializer: Callable[..., str],
     string_escape: Callable[[str], str],
 ) -> Tuple[str, str]:
-    try:
-        nested_chat = WaldiezAgentNestedChat.model_validate(target)
-    except BaseException:  # pylint: disable=broad-except
+    if not agent.data.nested_chats or not agent.data.nested_chats[0].messages:
         return "", ""
     chat_queue, extra_methods = get_nested_chat_queue(
-        nested_chat=nested_chat,
+        nested_chat=agent.data.nested_chats[0],
         agent=agent,
         agent_names=agent_names,
         chat_names=chat_names,
@@ -417,28 +418,40 @@ def _get_agent_on_condition_handoff_to_nested_chat(
     if not chat_queue:
         return "", ""
     before_agent = ""
-    registration = ""
-    condition_string = "Transfer to nested chat"
+    tab = "    "
     chat_queue_var_name = f"{agent_names[agent.id]}_handoff_nested_chat_queue"
     if extra_methods:
         before_agent += "\n".join(extra_methods) + "\n"
     before_agent += f"{chat_queue_var_name} = {chat_queue} " + "\n"
+    condition_string = string_escape(condition)
     on_condition = (
-        "    ON_CONDITION(\n"
-        "        target={\n"
-        f"            'chat_queue': {chat_queue_var_name}," + "\n"
-        "            'config': None,\n"
-        "            'reply_func_from_nested_chats': None,\n"
-        f"            'use_async': {is_async}," + "\n"
-        "        }," + "\n"
-        f'        condition="{condition_string}",' + "\n"
+        f"{tab}{tab}ON_CONDITION(" + "\n"
+        f"{tab}{tab}{tab}target=" + "{\n"
+        f'{tab}{tab}{tab}{tab}"chat_queue": {chat_queue_var_name},' + "\n"
+        f'{tab}{tab}{tab}{tab}"config": None,' + "\n"
+        f'{tab}{tab}{tab}{tab}"reply_func_from_nested_chats": None,' + "\n"
+        f'{tab}{tab}{tab}{tab}"use_async": {is_async},' + "\n"
+        f"{tab}{tab}{tab}" + "},\n"
+        f'{tab}{tab}{tab}condition="{condition_string}",' + "\n"
     )
-    if available and available_function:
-        on_condition += f"        available={available}," + "\n"
+    if available:
+        on_condition += f"{tab}{tab}{tab}available={available}," + "\n"
+    if available_function:
         before_agent += "\n" + available_function + "\n"
-    on_condition += "    )"
-    registration += (
-        f"{agent_names[agent.id]}.register_hand_off(" + "\n" + f"{on_condition}"
-        "\n)"
-    )
-    return before_agent, registration
+    on_condition += f"{tab}{tab}),"
+    return before_agent, on_condition
+
+
+def _get_condition_string(
+    condition: str,
+    chat_id: str,
+    all_chats: List[WaldiezChat],
+    agent_names: Dict[str, str],
+) -> str:
+    if not condition:
+        chat = next((c for c in all_chats if c.id == chat_id), None)
+        if chat:
+            target_name = agent_names[chat.target]
+            return f"Transfer to {target_name}"
+        return "Transfer to the next agent"
+    return condition

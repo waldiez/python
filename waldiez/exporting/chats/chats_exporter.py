@@ -196,17 +196,18 @@ class ChatsExporter(BaseExporter, ExporterMixin):
         # let's use one string for all nested chat registrations
         nested_chat_registrations = ""
         for agent in self.all_agents:
-            registration_string = export_nested_chat_registration(
-                agent=agent,
-                all_chats=self.all_chats,
-                chat_names=self.chat_names,
-                agent_names=self.agent_names,
-                string_escape=self.string_escape,
-                serializer=self.serializer,
-                is_async=self.is_async,
-            )
-            if registration_string:
-                nested_chat_registrations += "\n" + registration_string
+            if agent.agent_type != "swarm":
+                registration_string = export_nested_chat_registration(
+                    agent=agent,
+                    all_chats=self.all_chats,
+                    chat_names=self.chat_names,
+                    agent_names=self.agent_names,
+                    string_escape=self.string_escape,
+                    serializer=self.serializer,
+                    is_async=self.is_async,
+                )
+                if registration_string:
+                    nested_chat_registrations += "\n" + registration_string
         if nested_chat_registrations:
             # let's place it before the chats (after all agents are defined)
             after.append(
