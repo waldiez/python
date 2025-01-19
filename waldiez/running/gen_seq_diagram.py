@@ -3,10 +3,17 @@
 """Generate a Mermaid sequence diagram from a file containing event data."""
 
 import json
+import re
 from pathlib import Path
 from typing import Any, Dict, Set, Union
 
 import pandas as pd
+
+MAX_LEN = 100
+SEQ_TXT = """
+%%{init: {'sequence': {'actorSpacing': 10, 'width': 150}}}%%
+sequenceDiagram
+"""
 
 
 def escape_mermaid_text(text: str) -> str:
@@ -22,14 +29,13 @@ def escape_mermaid_text(text: str) -> str:
     str
         The escaped text with newline characters replaced by <br/>.
     """
-    return text.replace("\n", "<br/>")
-
-
-MAX_LEN = 100
-SEQ_TXT = """
-%%{init: {'sequence': {'actorSpacing': 10, 'width': 150}}}%%
-sequenceDiagram
-"""
+    if len(text) > MAX_LEN:
+        limited_text = text[:MAX_LEN] + "..."
+    else:
+        limited_text = text
+    output = limited_text.replace("\n", "<br/>")
+    output = re.sub(r"<br/>\s*<br/>", "<br/><br/>", output)
+    return output
 
 
 def get_json_state(json_state: Any) -> Dict[str, Any]:
@@ -99,9 +105,6 @@ def process_events(df_events: pd.DataFrame) -> str:
             # Escape the message for Mermaid compatibility and
             # truncate long messages
             message = escape_mermaid_text(message)
-            max_len = 100
-            if len(message) > max_len:
-                message = message[:max_len] + "..."
 
             # Add sender and recipient to participants set
             participants.add(recipient)

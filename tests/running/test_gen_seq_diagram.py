@@ -94,6 +94,18 @@ def sample_event_dicts_fixture() -> List[Dict[str, str]]:
             "event_name": "send_func_executed",
             "source_name": "Bob",
         },
+        {
+            "json_state": json.dumps(
+                {
+                    "sender": "Alice",
+                    "message": {
+                        "content": "Hello,  this is a message with \n new lines and empty space between two lines. \n    \n like this."
+                    },
+                }
+            ),
+            "event_name": "send_func_executed",
+            "source_name": "Bob",
+        },
     ]
     return events
 
@@ -146,6 +158,8 @@ def test_escape_mermaid_text() -> None:
     input_text = "Line1\nLine2"
     expected_output = "Line1<br/>Line2"
     assert escape_mermaid_text(input_text) == expected_output
+    input_text = "Line1\nLine2\n\n    \nLine3"
+    expected_output = "Line1<br/>Line2<br/><br/><br/>Line3"
 
 
 def test_process_events(sample_events_csv: StringIO) -> None:
@@ -174,6 +188,8 @@ def test_process_events(sample_events_csv: StringIO) -> None:
         "Content: Hello, there Bob! How are you? I was thinking about you and wanted to say hi. I hope you ar..."
         in result
     )
+    expected = "Hello,  this is a message with <br/> new lines and empty space between two lines. <br/><br/> like t..."
+    assert expected in result
     assert "Dave->>Charlie: {}" in result
     assert "Eve->>Frank: No content field" in result
     assert "Content: Reply content" not in result
