@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
+"""Helpers for the flow model."""
 
 import uuid
 from datetime import datetime, timezone
