@@ -164,6 +164,7 @@ def get_update_agent_state_before_reply_arg(
     before_agent = ""
     arg_string = f"{tab}update_agent_state_before_reply=["
     added_functions = False
+    # pylint: disable=line-too-long
     for function in agent.data.update_agent_state_before_reply:
         if isinstance(function, WaldiezSwarmUpdateSystemMessage):
             added_functions = True
@@ -171,11 +172,16 @@ def get_update_agent_state_before_reply_arg(
                 function_content, function_name = function.get_update_function(
                     name_suffix=agent_names[agent.id],
                 )
-                arg_string += "\n" + f"{tab}{tab}{function_name},"
+                arg_string += (
+                    "\n" + f"{tab}{tab}UPDATE_SYSTEM_MESSAGE({function_name}),"
+                )
                 before_agent += "\n" + function_content + "\n"
             else:
                 escaped_function = string_escape(function.update_function)
-                arg_string += "\n" + f'{tab}{tab}"{escaped_function}",'
+                arg_string += (
+                    "\n"
+                    + f'{tab}{tab}UPDATE_SYSTEM_MESSAGE("{escaped_function}"),'
+                )
         else:
             skill_name = skill_names.get(function, "")
             if skill_name:
