@@ -435,7 +435,7 @@ class WaldiezFlow(WaldiezBase):
             for swarm_agent in self.data.agents.swarm_agents:
                 check_handoff_to_nested_chat(
                     swarm_agent,
-                    all_agents=self.data.agents.members,
+                    all_agents=list(self.data.agents.members),
                     all_chats=self.data.chats,
                 )
         return self
