@@ -2,90 +2,90 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://waldiez.github.io/waldiez/python/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/exporter/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/runner/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/waldiez/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/exporting/agents/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/exporting/base/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/exporting/chats/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/exporting/flow/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/exporting/models/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/exporting/skills/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/chat/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/common/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/flow/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/model/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/skill/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/agents/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/agents/agent/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/agents/assistant/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/agents/group_manager/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/agents/rag_user/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/agents/swarm_agent/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
     <url>
          <loc>https://waldiez.github.io/waldiez/python/models/agents/user_proxy/</loc>
-         <lastmod>2025-01-12</lastmod>
+         <lastmod>2025-01-20</lastmod>
     </url>
 </urlset>
