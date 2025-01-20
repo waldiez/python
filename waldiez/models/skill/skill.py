@@ -108,13 +108,13 @@ class WaldiezSkill(WaldiezBase):
         """
         return self.name == SHARED_SKILL_NAME
 
-    def get_function(self) -> str:
-        """Get the function of the skill.
+    def get_content(self) -> str:
+        """Get the content of the skill.
 
         Returns
         -------
         str
-            The function of the skill.
+            The content of the skill.
         """
         if self.name == SHARED_SKILL_NAME:
             # the whole content (globals)

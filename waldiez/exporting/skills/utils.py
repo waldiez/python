@@ -77,7 +77,7 @@ def _write_skill_secrets(
     flow_name: str,
     skill: WaldiezSkill,
     skill_name: str,
-    output_dir: Path,
+    output_dir: Optional[Union[str, Path]],
 ) -> None:
     """Write the skill secrets to a file.
 
@@ -87,11 +87,13 @@ def _write_skill_secrets(
         The skill.
     skill_name : str
         The name of the skill.
-    output_dir : Path
+    output_dir : Optional[Union[str, Path]]
         The output directory to save the secrets to.
     """
-    if not skill.secrets:
+    if not skill.secrets or not output_dir:
         return
+    if not isinstance(output_dir, Path):
+        output_dir = Path(output_dir)
     secrets_file = output_dir / f"{flow_name}_{skill_name}_secrets.py"
     first_line = f'"""Secrets for the skill: {skill_name}."""' + "\n"
     with secrets_file.open("w", encoding="utf-8", newline="\n") as f:
@@ -132,23 +134,27 @@ def export_skills(
     skill_imports: List[str] = []
     skill_secrets: List[Tuple[str, str]] = []
     skill_contents: str = ""
+    # if the skill.is_shared,
+    # its contents must be first (before the other skills)
+    shared_skill_contents = ""
     for skill in skills:
-        skill_name = skill_names[skill.id]
+        skill_imports.append(get_skill_imports(flow_name, skill))
         for key, value in skill.secrets.items():
             skill_secrets.append((key, value))
-        skill_imports.append(get_skill_imports(flow_name, skill))
-        skill_content = skill.get_function()
-        if skill_content:
+        _write_skill_secrets(
+            flow_name=flow_name,
+            skill=skill,
+            skill_name=skill_names[skill.id],
+            output_dir=output_dir,
+        )
+        skill_content = skill.get_content()
+        if not skill_content:
+            continue
+        if skill.is_shared:
+            shared_skill_contents += skill_content + "\n\n"
+        else:
             skill_contents += skill_content + "\n\n"
-        if output_dir:
-            if not isinstance(output_dir, Path):
-                output_dir = Path(output_dir)
-            _write_skill_secrets(
-                flow_name=flow_name,
-                skill=skill,
-                skill_name=skill_name,
-                output_dir=output_dir,
-            )
+    skill_contents = shared_skill_contents + skill_contents
     return (
         skill_imports,
         skill_secrets,
@@ -170,12 +176,11 @@ def get_skill_imports(flow_name: str, skill: WaldiezSkill) -> str:
     str
         The skill imports string.
     """
-    module_name = f"{flow_name}_{skill.name}"
-    ignore_noqa = "  # type: ignore # noqa"
     if not skill.secrets:
         return ""
         # fmt: on
-    # have the secrets before the skill
+    module_name = f"{flow_name}_{skill.name}"
+    ignore_noqa = "  # type: ignore # noqa"
     return f"import {module_name}_secrets{ignore_noqa}" + "\n"
 
 
