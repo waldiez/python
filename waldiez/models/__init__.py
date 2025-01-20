@@ -43,6 +43,8 @@ from .agents import (
     WaldiezSwarmAgent,
     WaldiezSwarmAgentData,
     WaldiezSwarmOnCondition,
+    WaldiezSwarmOnConditionAvailable,
+    WaldiezSwarmOnConditionTarget,
     WaldiezSwarmUpdateSystemMessage,
     WaldiezUserProxy,
     WaldiezUserProxyData,
@@ -62,11 +64,12 @@ from .model import (
     WaldiezModelData,
     WaldiezModelPrice,
 )
-from .skill import WaldiezSkill, WaldiezSkillData
+from .skill import SHARED_SKILL_NAME, WaldiezSkill, WaldiezSkillData
 from .waldiez import Waldiez
 
 # pylint: disable=duplicate-code
 __all__ = [
+    "SHARED_SKILL_NAME",
     "Waldiez",
     "WaldiezAgent",
     "WaldiezAgentCodeExecutionConfig",
@@ -116,5 +119,7 @@ __all__ = [
     "WaldiezSwarmAfterWorkRecipientType",
     "WaldiezSwarmAgentData",
     "WaldiezSwarmOnCondition",
+    "WaldiezSwarmOnConditionTarget",
+    "WaldiezSwarmOnConditionAvailable",
     "WaldiezSwarmUpdateSystemMessage",
 ]

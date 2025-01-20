@@ -25,3 +25,5 @@ dmypy.json
 **/*.coverage*
 **/*.ffs_db
 **/*.lcov
+**/*.mmd
+**/*.ipynb_checkpoints/

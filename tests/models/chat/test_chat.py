@@ -125,15 +125,13 @@ def test_waldiez_chat_with_rag_user() -> None:
             message={  # type: ignore
                 "type": "rag_message_generator",
                 "content": None,
-                "context": {
-                    "problem": "Solve this task",
-                },
+                "context": {},
             },
+            context_variables={"problem": "Solve this task"},
         ),
     )
     # When
     chat_args = chat.get_chat_args(for_queue=False, sender=agent)
     # Then
     assert chat_args["n_results"] == 5
-    assert chat_args["problem"] == "Solve this task"
     assert chat.context_variables == {"problem": "Solve this task"}

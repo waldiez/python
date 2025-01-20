@@ -23,6 +23,7 @@ from typing import (
 )
 
 from .environment import in_virtualenv
+from .gen_seq_diagram import generate_sequence_diagram
 
 # pylint: disable=import-outside-toplevel
 
@@ -101,7 +102,7 @@ def before_run(
         uploads_root = Path(uploads_root)
     if not uploads_root.exists():
         uploads_root.mkdir(parents=True)
-    file_name = "flow.py" if not output_path else Path(output_path).name
+    file_name = "waldiez_flow.py" if not output_path else Path(output_path).name
     if file_name.endswith((".json", ".waldiez")):
         file_name = file_name.replace(".json", ".py").replace(".waldiez", ".py")
     if not file_name.endswith(".py"):
@@ -175,6 +176,8 @@ def after_run(
     temp_dir: Path,
     output_path: Optional[Union[str, Path]],
     printer: Callable[..., None],
+    flow_name: str,
+    skip_mmd: bool = False,
 ) -> None:
     """Actions to perform after running the flow.
 
@@ -186,9 +189,26 @@ def after_run(
         The output path.
     printer : Callable[..., None]
         The printer function.
+    flow_name : str
+        The flow name.
+    skip_mmd : bool, optional
+        Whether to skip the mermaid sequence diagram generation,
+        by default False
     """
+    if isinstance(output_path, str):
+        output_path = Path(output_path)
+    output_dir = output_path.parent if output_path else Path.cwd()
+    if output_dir.is_file():
+        output_dir = output_dir.parent
+    if skip_mmd is False:
+        events_csv_path = temp_dir / "logs" / "events.csv"
+        if events_csv_path.exists():
+            printer("Generating mermaid sequence diagram...")
+            mmd_path = temp_dir / f"{flow_name}.mmd"
+            generate_sequence_diagram(events_csv_path, mmd_path)
+            shutil.copyfile(mmd_path, output_dir / f"{flow_name}.mmd")
     if output_path:
-        destination_dir = Path(output_path).parent
+        destination_dir = output_path.parent
         destination_dir = (
             destination_dir
             / "waldiez_out"
@@ -202,7 +222,9 @@ def after_run(
             if (
                 item.name.startswith("__pycache__")
                 or item.name.endswith(".pyc")
-                or item == ".cache"
+                or item.name.endswith(".pyo")
+                or item.name.endswith(".pyd")
+                or item.name == ".cache"
             ):
                 continue
             if item.is_file():

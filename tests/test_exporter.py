@@ -189,7 +189,3 @@ def test_export_complex_flow(tmp_path: Path) -> None:
     exporter.export(output_file)
     assert output_file.exists()
     output_file.unlink()
-    skill_name = next(waldiez.skills).name
-    skill_file = tmp_path / f"{waldiez.name}_{skill_name}.py"
-    assert skill_file.exists()
-    skill_file.unlink(missing_ok=True)

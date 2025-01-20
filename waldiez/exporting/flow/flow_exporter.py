@@ -54,8 +54,8 @@ from .utils import (
     get_logging_start_string,
     get_logging_stop_string,
     get_py_content_start,
-    get_sqlite_to_csv_call_string,
-    get_sqlite_to_csv_string,
+    get_sqlite_out,
+    get_sqlite_out_call,
     get_the_imports_string,
 )
 
@@ -221,7 +221,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
             content += agents_content + "\n"
         if before_chats:
             content += before_chats + "\n"
-        content += get_sqlite_to_csv_string() + "\n"
+        content += get_sqlite_out() + "\n"
         content += self.get_comment("run", self.for_notebook) + "\n"
         if self.for_notebook is False:
             content += get_def_main(
@@ -230,7 +230,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
         else:
             content += "\n" + chats_content + "\n"
             content += get_logging_stop_string(tabs=0) + "\n"
-            content += get_sqlite_to_csv_call_string(tabs=0) + "\n"
+            content += get_sqlite_out_call(tabs=0) + "\n"
         content = content.replace("\n\n\n\n", "\n\n\n")
         return content
 

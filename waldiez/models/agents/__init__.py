@@ -64,6 +64,8 @@ from .swarm_agent import (
     WaldiezSwarmAgent,
     WaldiezSwarmAgentData,
     WaldiezSwarmOnCondition,
+    WaldiezSwarmOnConditionAvailable,
+    WaldiezSwarmOnConditionTarget,
     WaldiezSwarmUpdateSystemMessage,
 )
 from .user_proxy import WaldiezUserProxy, WaldiezUserProxyData
@@ -127,5 +129,7 @@ __all__ = [
     "WaldiezSwarmAfterWorkOption",
     "WaldiezSwarmAfterWorkRecipientType",
     "WaldiezSwarmOnCondition",
+    "WaldiezSwarmOnConditionTarget",
+    "WaldiezSwarmOnConditionAvailable",
     "WaldiezSwarmUpdateSystemMessage",
 ]

@@ -8,6 +8,12 @@ from waldiez.models.agents.swarm_agent.after_work import WaldiezSwarmAfterWork
 from waldiez.models.agents.swarm_agent.on_condition import (
     WaldiezSwarmOnCondition,
 )
+from waldiez.models.agents.swarm_agent.on_condition_available import (
+    WaldiezSwarmOnConditionAvailable,
+)
+from waldiez.models.agents.swarm_agent.on_condition_target import (
+    WaldiezSwarmOnConditionTarget,
+)
 from waldiez.models.agents.swarm_agent.swarm_agent_data import (
     WaldiezSwarmAgentData,
 )
@@ -23,9 +29,12 @@ def test_waldiez_swarm_data() -> None:
         recipient="TERMINATE",
     )
     on_condition = WaldiezSwarmOnCondition(
-        target="agent2",
+        target=WaldiezSwarmOnConditionTarget(id="agent2", order=1),
         condition="go to agent2",
-        available="context_var1",
+        available=WaldiezSwarmOnConditionAvailable(
+            type="string",
+            value="context_var1",
+        ),
     )
     update_system_message1 = WaldiezSwarmUpdateSystemMessage(
         update_function_type="string",

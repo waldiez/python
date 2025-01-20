@@ -5,7 +5,12 @@
 from datetime import datetime, timezone
 
 from .base import WaldiezBase
-from .method_utils import check_function, generate_function, parse_code_string
+from .method_utils import (
+    check_function,
+    generate_function,
+    get_function,
+    parse_code_string,
+)
 
 
 def now() -> str:
@@ -27,6 +32,7 @@ __all__ = [
     "WaldiezBase",
     "now",
     "check_function",
+    "get_function",
     "generate_function",
     "parse_code_string",
 ]

@@ -7,7 +7,7 @@ from typing import List, Union
 from pydantic import Field
 from typing_extensions import Annotated, Literal
 
-from ..agent import WaldiezAgent
+from ..agent import WaldiezAgent, WaldiezAgentNestedChat
 from .after_work import WaldiezSwarmAfterWork
 from .on_condition import WaldiezSwarmOnCondition
 from .swarm_agent_data import WaldiezSwarmAgentData
@@ -83,3 +83,25 @@ class WaldiezSwarmAgent(WaldiezAgent):
             The hand offs to register.
         """
         return self.data.handoffs
+
+    @property
+    def nested_chats(self) -> List[WaldiezAgentNestedChat]:
+        """Get the nested chats.
+
+        Returns
+        -------
+        List[WaldiezChat]
+            The nested chats.
+        """
+        return self.data.nested_chats
+
+    @property
+    def is_initial(self) -> bool:
+        """Check if the agent is the initial agent.
+
+        Returns
+        -------
+        bool
+            Whether the agent is the initial agent.
+        """
+        return self.data.is_initial

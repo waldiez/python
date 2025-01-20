@@ -21,8 +21,8 @@ from .importing_utils import (
 from .logging_utils import (
     get_logging_start_string,
     get_logging_stop_string,
-    get_sqlite_to_csv_call_string,
-    get_sqlite_to_csv_string,
+    get_sqlite_out,
+    get_sqlite_out_call,
 )
 
 __all__ = [
@@ -40,8 +40,8 @@ __all__ = [
     "get_ipynb_content_start",
     "get_logging_start_string",
     "get_logging_stop_string",
-    "get_sqlite_to_csv_call_string",
-    "get_sqlite_to_csv_string",
+    "get_sqlite_out",
+    "get_sqlite_out_call",
     "get_standard_imports",
     "get_the_imports_string",
 ]

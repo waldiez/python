@@ -23,6 +23,7 @@ from waldiez.models import (
     WaldiezFlow,
     WaldiezFlowData,
     WaldiezSwarmAfterWork,
+    WaldiezSwarmOnConditionAvailable,
 )
 
 
@@ -68,7 +69,7 @@ def test_swarm_chat() -> None:
                 type="string",
                 use_carryover=False,
                 content="Hello wa-2 from wa-1!",
-                context={"variable1": "value1"},
+                context={},
             ),
             summary=WaldiezChatSummary(
                 method=None,
@@ -79,6 +80,9 @@ def test_swarm_chat() -> None:
                 message=None,
                 reply=None,
             ),
+            context_variables={
+                "variable1": "value1",
+            },
             silent=False,
             real_source=None,
             real_target=None,
@@ -87,6 +91,10 @@ def test_swarm_chat() -> None:
             after_work=WaldiezSwarmAfterWork(
                 recipient="REVERT_TO_USER",
                 recipient_type="option",
+            ),
+            available=WaldiezSwarmOnConditionAvailable(
+                type="string",
+                value="variable1",
             ),
             prerequisites=[],
         ),
@@ -129,6 +137,10 @@ def custom_after_work(last_speaker, messages, groupchat):
                 recipient=after_work_callable,
                 recipient_type="callable",
             ),
+            available=WaldiezSwarmOnConditionAvailable(
+                type="none",
+                value=None,
+            ),
             prerequisites=[],
         ),
     )
@@ -165,6 +177,10 @@ def custom_after_work(last_speaker, messages, groupchat):
             after_work=WaldiezSwarmAfterWork(
                 recipient="wa-4",
                 recipient_type="agent",
+            ),
+            available=WaldiezSwarmOnConditionAvailable(
+                type="none",
+                value=None,
             ),
             prerequisites=[],
         ),
@@ -206,6 +222,10 @@ def callable_message(sender, recipient, context):
             max_turns=4,
             max_rounds=3,
             after_work=None,
+            available=WaldiezSwarmOnConditionAvailable(
+                type="string",
+                value="variable1",
+            ),
             prerequisites=[],
         ),
     )

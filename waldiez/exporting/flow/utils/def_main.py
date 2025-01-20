@@ -2,10 +2,7 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Get the main function."""
 
-from .logging_utils import (
-    get_logging_stop_string,
-    get_sqlite_to_csv_call_string,
-)
+from .logging_utils import get_logging_stop_string, get_sqlite_out_call
 
 
 def get_def_main(flow_chats: str, is_async: bool) -> str:
@@ -36,17 +33,23 @@ def get_def_main(flow_chats: str, is_async: bool) -> str:
     content += '    """Start chatting."""\n'
     content += f"{flow_chats}" + "\n"
     content += get_logging_stop_string(1) + "\n"
-    content += get_sqlite_to_csv_call_string(1) + "\n"
+    content += get_sqlite_out_call(1) + "\n"
     content += "    return results\n\n\n"
     if is_async:
         content += "async def call_main():\n"
     else:
         content += "def call_main() -> None:\n"
     content += '    """Run the main function and print the results."""\n'
+    # fmt: off
     if is_async:
-        content += "    results = await main()\n"
+        content += (
+            "    results: Union[ChatResult, List[ChatResult]] = await main()\n"
+        )
     else:
-        content += "    results = main()\n"
+        content += (
+            "    results: Union[ChatResult, List[ChatResult]] = main()\n"
+        )
+    # fmt: on
     content += "    if not isinstance(results, list):\n"
     content += "        results = [results]\n"
     content += "    for result in results:\n"

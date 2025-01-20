@@ -17,6 +17,7 @@ from waldiez.models import (
     WaldiezChatSummary,
     WaldiezFlow,
     WaldiezFlowData,
+    WaldiezSwarmOnConditionAvailable,
     WaldiezUserProxy,
     WaldiezUserProxyData,
 )
@@ -126,6 +127,10 @@ def get_runnable_flow() -> WaldiezFlow:
             nested_chat=WaldiezChatNested(
                 message=None,
                 reply=None,
+            ),
+            available=WaldiezSwarmOnConditionAvailable(
+                type="none",
+                value=None,
             ),
             real_source=None,
             real_target=None,

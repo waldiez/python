@@ -40,6 +40,7 @@ def get_agent_imports(agent_class: str) -> Set[str]:
             "from autogen import "
             "AFTER_WORK, "
             "ON_CONDITION, "
+            "UPDATE_SYSTEM_MESSAGE, "
             "AfterWorkOption, "
             "SwarmAgent, "
             "SwarmResult"
