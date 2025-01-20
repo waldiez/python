@@ -137,7 +137,7 @@ class WaldiezSkill(WaldiezBase):
             If the skill content is invalid.
         """
         search = f"def {self.name}("
-        if search not in self.data.content:
+        if self.name != SHARED_SKILL_NAME and search not in self.data.content:
             raise ValueError(
                 f"The skill name '{self.name}' is not in the content."
             )
