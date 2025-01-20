@@ -5,6 +5,10 @@
 import ast
 from typing import List, Optional, Tuple
 
+import parso
+import parso.python
+import parso.tree
+
 
 def parse_code_string(
     code_string: str,
@@ -112,7 +116,7 @@ def _validate_function_body(
                     )
             if not node.body:
                 return False, "No body found in the function"
-            function_body = get_function_body(code_string, node)
+            function_body = _get_function_body(code_string, node)
             return True, function_body
     error_msg = (
         f"No method with name `{function_name}`"
@@ -121,7 +125,35 @@ def _validate_function_body(
     return False, error_msg
 
 
-def get_function_body(
+def get_function(
+    code_string: str,
+    function_name: str,
+) -> str:
+    """Get the function signature and body.
+
+    Parameters
+    ----------
+    code_string : str
+        The code string.
+    function_name : str
+        The function name.
+
+    Returns
+    -------
+    str
+        The function signature and body.
+    """
+    try:
+        tree = parso.parse(code_string)  # type: ignore
+    except BaseException:  # pylint: disable=broad-except
+        return ""
+    for node in tree.iter_funcdefs():
+        if node.name.value == function_name:
+            return node.get_code()
+    return ""
+
+
+def _get_function_body(
     code_string: str,
     node: ast.FunctionDef,
 ) -> str:

@@ -139,6 +139,17 @@ class WaldiezFlow(WaldiezBase):
         return self.data.is_async
 
     @property
+    def has_shared_skill(self) -> bool:
+        """Check if the flow has a skill with shared variables (global).
+
+        Returns
+        -------
+        bool
+            True if the flow has shared skills, False otherwise.
+        """
+        return any(skill.is_shared for skill in self.data.skills)
+
+    @property
     def is_swarm_flow(self) -> bool:
         """Check if the flow is a swarm flow.
 

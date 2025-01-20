@@ -7,8 +7,10 @@ from typing import Dict, List
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ..common import WaldiezBase, now, parse_code_string
+from ..common import WaldiezBase, get_function, now, parse_code_string
 from .skill_data import WaldiezSkillData
+
+SHARED_SKILL_NAME = "waldiez_shared"
 
 
 class WaldiezSkill(WaldiezBase):
@@ -94,6 +96,30 @@ class WaldiezSkill(WaldiezBase):
             description="The date and time when the skill was last updated.",
         ),
     ]
+
+    @property
+    def is_shared(self) -> bool:
+        """Check if the skill is shared.
+
+        Returns
+        -------
+        bool
+            True if the skill is shared, False otherwise.
+        """
+        return self.name == SHARED_SKILL_NAME
+
+    def get_function(self) -> str:
+        """Get the function of the skill.
+
+        Returns
+        -------
+        str
+            The function of the skill.
+        """
+        if self.name == SHARED_SKILL_NAME:
+            # the whole content (globals)
+            return self.data.content
+        return get_function(self.data.content, self.name)
 
     @model_validator(mode="after")
     def validate_data(self) -> Self:

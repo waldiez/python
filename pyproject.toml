@@ -26,6 +26,7 @@ dependencies =[
     "pandas>=2",
     "pyautogen==0.7.1",
     "jupytext",
+    "parso==0.8.4",
     "pydantic>=2.0",
     # together(ag2 extra) 1.2.0 depends on typer<0.13 and >=0.9
     "typer>=0.9,<0.13",

@@ -106,7 +106,7 @@ def export_skills(
     skills: List[WaldiezSkill],
     skill_names: Dict[str, str],
     output_dir: Optional[Union[str, Path]] = None,
-) -> Tuple[List[str], List[Tuple[str, str]]]:
+) -> Tuple[List[str], List[Tuple[str, str]], str]:
     """Get the skills' contents and secrets.
 
     If `output_dir` is provided, the contents are saved to that directory.
@@ -124,57 +124,36 @@ def export_skills(
 
     Returns
     -------
-    Tuple[Set[str], Set[Tuple[str, str]]]
+    Tuple[Set[str], Set[Tuple[str, str]], str]
         - The skill imports to use in the main file.
         - The skill secrets to set as environment variables.
-
-    Example
-    -------
-    ```python
-    >>> from waldiez.models import WaldiezSkill, WaldiezSkillData
-    >>> flow_name = "flow1"
-    >>> skill1 = WaldiezSkill(
-    ...     id="ws-1",
-    ...     name="skill1",
-    ...     description="A skill that does something.",
-    ...     tags=["skill", "skill1"],
-    ...     requirements=[],
-    ...     data=WaldiezSkillData(
-    ...         content="def skill1():\\n    pass",
-    ...         secrets={"API_KEY": "1234567890"},
-    ... )
-    >>> skill_names = {"ws-1": "skill1"}
-    >>> export_skills(flow_name, [skill1], skill_names, None)
-    (
-        [   "import flow1_skill1_secrets  # type: ignore # noqa",
-            "from flow1_skill1 import skill1  # type: ignore # noqa",
-        ],
-        [('API_KEY', '1234567890')]
-    )
-    ```
+        - The skills contents.
     """
     skill_imports: List[str] = []
     skill_secrets: List[Tuple[str, str]] = []
+    skill_contents: str = ""
     for skill in skills:
         skill_name = skill_names[skill.id]
         for key, value in skill.secrets.items():
             skill_secrets.append((key, value))
-        if not output_dir:
-            skill_imports.append(get_skill_imports(flow_name, skill))
-            continue
-        if not isinstance(output_dir, Path):
-            output_dir = Path(output_dir)
         skill_imports.append(get_skill_imports(flow_name, skill))
-        _write_skill_secrets(
-            flow_name=flow_name,
-            skill=skill,
-            skill_name=skill_name,
-            output_dir=output_dir,
-        )
-        skill_file = output_dir / f"{flow_name}_{skill_name}.py"
-        with skill_file.open("w", encoding="utf-8", newline="\n") as f:
-            f.write(skill.content)
-    return skill_imports, skill_secrets
+        skill_content = skill.get_function()
+        if skill_content:
+            skill_contents += skill_content + "\n\n"
+        if output_dir:
+            if not isinstance(output_dir, Path):
+                output_dir = Path(output_dir)
+            _write_skill_secrets(
+                flow_name=flow_name,
+                skill=skill,
+                skill_name=skill_name,
+                output_dir=output_dir,
+            )
+    return (
+        skill_imports,
+        skill_secrets,
+        skill_contents.replace("\n\n\n", "\n\n"),
+    )
 
 
 def get_skill_imports(flow_name: str, skill: WaldiezSkill) -> str:
@@ -191,18 +170,13 @@ def get_skill_imports(flow_name: str, skill: WaldiezSkill) -> str:
     str
         The skill imports string.
     """
+    module_name = f"{flow_name}_{skill.name}"
     ignore_noqa = "  # type: ignore # noqa"
     if not skill.secrets:
-        # fmt: off
-        return (
-            f"from {flow_name}_{skill.name} import {skill.name}{ignore_noqa}"
-        )
+        return ""
         # fmt: on
     # have the secrets before the skill
-    return (
-        f"import {flow_name}_{skill.name}_secrets{ignore_noqa}" + "\n"
-        f"from {flow_name}_{skill.name} import {skill.name}{ignore_noqa}"
-    )
+    return f"import {module_name}_secrets{ignore_noqa}" + "\n"
 
 
 def get_agent_skill_registrations(

@@ -62,11 +62,13 @@ class SkillsExporter(BaseExporter, ExporterMixin):
         self.skills = skills
         self.skill_names = skill_names
         self.output_dir = output_dir
-        self.skill_imports, self.skill_secrets = export_skills(
-            flow_name=flow_name,
-            skills=skills,
-            skill_names=skill_names,
-            output_dir=output_dir,
+        self.skill_imports, self.skill_secrets, self.skills_contents = (
+            export_skills(
+                flow_name=flow_name,
+                skills=skills,
+                skill_names=skill_names,
+                output_dir=output_dir,
+            )
         )
 
     def get_environment_variables(self) -> List[Tuple[str, str]]:
@@ -89,7 +91,7 @@ class SkillsExporter(BaseExporter, ExporterMixin):
         """
         if not self.skill_imports:
             return []
-        imports = []
+        imports: List[Tuple[str, ImportPosition]] = []
         for skill_import in self.skill_imports:
             if (skill_import, ImportPosition.LOCAL) not in imports:
                 imports.append((skill_import, ImportPosition.LOCAL))
@@ -114,11 +116,7 @@ class SkillsExporter(BaseExporter, ExporterMixin):
         Optional[str]
             The exported content.
         """
-        # nothing here:
-        # we write the skills to separate files (and the secrets if any)
-        # we use the imports in `get_imports()`,
-        # register the skills in `get_after_export`,
-        # export the skill secrets in `get_environment_variables`
+        return self.skills_contents
 
     def get_after_export(
         self,
@@ -162,7 +160,7 @@ class SkillsExporter(BaseExporter, ExporterMixin):
         after_export = self.get_after_export()
         environment_variables = self.get_environment_variables()
         result: ExporterReturnType = {
-            "content": None,
+            "content": self.generate(),
             "imports": imports,
             "before_export": None,
             "after_export": after_export,

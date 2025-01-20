@@ -64,11 +64,12 @@ from .model import (
     WaldiezModelData,
     WaldiezModelPrice,
 )
-from .skill import WaldiezSkill, WaldiezSkillData
+from .skill import SHARED_SKILL_NAME, WaldiezSkill, WaldiezSkillData
 from .waldiez import Waldiez
 
 # pylint: disable=duplicate-code
 __all__ = [
+    "SHARED_SKILL_NAME",
     "Waldiez",
     "WaldiezAgent",
     "WaldiezAgentCodeExecutionConfig",
