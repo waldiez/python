@@ -30,6 +30,9 @@ dependencies =[
     "pydantic>=2.0",
     # together(ag2 extra) 1.2.0 depends on typer<0.13 and >=0.9
     "typer>=0.9,<0.13",
+    # mistralai and anthropic need httpx<0.28
+    # TypeError: Client.__init__() got an unexpected keyword argument 'proxies'
+    "httpx<0.28.0,>=0.27.0",
 ]
 
 [project.urls]

@@ -1,4 +1,5 @@
 asyncer==0.0.8
+httpx<0.28.0,>=0.27.0
 jupytext
 pandas>=2
 parso==0.8.4
