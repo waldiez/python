@@ -141,11 +141,13 @@ class WaldiezModel(WaldiezBase):
             - nim: 'NIM_API_KEY',
             - other: 'OPENAI_API_KEY'
         """
-        if self.data.api_key:
+        if self.data.api_key and self.data.api_key != "REPLACE_ME":
             return self.data.api_key
         env_key = self.api_key_env_key
-        api_key = os.environ.get(env_key, "")
-        return api_key
+        api_key = os.environ.get(
+            env_key, getattr(self.data, "api_key", "REPLACE_ME")
+        )
+        return api_key or "REPLACE_ME"
 
     @property
     def price(self) -> Optional[List[float]]:

@@ -73,20 +73,20 @@ def test_models_exporter(tmp_path: Path) -> None:
 {model1_name}_llm_config = {{
     "model": "{model1_name}",
     "api_type": "anthropic",
-    "base_url": "{DEFAULT_BASE_URLS["anthropic"]}",
-    "api_key": get_{flow_name}_model_api_key("{model1_name}")
+    "api_key": get_{flow_name}_model_api_key("{model1_name}"),
+    "base_url": "{DEFAULT_BASE_URLS["anthropic"]}"
 }}
 
 {model2_name}_llm_config = {{
     "model": "{model2_name}",
-    "base_url": "{DEFAULT_BASE_URLS["nim"]}",
-    "api_key": get_{flow_name}_model_api_key("{model2_name}")
+    "api_key": get_{flow_name}_model_api_key("{model2_name}"),
+    "base_url": "{DEFAULT_BASE_URLS["nim"]}"
 }}
 
 {model3_name}_llm_config = {{
     "model": "{model3_name}",
-    "base_url": "{DEFAULT_BASE_URLS["nim"]}",
-    "api_key": get_{flow_name}_model_api_key("{model3_name}")
+    "api_key": get_{flow_name}_model_api_key("{model3_name}"),
+    "base_url": "{DEFAULT_BASE_URLS["nim"]}"
 }}
 """
     assert generated_string == expected
