@@ -56,10 +56,8 @@ class AgentExporter(BaseExporter, ExporterMixin):
             The model ids to names mapping.
         skill_names : Dict[str, str]
             The skill ids to names mapping.
-        all_chats : List[WaldiezChat]
-            All the chats in the flow.
-        chat_names : Dict[str, str]
-            The chat ids to names mapping.
+        chats : Tuple[List[WaldiezChat], Dict[str, str]]
+            All the chats and the chat ids to names mapping.
         is_async : bool
             Whether the whole flow is async.
         for_notebook : bool
