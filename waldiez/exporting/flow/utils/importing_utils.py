@@ -15,11 +15,14 @@ BUILTIN_IMPORTS = [
     "from pprint import pprint",
 ]
 TYPING_IMPORTS = [
+    "Annotated",
     "Any",
     "Callable",
     "Dict",
     "List",
+    "Literal",
     "Optional",
+    "Set",
     "Tuple",
     "Union",
 ]
