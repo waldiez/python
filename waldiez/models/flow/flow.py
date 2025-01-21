@@ -237,11 +237,19 @@ class WaldiezFlow(WaldiezBase):
             ):
                 return [(chat, source, target)]
             if source.agent_type == "swarm" and target.agent_type == "swarm":
-                if isinstance(source, WaldiezSwarmAgent) and source.is_initial:
-                    return [(chat, source, target)]
                 valid_chats.append(chat)
         if not valid_chats:
             return []
+        for valid_chat in valid_chats:
+            source = self.get_agent_by_id(valid_chat.source)
+            if isinstance(source, WaldiezSwarmAgent) and source.is_initial:
+                return [
+                    (
+                        valid_chat,
+                        source,
+                        self.get_agent_by_id(valid_chat.target),
+                    )
+                ]
         first_chat: Optional[WaldiezChat] = None
         # first check the order
         by_order = sorted(
