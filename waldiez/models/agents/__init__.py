@@ -48,6 +48,11 @@ from .rag_user import (
     WaldiezRagUserVectorDb,
     WaldiezRagUserVectorDbConfig,
 )
+from .reasoning import (
+    WaldiezReasoningAgent,
+    WaldiezReasoningAgentData,
+    WaldiezReasoningAgentReasonConfig,
+)
 from .swarm_agent import (
     CUSTOM_AFTER_WORK,
     CUSTOM_AFTER_WORK_ARGS,
@@ -116,6 +121,9 @@ __all__ = [
     "WaldiezRagUser",
     "WaldiezRagUserData",
     "WaldiezRagUserModels",
+    "WaldiezReasoningAgent",
+    "WaldiezReasoningAgentData",
+    "WaldiezReasoningAgentReasonConfig",
     "WaldiezUserProxy",
     "WaldiezUserProxyData",
     "WaldiezRagUserRetrieveConfig",
