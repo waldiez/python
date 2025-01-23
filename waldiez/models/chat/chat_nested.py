@@ -114,27 +114,26 @@ class WaldiezChatNested(WaldiezBase):
             If the validation fails.
         """
         if self.message is not None:
+            self._message_content = self.message.content_body
             if self.message.type == "none":
                 self._message_content = ""
-            elif self.message.type == "string":
+            if self.message.type == "string":
                 self._message_content = self.message.content
-            elif self.message.type == "method":
+            if self.message.type == "method":
                 self._message_content = self.message.validate_method(
                     function_name=NESTED_CHAT_MESSAGE,
                     function_args=NESTED_CHAT_ARGS,
                 )
-            else:
-                self._message_content = self.message.content_body
+
         if self.reply is not None:
+            self._reply_content = self.reply.content_body
             if self.reply.type == "none":
                 self._reply_content = ""
-            elif self.reply.type == "string":
+            if self.reply.type == "string":
                 self._reply_content = self.reply.content
-            elif self.reply.type == "method":
+            if self.reply.type == "method":
                 self._reply_content = self.reply.validate_method(
                     function_name=NESTED_CHAT_REPLY,
                     function_args=NESTED_CHAT_ARGS,
                 )
-            else:
-                self._reply_content = self.reply.content_body
         return self

@@ -22,6 +22,11 @@ def test_waldiez_swarm_on_condition_available() -> None:
             value=None,
             type="invalid",  # type: ignore
         )
+    with pytest.raises(ValueError):
+        WaldiezSwarmOnConditionAvailable(
+            value="",
+            type="string",
+        )
 
 
 def test_waldiez_swarm_on_condition_available_string() -> None:

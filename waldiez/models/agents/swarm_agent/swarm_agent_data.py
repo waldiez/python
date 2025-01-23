@@ -13,6 +13,8 @@ from .after_work import WaldiezSwarmAfterWork
 from .on_condition import WaldiezSwarmOnCondition
 from .update_system_message import WaldiezSwarmUpdateSystemMessage
 
+WaldiezSwarmHandoff = Union[WaldiezSwarmOnCondition, WaldiezSwarmAfterWork]
+
 
 # flake8: noqa: E501
 # pylint: disable=line-too-long
@@ -118,8 +120,5 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         ]
         on_conditions = sorted(on_conditions, key=lambda x: x.target.order)
         handoffs = on_conditions + after_works
-        if after_works and after_works[0] != handoffs[-1]:
-            handoffs.remove(after_works[0])
-            handoffs.append(after_works[0])
         self.handoffs = handoffs
         return self

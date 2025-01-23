@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: skip-file
-# type: ignore
 # isort: skip_file
-"""Extra typer commands for CLI."""
+# flake8: noqa: E501
+"""Waldiez-jupyter extra typer commands for CLI."""
 
 from typing import Callable
 
@@ -11,40 +11,29 @@ import typer
 from typer.models import CommandInfo
 import subprocess  # nosemgrep # nosec
 
-HAVE_STUDIO = False
 HAVE_JUPYTER = False
-try:
-    from waldiez_studio.cli import run as studio_app
-
-    HAVE_STUDIO = True
-except BaseException:
-    pass
 
 try:
-    import waldiez_jupyter  # noqa: F401
+    import waldiez_jupyter  # type: ignore[unused-ignore, unused-import, import-not-found, import-untyped]  # noqa
 
     HAVE_JUPYTER = True
 except BaseException:
     pass
 
 
-def add_cli_extras(app: typer.Typer) -> None:
-    """Add extra CLI commands to the app.
+def add_jupyter_cli(app: typer.Typer) -> None:
+    """Add Jupyter extra command to the app if available.
 
     Parameters
     ----------
     app : typer.Typer
-        The Typer app to add the extra commands to.
+        The Typer app to add the extra command to.
 
     Returns
     -------
     typer.Typer
-        The app with the extra commands added
+        The app with the extra command added
     """
-    if HAVE_STUDIO:
-        app.registered_commands.append(
-            CommandInfo(name="studio", callback=studio_app)
-        )
     if HAVE_JUPYTER:
         jupyter_app = get_jupyter_app()
         app.registered_commands.append(
@@ -112,9 +101,9 @@ def get_jupyter_app() -> Callable[..., None]:
         if not browser:
             command.append("--no-browser")
         if password:
-            from jupyter_server.auth import passwd
+            from jupyter_server.auth import passwd  # type: ignore[unused-ignore, import-not-found, attr-defined]  # noqa
 
-            hashed_password = passwd(password)
+            hashed_password = passwd(password)  # type: ignore[unused-ignore, no-untyped-call]  # noqa
             command.append(f"--ServerApp.password={hashed_password}")
         subprocess.run(command)
 

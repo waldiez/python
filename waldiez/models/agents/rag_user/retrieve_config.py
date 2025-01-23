@@ -718,23 +718,29 @@ class WaldiezRagUserRetrieveConfig(WaldiezBase):
             if isinstance(self.docs_path, str)
             else self.docs_path
         )
-        for index, path in enumerate(doc_paths):
-            is_remote, is_raw = is_remote_path(path)
+        paths: List[str] = []
+        for path in doc_paths:
+            resolved = path
+            is_remote, is_raw = is_remote_path(resolved)
             if is_remote:
                 if not is_raw:
-                    doc_paths[index] = f'r"{path}"'
+                    resolved = f'r"{resolved}"'
+                if resolved not in paths:
+                    paths.append(resolved)
                 continue
-            if path.startswith("file://"):
-                path = path[len("file://") :]
-            if path.startswith('r"file://"'):
-                path = path[len('r"file://"') :]
-            if string_represents_folder(path):
+            resolved = remove_file_scheme(resolved)
+            is_raw = resolved.startswith(("r'", 'r"'))
+            maybe_folder = string_represents_folder(resolved)
+            if maybe_folder:
                 if not is_raw:
-                    doc_paths[index] = f'r"{path}"'
+                    resolved = f'r"{resolved}"'
+                if resolved not in paths:
+                    paths.append(resolved)
                 continue
-            resolved = resolve_path(path, is_raw)
-            doc_paths[index] = resolved
-        self.docs_path = doc_paths
+            resolved = resolve_path(resolved, is_raw, not maybe_folder)
+            if resolved not in paths:
+                paths.append(resolved)
+        self.docs_path = paths
 
     @model_validator(mode="after")
     def validate_rag_user_data(self) -> Self:
@@ -796,12 +802,35 @@ def is_remote_path(path: str) -> Tuple[bool, bool]:
     """
     is_raw = path.startswith(("r'", 'r"'))
     for not_local in NOT_LOCAL:
-        if path.startswith((not_local, f'r"{not_local}"', f"r'{not_local}'")):
+        if path.startswith((not_local, f'r"{not_local}', f"r'{not_local}")):
             return True, is_raw
     return False, is_raw
 
 
-def resolve_path(path: str, is_raw: bool) -> str:
+def remove_file_scheme(path: str) -> str:
+    """Remove the file:// scheme from a path.
+
+    Parameters
+    ----------
+    path : str
+        The path to remove the scheme from.
+
+    Returns
+    -------
+    str
+        The path without the scheme.
+    """
+    resolved = str(path)
+    while resolved.startswith('r"file://') and resolved.endswith('"'):
+        resolved = resolved[len('r"file://') : -1]
+    while resolved.startswith("r'file://") and resolved.endswith("'"):
+        resolved = resolved[len("r'file://") : -1]
+    while resolved.startswith("file://"):
+        resolved = resolved[len("file://") :]
+    return resolved
+
+
+def resolve_path(path: str, is_raw: bool, must_exist: bool) -> str:
     """Try to resolve a path.
 
     Parameters
@@ -810,6 +839,8 @@ def resolve_path(path: str, is_raw: bool) -> str:
         The path to resolve.
     is_raw : bool
         If the path is a raw string.
+    must_exist : bool
+        If the path must exist.
     Returns
     -------
     Path
@@ -824,8 +855,6 @@ def resolve_path(path: str, is_raw: bool) -> str:
     path_string = path
     if is_raw:
         path_string = path[2:-1]
-    if path_string.startswith(NOT_LOCAL):
-        return path
     try:
         resolved = Path(path_string).resolve()
     except BaseException as error:  # pragma: no cover
@@ -838,6 +867,6 @@ def resolve_path(path: str, is_raw: bool) -> str:
                 f"Path {path} is not a valid local path."
             ) from error
         return raw_string
-    if not resolved.exists():
+    if not resolved.exists() and must_exist:
         raise ValueError(f"Path {path} does not exist.")
     return f'r"{resolved}"'

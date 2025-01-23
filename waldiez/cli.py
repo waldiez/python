@@ -7,7 +7,6 @@ import json
 import logging
 import os
 import sys
-import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
@@ -15,14 +14,11 @@ import anyio
 import typer
 from typing_extensions import Annotated
 
-from . import Waldiez, __version__
-from .cli_extras import add_cli_extras  # type: ignore
+from ._version import __version__
 from .exporter import WaldiezExporter
+from .models import Waldiez
 from .runner import WaldiezRunner
-
-warnings.filterwarnings(
-    "ignore", module="flaml", message="^.*flaml.automl is not available.*$"
-)
+from .utils import add_cli_extras
 
 if TYPE_CHECKING:
     from autogen import ChatResult  # type: ignore[import-untyped]
@@ -90,7 +86,7 @@ def run(
     ),
 ) -> None:
     """Run a Waldiez flow."""
-    # swarm without a user,
+    # a swarm chat without a user agent
     # creates a new user (this has a default code execution with docker)
     # temp (until we handle/detect docker setup)
     os.environ["AUTOGEN_USE_DOCKER"] = "0"

@@ -151,7 +151,7 @@ class WaldiezFlowData(WaldiezBase):
         for chat in self.chats:
             chat_prerequisites = []
             for chat_id in chat.data.prerequisites:
-                if chat_id not in id_to_chat_id:
+                if chat_id not in id_to_chat_id:  # pragma: no cover
                     raise ValueError(
                         f"Chat with id {chat_id} not found in the flow."
                     )

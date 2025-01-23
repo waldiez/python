@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import warnings
 from contextlib import asynccontextmanager, contextmanager
 from pathlib import Path
 from typing import (
@@ -198,8 +199,6 @@ def after_run(
     if isinstance(output_path, str):
         output_path = Path(output_path)
     output_dir = output_path.parent if output_path else Path.cwd()
-    if output_dir.is_file():
-        output_dir = output_dir.parent
     if skip_mmd is False:
         events_csv_path = temp_dir / "logs" / "events.csv"
         if events_csv_path.exists():
@@ -217,6 +216,7 @@ def after_run(
         destination_dir.mkdir(parents=True, exist_ok=True)
         # copy the contents of the temp dir to the destination dir
         printer(f"Copying the results to {destination_dir}")
+        temp_dir.mkdir(parents=True, exist_ok=True)
         for item in temp_dir.iterdir():
             # skip cache files
             if (
@@ -242,7 +242,13 @@ def get_printer() -> Callable[..., None]:
     Callable[..., None]
         The printer function.
     """
-    from autogen.io import IOStream  # type: ignore
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            module="flaml",
+            message="^.*flaml.automl is not available.*$",
+        )
+        from autogen.io import IOStream  # type: ignore
 
     printer = IOStream.get_default().print
 

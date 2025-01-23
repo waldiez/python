@@ -82,6 +82,12 @@ def custom_update_system_message(agent, messages):
         created_at="2021-01-01T00:00:00Z",
         updated_at="2021-01-01T00:00:00Z",
     )
+    assert agent.functions == ["function1", "function2"]
+    assert agent.update_agent_state_before_reply == [
+        update_system_message1,
+        update_system_message2,
+    ]
+    assert agent.nested_chats == []
     agent_dump = agent.model_dump()
     assert agent_dump["id"] == "wa-1"
     assert agent_dump["type"] == "agent"

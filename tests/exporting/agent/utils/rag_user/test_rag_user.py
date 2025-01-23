@@ -24,9 +24,9 @@ from waldiez.models import (
 
 def _get_a_doc_path() -> Tuple[str, str]:
     """Get a doc path."""
-    path = "/home/username/Documents/ New Folder"
+    path = "/home/username/Documents/ A New Folder"
     if os.name == "nt":
-        path = r"C:\Users\username\Documents\ New Folder"
+        path = r"C:\Users\username\Documents\ A New Folder"
     expecting = f'r"{path}"'
     return path, expecting
 

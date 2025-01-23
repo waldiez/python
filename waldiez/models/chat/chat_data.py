@@ -11,7 +11,7 @@ from ..agents.swarm_agent import (
     WaldiezSwarmAfterWork,
     WaldiezSwarmOnConditionAvailable,
 )
-from ..common import WaldiezBase, check_function
+from ..common import WaldiezBase, check_function, update_dict
 from .chat_message import (
     CALLABLE_MESSAGE,
     CALLABLE_MESSAGE_ARGS,
@@ -291,22 +291,22 @@ class WaldiezChatData(WaldiezBase):
         ValueError
             If the validation fails.
         """
-        if isinstance(self.message, WaldiezChatMessage):
-            if self.message.type == "none":
-                self._message_content = None
-            elif self.message.type == "string":
-                self._message_content = self.message.content
-            elif self.message.type == "method":
-                valid, error_or_body = check_function(
-                    self.message.content or "",
-                    CALLABLE_MESSAGE,
-                    CALLABLE_MESSAGE_ARGS,
-                )
-                if not valid:
-                    raise ValueError(error_or_body)
-                self._message_content = error_or_body
-            else:
-                self._message_content = self.message.content
+        if not isinstance(self.message, WaldiezChatMessage):  # pragma: no cover
+            return self
+        self._message_content = self.message.content
+        if self.message.type == "none":
+            self._message_content = None
+        if self.message.type == "string":
+            self._message_content = self.message.content
+        if self.message.type == "method":
+            valid, error_or_body = check_function(
+                self.message.content or "",
+                CALLABLE_MESSAGE,
+                CALLABLE_MESSAGE_ARGS,
+            )
+            if not valid:
+                raise ValueError(error_or_body)
+            self._message_content = error_or_body
         return self
 
     @field_validator("message", mode="before")
@@ -342,20 +342,22 @@ class WaldiezChatData(WaldiezBase):
             )
         if isinstance(value, dict):
             return WaldiezChatMessage.model_validate(value)
-        if isinstance(value, WaldiezChatMessage):
-            return value
-        return WaldiezChatMessage(
-            type="none", use_carryover=False, content=None, context={}
-        )
+        if not isinstance(value, WaldiezChatMessage):
+            return WaldiezChatMessage(
+                type="none", use_carryover=False, content=None, context={}
+            )
+        return value
 
     @field_validator("context_variables", mode="after")
     @classmethod
-    def validate_context_variables(cls, value: Any) -> Optional[Dict[str, Any]]:
+    def validate_context_variables(
+        cls, value: Optional[Dict[str, Any]]
+    ) -> Optional[Dict[str, Any]]:
         """Validate the context variables.
 
         Parameters
         ----------
-        value : Any
+        value : Optional[Dict[str, Any]]
             The context variables value.
 
         Returns
@@ -370,9 +372,7 @@ class WaldiezChatData(WaldiezBase):
         """
         if value is None:
             return None
-        if not isinstance(value, dict):
-            raise ValueError("Context variables must be a dictionary.")
-        return get_context_dict(value)
+        return update_dict(value)
 
     @property
     def summary_args(self) -> Optional[Dict[str, Any]]:
@@ -398,8 +398,9 @@ class WaldiezChatData(WaldiezBase):
             The dictionary to use for generating the kwargs.
         """
         extra_args: Dict[str, Any] = {}
-        if isinstance(self.message, WaldiezChatMessage):
-            extra_args.update(get_context_dict(self.message.context))
+        if not isinstance(self.message, WaldiezChatMessage):  # pragma: no cover
+            return extra_args
+        extra_args.update(update_dict(self.message.context))
         return extra_args
 
     def get_chat_args(self, for_queue: bool) -> Dict[str, Any]:
@@ -434,37 +435,3 @@ class WaldiezChatData(WaldiezBase):
         if self._prerequisites:
             args["prerequisites"] = self._prerequisites
         return args
-
-
-def get_context_dict(context: Dict[str, Any]) -> Dict[str, Any]:
-    """Get the context dictionary.
-
-    Try to determine the type of the context variables.
-
-    Parameters
-    ----------
-    context : Dict[str, Any]
-        The context variables.
-
-    Returns
-    -------
-    Dict[str, Any]
-        The context variables with the detected types.
-    """
-    new_dict: Dict[str, Any] = {}
-    for key, value in context.items():
-        value_lower = str(value).lower()
-        if value_lower in ("none", "null"):
-            new_dict[key] = None
-        elif value_lower in ("true", "false"):
-            new_dict[key] = value.lower() == "true"
-        elif str(value).isdigit():
-            new_dict[key] = int(value)
-        elif str(value).replace(".", "").isdigit():
-            try:
-                new_dict[key] = float(value)
-            except ValueError:  # pragma: no cover
-                new_dict[key] = value
-        else:
-            new_dict[key] = value
-    return new_dict

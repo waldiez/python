@@ -3,6 +3,8 @@
 
 """Test waldiez.models.chat.chat_data.*."""
 
+import pytest
+
 from waldiez.models.chat.chat_data import WaldiezChatData
 from waldiez.models.chat.chat_message import WaldiezChatMessage
 
@@ -146,6 +148,19 @@ def test_waldiez_chat_data_message() -> None:
         target="wa-2",
         position=0,
         clear_history=False,
+        message=(1, 2),  # type: ignore
+    )
+    assert isinstance(chat_data.message, WaldiezChatMessage)
+    assert chat_data.message.type == "none"
+
+    # Given
+    chat_data = WaldiezChatData(  # type: ignore
+        name="chat_data",
+        description="Chat data",
+        source="wa-1",
+        target="wa-2",
+        position=0,
+        clear_history=False,
         message=WaldiezChatMessage(
             type="string",
             use_carryover=False,
@@ -223,6 +238,7 @@ def test_waldiez_chat_summary() -> None:
         },
     )
     # Then
+    assert not chat_data.summary_args
     model_dump = chat_data.model_dump(by_alias=True)
     assert model_dump["summary"]["method"] == "reflectionWithLlm"
     # Given
@@ -236,6 +252,7 @@ def test_waldiez_chat_summary() -> None:
         message="Hello there",
         summary={  # type: ignore
             "method": "reflectionWithLlm",
+            "prompt": "Summarize this chat",
             "args": {
                 "summary_role": "system",
             },
@@ -246,3 +263,87 @@ def test_waldiez_chat_summary() -> None:
     assert model_dump["summary"]["method"] == "reflectionWithLlm"
     model_dump = chat_data.model_dump(by_alias=False)
     assert model_dump["summary"]["method"] == "reflection_with_llm"
+
+
+def test_waldiez_chat_get_chat_args() -> None:
+    """Test get_chat_args."""
+    chat_data = WaldiezChatData(  # type: ignore
+        name="Chat data",
+        description="Chat data",
+        source="wa-1",
+        target="wa-2",
+        position=0,
+        clear_history=False,
+        message={  # type: ignore
+            "type": "string",
+            "content": "Hello there",
+            "context": {
+                "problem": "Solve this task",
+                "solution": "4.2",
+                "alternative_solution": "42",
+                "not_a_solution": "null",
+                "is_valid": "true",
+            },
+        },
+        summary={  # type: ignore
+            "method": "last_msg",
+        },
+    )
+    chat_args = chat_data.get_chat_args(for_queue=True)
+    assert chat_args["chat_id"] == 0
+    assert chat_args["problem"] == "Solve this task"
+    assert chat_args["solution"] == 4.2
+    assert chat_args["alternative_solution"] == 42
+    assert chat_args["not_a_solution"] is None
+
+
+def test_waldiez_chat_invalid_context_variables() -> None:
+    """Test invalid context variables."""
+    with pytest.raises(ValueError):
+        WaldiezChatData(  # type: ignore
+            name="Chat data",
+            description="Chat data",
+            source="wa-1",
+            target="wa-2",
+            position=0,
+            clear_history=False,
+            message={  # type: ignore
+                "type": "string",
+                "content": "Hello there",
+                "context": {
+                    "problem": "Solve this task",
+                    "solution": "4.2",
+                    "alternative_solution": "42",
+                    "not_a_solution": "null",
+                    "is_valid": "true",
+                },
+            },
+            summary={  # type: ignore
+                "method": "last_msg",
+                "prompt": "Summarize this chat",
+                "args": {
+                    "summary_role": "system",
+                },
+            },
+            context_variables=4,  # type: ignore
+        )
+
+
+def test_waldiez_chat_invalid_message_method() -> None:
+    """Test invalid message method."""
+    with pytest.raises(ValueError):
+        WaldiezChatData(  # type: ignore
+            name="Chat data",
+            description="Chat data",
+            source="wa-1",
+            target="wa-2",
+            position=0,
+            clear_history=False,
+            message={  # type: ignore
+                "type": "method",
+                "content": "Hello there",
+            },
+            summary={  # type: ignore
+                "method": "reflectionWithLlm",
+            },
+        )

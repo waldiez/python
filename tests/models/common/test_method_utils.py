@@ -21,6 +21,7 @@ from waldiez.models.chat.chat_nested import (
 from waldiez.models.common.method_utils import (
     check_function,
     generate_function,
+    get_function,
     parse_code_string,
 )
 
@@ -48,10 +49,14 @@ def test_parse_code_string() -> None:
 def test_check_function() -> None:
     """Test check_function."""
     # Given
-    code_string = """
-def callable_message(sender, recipient, context):
-    return "Hello"
-    """
+    code_string = '''
+def callable_message(
+    sender,
+    recipient,
+    context
+) -> str:
+    """Some docstring."""
+    return "Hello"'''
     function_name = CALLABLE_MESSAGE
     function_args = CALLABLE_MESSAGE_ARGS
     # When
@@ -62,7 +67,7 @@ def callable_message(sender, recipient, context):
     )
     # Then
     assert valid
-    assert body == '    return "Hello"'
+    assert body == '    """Some docstring."""\n    return "Hello"'
 
     # Given
     code_string = """
@@ -287,3 +292,68 @@ def test_generate_function() -> None:
         "    # type: (...) -> Union[Dict[str, Any], str]\n"
         "    return 'Hello'\n"
     )
+
+
+def test_get_function() -> None:
+    """Test get_function."""
+    # Given
+    code_string = """
+def callable_message(sender, recipient, context):
+    return "Hello"
+"""
+    function_name = "callable_message"
+    # When
+    function = get_function(
+        code_string=code_string,
+        function_name=function_name,
+    )
+    # Then
+    assert function == code_string
+
+    # Given
+    code_string = """
+def invalid:
+    return "Hello"
+"""
+    function_name = "invalid"
+    # When/Then
+    output = get_function(
+        code_string=code_string,
+        function_name=function_name,
+    )
+    assert output == ""
+
+    # Given
+    code_string = """
+# some code before should be excluded
+
+x = 5
+
+def callable_message(sender, recipient, context):
+    return "Hello"
+"""
+    # When
+    function_name = "callable_message"
+    output = get_function(
+        code_string=code_string,
+        function_name=function_name,
+    )
+    # Then
+    assert output == (
+        "\ndef callable_message(sender, recipient, context):\n"
+        '    return "Hello"\n'
+    )
+
+    # Given
+    code_string = """
+def callable_message(sender, recipient, context):
+    return "Hello"
+"""
+    function_name = "invalid"
+    # When
+    output = get_function(
+        code_string=code_string,
+        function_name=function_name,
+    )
+    # Then
+    assert output == ""

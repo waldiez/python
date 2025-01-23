@@ -6,9 +6,11 @@
 import sys
 from importlib.metadata import PackageNotFoundError, version
 
+__WALDIEZ_CHECKED_FOR_CONFLICTS = False
+
 
 # fmt: off
-def check_conflicts() -> None:  # pragma: no cover
+def _check_conflicts() -> None:  # pragma: no cover
     """Check for conflicts with 'autogen-agentchat' package."""
     try:
         version("autogen-agentchat")
@@ -19,10 +21,19 @@ def check_conflicts() -> None:  # pragma: no cover
             "Please uninstall 'autogen-agentchat': \n"
             f"{sys.executable} -m pip uninstall -y autogen-agentchat" + "\n"
             "And install 'pyautogen' (and/or 'waldiez') again: \n"
-            f"{sys.executable} -m pip install --force pyautogen waldiez"
+            f"{sys.executable} -m pip install --force pyautogen waldiez",
+            file=sys.stderr,
         )
         sys.exit(1)
     except PackageNotFoundError:
         pass
-
 # fmt: on
+
+
+def check_conflicts() -> None:  # pragma: no cover
+    """Check for conflicts with 'autogen-agentchat' package."""
+    # pylint: disable=global-statement
+    global __WALDIEZ_CHECKED_FOR_CONFLICTS
+    if __WALDIEZ_CHECKED_FOR_CONFLICTS is False:
+        _check_conflicts()
+        __WALDIEZ_CHECKED_FOR_CONFLICTS = True

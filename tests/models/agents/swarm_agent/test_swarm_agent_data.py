@@ -2,28 +2,34 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Test waldiez.models.agents.swarm.WaldiezSwarmData."""
 
+from typing import List
+
 import pytest
 
-from waldiez.models.agents.swarm_agent.after_work import WaldiezSwarmAfterWork
-from waldiez.models.agents.swarm_agent.on_condition import (
-    WaldiezSwarmOnCondition,
-)
-from waldiez.models.agents.swarm_agent.on_condition_available import (
-    WaldiezSwarmOnConditionAvailable,
-)
-from waldiez.models.agents.swarm_agent.on_condition_target import (
-    WaldiezSwarmOnConditionTarget,
-)
-from waldiez.models.agents.swarm_agent.swarm_agent_data import (
+from waldiez.models.agents.swarm_agent import (
+    WaldiezSwarmAfterWork,
     WaldiezSwarmAgentData,
-)
-from waldiez.models.agents.swarm_agent.update_system_message import (
+    WaldiezSwarmHandoff,
+    WaldiezSwarmOnCondition,
+    WaldiezSwarmOnConditionAvailable,
+    WaldiezSwarmOnConditionTarget,
     WaldiezSwarmUpdateSystemMessage,
 )
 
 
-def test_waldiez_swarm_data() -> None:
-    """Test WaldiezSwarmAgentData."""
+def get_swarm_agent_data(no_after_works: int = 1) -> WaldiezSwarmAgentData:
+    """Return WaldiezSwarmAgentData.
+
+    Parameters
+    ----------
+    no_after_works : int
+        Number of after_works to include in the handoffs.
+
+    Returns
+    -------
+    WaldiezSwarmAgentData
+        The WaldiezSwarmAgentData object.
+    """
     after_work = WaldiezSwarmAfterWork(
         recipient_type="option",
         recipient="TERMINATE",
@@ -53,7 +59,12 @@ def test_waldiez_swarm_data() -> None:
         ),
     )
     update_system_message3 = "function 3"
-    swarm_data = WaldiezSwarmAgentData(
+    handoffs: List[WaldiezSwarmHandoff] = (
+        [after_work, on_condition]
+        if no_after_works == 1
+        else [after_work, on_condition, after_work]
+    )
+    return WaldiezSwarmAgentData(
         system_message="system message",
         skills=[],
         model_ids=["model1", "model2"],
@@ -74,8 +85,13 @@ def test_waldiez_swarm_data() -> None:
             update_system_message2,
             update_system_message3,
         ],
-        handoffs=[on_condition, after_work],
+        handoffs=handoffs,
     )
+
+
+def test_waldiez_swarm_agent_data() -> None:
+    """Test WaldiezSwarmAgentData."""
+    swarm_data = get_swarm_agent_data()
     assert swarm_data.functions == ["function1", "function2"]
 
 
@@ -106,3 +122,5 @@ def test_waldiez_swarm_data_invalid() -> None:
             ],
             handoffs=[],
         )
+    with pytest.raises(ValueError):
+        get_swarm_agent_data(2)

@@ -26,24 +26,30 @@ def in_virtualenv() -> bool:
 
 def refresh_environment() -> None:
     """Refresh the environment."""
-    # backup the default IOStream
-    from autogen.io import IOStream  # type: ignore
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            module="flaml",
+            message="^.*flaml.automl is not available.*$",
+        )
+        from autogen.io import IOStream  # type: ignore
 
-    default_io_stream = IOStream.get_default()
-    site.main()
-    # pylint: disable=import-outside-toplevel
-    modules_to_reload = [mod for mod in sys.modules if "autogen" in mod]
-    for mod in modules_to_reload:
-        del sys.modules[mod]
-    warnings.filterwarnings(
-        "ignore", module="flaml", message="^.*flaml.automl is not available.*$"
-    )
-    import autogen  # type: ignore
-    from autogen.io import IOStream
+        default_io_stream = IOStream.get_default()
+        site.main()
+        # pylint: disable=import-outside-toplevel
+        modules_to_reload = [mod for mod in sys.modules if "autogen" in mod]
+        for mod in modules_to_reload:
+            del sys.modules[mod]
+        import autogen  # type: ignore
+        from autogen.io import IOStream
 
-    importlib.reload(autogen)
-    # restore the default IOStream
-    IOStream.set_global_default(default_io_stream)
+        importlib.reload(autogen)
+        # restore the default IOStream
+        IOStream.set_global_default(default_io_stream)
+        # reload any other modules that may have been affected
+        for mod in modules_to_reload:
+            if mod not in sys.modules:
+                importlib.import_module(mod)
 
 
 def set_env_vars(flow_env_vars: List[Tuple[str, str]]) -> Dict[str, str]:

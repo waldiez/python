@@ -96,3 +96,31 @@ def test_waldiez_agent_termination_message_method() -> None:
             criterion=None,
             method_content="def is_termination_message():\n    return False",
         )
+
+
+def test_waldiez_agent_get_termination_function() -> None:
+    """Test WaldiezAgentTerminationMessage.get_termination_function."""
+    termination_message = WaldiezAgentTerminationMessage(
+        type="keyword",
+        keywords=["keyword-1", "keyword-2"],
+        criterion="found",
+        method_content=None,
+    )
+    termination_function = termination_message.get_termination_function()
+    assert termination_function[1] == "is_termination_message"
+    termination_message = WaldiezAgentTerminationMessage(
+        type="method",
+        keywords=[],
+        criterion=None,
+        method_content="def is_termination_message(message):\n    return False",
+    )
+    termination_function_tuple = termination_message.get_termination_function(
+        name_suffix="post", name_prefix="pre"
+    )
+    assert termination_function_tuple[1] == "pre_is_termination_message_post"
+    assert termination_function_tuple[0] == (
+        "def pre_is_termination_message_post(\n"
+        "    message: Dict[str, Any],\n"
+        ") -> bool:\n"
+        "    return False\n"
+    )

@@ -114,7 +114,7 @@ def _validate_function_body(
                             f" in function {node.name}"
                         ),
                     )
-            if not node.body:
+            if not node.body:  # pragma: no cover
                 return False, "No body found in the function"
             function_body = _get_function_body(code_string, node)
             return True, function_body
@@ -143,10 +143,7 @@ def get_function(
     str
         The function signature and body.
     """
-    try:
-        tree = parso.parse(code_string)  # type: ignore
-    except BaseException:  # pylint: disable=broad-except
-        return ""
+    tree = parso.parse(code_string)  # type: ignore
     for node in tree.iter_funcdefs():
         if node.name.value == function_name:
             return node.get_code()

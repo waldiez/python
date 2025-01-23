@@ -79,7 +79,7 @@ class WaldiezReasoningAgentData(WaldiezAssistantData):
         if self.reason_config.method == "beam_search":
             reason_dict["beam_size"] = self.reason_config.beam_size
             reason_dict["answer_approach"] = self.reason_config.answer_approach
-        elif self.reason_config.method in ["mcts", "lats"]:
+        if self.reason_config.method in ("mcts", "lats"):
             reason_dict["nsim"] = self.reason_config.nsim
             reason_dict["exploration_constant"] = (
                 self.reason_config.exploration_constant

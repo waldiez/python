@@ -94,5 +94,4 @@ def test_agent_exporter(tmp_path: Path) -> None:
     output_dir = tmp_path / "test_agent_exporter"
     output_dir.mkdir(exist_ok=True)
     agent, _, __ = create_agent(1)
-    print(agent.id)
     shutil.rmtree(output_dir)

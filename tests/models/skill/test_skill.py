@@ -4,7 +4,11 @@
 
 import pytest
 
-from waldiez.models.skill import WaldiezSkill
+from waldiez.models.skill import (
+    SHARED_SKILL_NAME,
+    WaldiezSkill,
+    WaldiezSkillData,
+)
 
 
 def test_waldiez_skill() -> None:
@@ -63,3 +67,28 @@ def test_invalid_skill() -> None:
             description=description,
             data=data,  # type: ignore
         )
+
+
+def test_shared_skill() -> None:
+    """Test shared skill."""
+    # When
+    skill = WaldiezSkill(
+        id="ws-1",
+        type="skill",
+        tags=[],
+        requirements=[],
+        name=SHARED_SKILL_NAME,
+        created_at="2024-01-01T00:00:00Z",
+        updated_at="2024-01-01T00:00:00Z",
+        description="shared skill",
+        data=WaldiezSkillData(content="GLOBAL_VARIABLE = 5", secrets={}),
+    )
+    # Then
+    assert skill.id == "ws-1"
+    assert skill.name == SHARED_SKILL_NAME
+    assert skill.description == "shared skill"
+    assert skill.content == "GLOBAL_VARIABLE = 5"
+    assert not skill.secrets
+    assert not skill.tags
+    assert not skill.requirements
+    assert skill.get_content() == "GLOBAL_VARIABLE = 5"

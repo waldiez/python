@@ -206,3 +206,122 @@ def test_with_folder_as_doc_path(tmp_path: Path) -> None:
     )
     assert config.docs_path == [f'r"{doc_path}"']
     shutil.rmtree(docs_dir, ignore_errors=True)
+
+
+def test_get_custom_embedding_function() -> None:
+    """Test get_custom_embedding_function."""
+    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+        use_custom_embedding=True,
+        embedding_function="def custom_embedding_function():\n    return list",
+    )
+    custom_embedding_function = config.get_custom_embedding_function(
+        name_prefix="pre",
+        name_suffix="post",
+    )
+    assert custom_embedding_function[1] == "pre_custom_embedding_function_post"
+    assert custom_embedding_function[0] == (
+        "def pre_custom_embedding_function_post() -> Callable[..., Any]:\n"
+        "    return list\n"
+    )
+    custom_embedding_function = config.get_custom_embedding_function()
+    assert custom_embedding_function[1] == "custom_embedding_function"
+    custom_embedding_function = config.get_custom_embedding_function(
+        name_prefix="pre",
+    )
+    assert custom_embedding_function[1] == "pre_custom_embedding_function"
+
+
+def test_get_custom_token_count_function() -> None:
+    """Test get_custom_token_count_function."""
+    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+        use_custom_token_count=True,
+        custom_token_count_function=(
+            "def custom_token_count_function(text, model):\n    return 0"  # nosemgrep # nosec
+        ),
+    )
+    custom_token_count_function = config.get_custom_token_count_function(
+        name_prefix="pre",
+        name_suffix="post",
+    )
+    assert (
+        custom_token_count_function[1] == "pre_custom_token_count_function_post"
+    )
+    assert custom_token_count_function[0] == (
+        "def pre_custom_token_count_function_post(\n"
+        "    text: str,\n"
+        "    model: str,\n"
+        ") -> int:\n"
+        "    return 0\n"
+    )
+    custom_token_count_function = config.get_custom_token_count_function()
+    assert custom_token_count_function[1] == "custom_token_count_function"
+    custom_token_count_function = config.get_custom_token_count_function(
+        name_prefix="pre",
+    )
+    assert custom_token_count_function[1] == "pre_custom_token_count_function"
+
+
+def test_get_custom_text_split_function() -> None:
+    """Test get_custom_text_split_function."""
+    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+        use_custom_text_split=True,
+        custom_text_split_function="def custom_text_split_function(text, max_tokens, chunk_mode, must_break_at_empty_line, overlap):\n    return [text]",
+    )
+    custom_text_split_function = config.get_custom_text_split_function(
+        name_prefix="pre",
+        name_suffix="post",
+    )
+    assert (
+        custom_text_split_function[1] == "pre_custom_text_split_function_post"
+    )
+    assert custom_text_split_function[0] == (
+        "def pre_custom_text_split_function_post(\n"
+        "    text: str,\n"
+        "    max_tokens: int,\n"
+        "    chunk_mode: str,\n"
+        "    must_break_at_empty_line: bool,\n"
+        "    overlap: int,\n"
+        ") -> List[str]:\n"
+        "    return [text]\n"
+    )
+    custom_text_split_function = config.get_custom_text_split_function()
+    assert custom_text_split_function[1] == "custom_text_split_function"
+    custom_text_split_function = config.get_custom_text_split_function(
+        name_prefix="pre",
+    )
+    assert custom_text_split_function[1] == "pre_custom_text_split_function"
+
+
+def test_validate_docs_path() -> None:
+    """Test validate_docs_path."""
+    this_file = Path(__file__)
+    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+        task="default",
+        vector_db="chroma",
+        docs_path=[
+            "file:///path/to/docs",
+            "/path/to/docs",
+            "/path/to/folder/one",
+            'r"file:///path/to/the/docs"',
+            "r'/path/to/folder'",
+            "r'file:///path/to/docs/two/'",
+            "https://www.example.com/one",
+            'r"https://www.example.com/two"',
+            "https://www.example.com/two",
+            "r'https://www.example.com/three'",
+            str(this_file),
+            f'r"{this_file}"',
+            f"r'{this_file}'",
+        ],
+    )
+    assert config.docs_path == [
+        'r"/path/to/docs"',
+        'r"/path/to/folder/one"',
+        'r"/path/to/the/docs"',
+        "r'/path/to/folder'",
+        'r"/path/to/docs/two/"',
+        'r"https://www.example.com/one"',
+        'r"https://www.example.com/two"',
+        "r'https://www.example.com/three'",
+        f'r"{this_file}"',
+    ]

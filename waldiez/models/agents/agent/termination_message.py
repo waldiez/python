@@ -115,6 +115,8 @@ class WaldiezAgentTerminationMessage(WaldiezBase):
             function_name = f"{name_prefix}_{function_name}"
         if name_suffix:
             function_name = f"{function_name}_{name_suffix}"
+        if self.type in ("none", "keyword"):
+            return self.string, function_name
         return (
             generate_function(
                 function_name=function_name,

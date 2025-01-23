@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
 
-from ..common import WaldiezBase, check_function
+from ..common import WaldiezBase, check_function, update_dict
 
 WaldiezChatMessageType = Literal[
     "string", "method", "rag_message_generator", "none"
@@ -113,32 +113,8 @@ class WaldiezChatMessage(WaldiezBase):
         WaldiezChatMessage
             The validated instance.
         """
-        for key, value in self.context.items():
-            if isinstance(value, str):
-                if value.lower() == "true":
-                    self.context[key] = True
-                elif value.lower() == "false":
-                    self.context[key] = False
-                elif value.lower() in ["null", "none"]:
-                    self.context[key] = None
-                else:
-                    self.context[key] = self._number_or_string(value)
+        self.context = update_dict(self.context)
         return self
-
-    @staticmethod
-    def _number_or_string(value: Any) -> Any:
-        try:
-            int_value = int(value)
-            if str(int_value) == value:
-                return int_value
-        except ValueError:
-            try:
-                float_value = float(value)
-                if str(float_value) == value:
-                    return float_value
-            except ValueError:
-                pass
-        return value
 
     @model_validator(mode="after")
     def validate_content(self) -> Self:
