@@ -24,7 +24,7 @@ classifiers = [
 dependencies =[
     "asyncer==0.0.8",
     "pandas>=2",
-    "pyautogen==0.7.1",
+    "pyautogen==0.7.2",
     "jupytext",
     "parso==0.8.4",
     "pydantic>=2.6.1,<3",
@@ -99,22 +99,22 @@ dev = [
 ag2_extras =[
     'pgvector>=0.3.6',
     'psycopg[binary]>=3.2.3',
-    'pyautogen[anthropic]==0.7.1',
-    'pyautogen[bedrock]==0.7.1',
-    'autogen[captainagent]==0.7.1; platform_system == "Linux"',
-    'pyautogen[gemini]==0.7.1',
-    'pyautogen[groq]==0.7.1',
-    'pyautogen[lmm]==0.7.1',
-    'pyautogen[mistral]==0.7.1',
-    'pyautogen[neo4j]==0.7.1',
-    'pyautogen[retrievechat-mongodb]==0.7.1',
-    'pyautogen[retrievechat-pgvector]==0.7.1',
-    'pyautogen[retrievechat-qdrant]==0.7.1; python_version < "3.13"',
+    'pyautogen[anthropic]==0.7.2',
+    'pyautogen[bedrock]==0.7.2',
+    'autogen[captainagent]==0.7.2; platform_system == "Linux"',
+    'pyautogen[gemini]==0.7.2',
+    'pyautogen[groq]==0.7.2',
+    'pyautogen[lmm]==0.7.2',
+    'pyautogen[mistral]==0.7.2',
+    'pyautogen[neo4j]==0.7.2',
+    'pyautogen[retrievechat-mongodb]==0.7.2',
+    'pyautogen[retrievechat-pgvector]==0.7.2',
+    'pyautogen[retrievechat-qdrant]==0.7.2; python_version < "3.13"',
     'qdrant-client[fastembed]; python_version >= "3.13"',
-    'pyautogen[retrievechat]==0.7.1',
-    'pyautogen[together]==0.7.1',
-    'pyautogen[together]==0.7.1',
-    'pyautogen[websurfer]==0.7.1',
+    'pyautogen[retrievechat]==0.7.2',
+    'pyautogen[together]==0.7.2',
+    'pyautogen[together]==0.7.2',
+    'pyautogen[websurfer]==0.7.2',
     'pymongo==4.10.1',
 ]
 test = [
@@ -347,7 +347,7 @@ addopts = """
 [tool.coverage.run]
 omit = [
   "example.py",
-  "cli_extras.py"
+  "**/cli_extras/*.py",
 ]
 [tool.coverage.report]
 exclude_lines = [
