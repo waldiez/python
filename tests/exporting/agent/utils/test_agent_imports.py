@@ -16,6 +16,7 @@ def test_get_agent_imports() -> None:
     multimodal_agent_imports = get_agent_imports("MultimodalConversableAgent")
     conversable_agent_imports = get_agent_imports("ConversableAgent")
     swarm_agent_imports = get_agent_imports("SwarmAgent")
+    reasoning_agent_imports = get_agent_imports("ReasoningAgent")
 
     assert user_proxy_imports == {
         "import autogen",
@@ -44,4 +45,8 @@ def test_get_agent_imports() -> None:
     assert swarm_agent_imports == {
         "import autogen",
         "from autogen import AFTER_WORK, ON_CONDITION, UPDATE_SYSTEM_MESSAGE, AfterWorkOption, SwarmAgent, SwarmResult",
+    }
+    assert reasoning_agent_imports == {
+        "import autogen",
+        "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent",
     }

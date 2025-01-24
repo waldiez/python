@@ -12,6 +12,7 @@ from .agent import WaldiezAgent
 from .assistant import WaldiezAssistant
 from .group_manager.group_manager import WaldiezGroupManager
 from .rag_user import WaldiezRagUser
+from .reasoning import WaldiezReasoningAgent
 from .swarm_agent import WaldiezSwarmAgent
 from .user_proxy import WaldiezUserProxy
 
@@ -71,6 +72,14 @@ class WaldiezAgents(WaldiezBase):
             default_factory=list,
         ),
     ]
+    reasoning_agents: Annotated[
+        List[WaldiezReasoningAgent],
+        Field(
+            title="Reasoning Agents.",
+            description="Reasoning agents",
+            default_factory=list,
+        ),
+    ]
 
     @property
     def members(self) -> Iterator[WaldiezAgent]:
@@ -84,6 +93,7 @@ class WaldiezAgents(WaldiezBase):
         yield from self.users
         yield from self.assistants
         yield from self.rag_users
+        yield from self.reasoning_agents
         yield from self.swarm_agents
         yield from self.managers
 

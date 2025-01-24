@@ -31,6 +31,9 @@ from waldiez.models import (
     WaldiezRagUserData,
     WaldiezRagUserRetrieveConfig,
     WaldiezRagUserVectorDbConfig,
+    WaldiezReasoningAgent,
+    WaldiezReasoningAgentData,
+    WaldiezReasoningAgentReasonConfig,
     WaldiezSkill,
     WaldiezSkillData,
     WaldiezSwarmAfterWork,
@@ -529,7 +532,67 @@ def get_swarm_agent(agent_id: str = "wa-5") -> WaldiezSwarmAgent:
     )
 
 
-def get_chats(count: int = 4) -> List[WaldiezChat]:
+def get_reasoning_agent(agent_id: str = "wa-6") -> WaldiezReasoningAgent:
+    """Get a WaldiezReasoningAgent.
+
+    Parameters
+    ----------
+    agent_id : str, optional
+        The agent ID, by default "wa-6"
+
+    Returns
+    -------
+    WaldiezReasoningAgent
+        A WaldiezReasoningAgent instance.
+    """
+    return WaldiezReasoningAgent(
+        id=agent_id,
+        name="reasoning_agent",
+        description="Reasoning Agent",
+        tags=["reasoning_agent"],
+        requirements=[],
+        created_at="2021-01-01T00:00:00.000Z",
+        updated_at="2021-01-01T00:00:00.000Z",
+        type="agent",
+        agent_type="reasoning",
+        data=WaldiezReasoningAgentData(
+            system_message=None,
+            human_input_mode="NEVER",
+            code_execution_config=False,
+            agent_default_auto_reply="I am a reasoning agent.",
+            max_consecutive_auto_reply=5,
+            termination=WaldiezAgentTerminationMessage(
+                type="keyword",
+                criterion="ending",
+                keywords=["bye", "goodbye"],
+                method_content=None,
+            ),
+            model_ids=[],
+            skills=[],
+            nested_chats=[],
+            teachability=WaldiezAgentTeachability(
+                enabled=False,
+                verbosity=0,
+                reset_db=False,
+                recall_threshold=1.5,
+                max_num_retrievals=10,
+            ),
+            verbose=True,
+            reason_config=WaldiezReasoningAgentReasonConfig(
+                method="beam_search",
+                max_depth=3,
+                forest_size=1,
+                rating_scale=10,
+                beam_size=3,
+                answer_approach="pool",
+                nsim=3,
+                exploration_constant=1.41,
+            ),
+        ),
+    )
+
+
+def get_chats(count: int = 6) -> List[WaldiezChat]:
     """Get a list of WaldiezChat instances.
 
     Parameters
@@ -642,6 +705,7 @@ def get_flow(is_async: bool = False) -> WaldiezFlow:
     manager = get_group_manager()
     rag_user = get_rag_user()
     swarm_agent = get_swarm_agent()
+    reasoning_agent = get_reasoning_agent()
     chats = get_chats()
     agents = WaldiezAgents(
         users=[user],
@@ -649,6 +713,7 @@ def get_flow(is_async: bool = False) -> WaldiezFlow:
         managers=[manager],
         rag_users=[rag_user],
         swarm_agents=[swarm_agent],
+        reasoning_agents=[reasoning_agent],
     )
     flow = WaldiezFlow(
         id="wf-1",

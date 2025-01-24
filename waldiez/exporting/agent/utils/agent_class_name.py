@@ -31,4 +31,6 @@ def get_agent_class_name(agent: WaldiezAgent) -> str:
         return "RetrieveUserProxyAgent"
     if agent.agent_type == "swarm":
         return "SwarmAgent"
+    if agent.agent_type == "reasoning":
+        return "ReasoningAgent"
     return "ConversableAgent"  # pragma: no cover

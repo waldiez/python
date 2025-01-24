@@ -8,6 +8,7 @@ from waldiez.models import (
     WaldiezAssistantData,
     WaldiezGroupManager,
     WaldiezRagUser,
+    WaldiezReasoningAgent,
     WaldiezSwarmAgent,
     WaldiezUserProxy,
 )
@@ -43,6 +44,10 @@ def test_get_agent_class_name() -> None:
         id="wa-6",
         name="swarm_agent",
     )
+    reasoning_agent = WaldiezReasoningAgent(  # type: ignore
+        id="wa-7",
+        name="reasoning_agent",
+    )
     # When
     user_proxy_class_name = get_agent_class_name(user_proxy)
     assistant_class_name = get_agent_class_name(assistant)
@@ -50,6 +55,7 @@ def test_get_agent_class_name() -> None:
     rag_user_class_name = get_agent_class_name(rag_user)
     multimodal_agent_class_name = get_agent_class_name(multimodal_agent)
     swarm_agent_class_name = get_agent_class_name(swarm_agent)
+    reasoning_agent_class_name = get_agent_class_name(reasoning_agent)
     # Then
     assert user_proxy_class_name == "UserProxyAgent"
     assert assistant_class_name == "AssistantAgent"
@@ -57,3 +63,4 @@ def test_get_agent_class_name() -> None:
     assert rag_user_class_name == "RetrieveUserProxyAgent"
     assert multimodal_agent_class_name == "MultimodalConversableAgent"
     assert swarm_agent_class_name == "SwarmAgent"
+    assert reasoning_agent_class_name == "ReasoningAgent"

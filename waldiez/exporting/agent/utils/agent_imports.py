@@ -45,6 +45,11 @@ def get_agent_imports(agent_class: str) -> Set[str]:
             "SwarmAgent, "
             "SwarmResult"
         )
+    elif agent_class == "ReasoningAgent":
+        # pylint: disable=line-too-long
+        imports.add(
+            "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent"  # noqa: E501
+        )
     else:
         imports.add("from autogen import ConversableAgent")
     return imports

@@ -6,13 +6,14 @@ from ._version import __version__
 from .exporter import WaldiezExporter
 from .models import Waldiez
 from .runner import WaldiezRunner
-from .utils import check_conflicts, check_flaml_warnings
+from .utils import check_conflicts, check_flaml_warnings, check_pysqlite3
 
 __WALDIEZ_INITIALIZED = False
 
 if not __WALDIEZ_INITIALIZED:
     check_conflicts()
     check_flaml_warnings()
+    check_pysqlite3()
     __WALDIEZ_INITIALIZED = True
 
 __all__ = [

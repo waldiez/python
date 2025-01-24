@@ -24,6 +24,7 @@ from .utils import (
     get_group_manager_extras,
     get_is_termination_message,
     get_rag_user_extras,
+    get_reasoning_agent_extras,
     get_swarm_extras,
 )
 
@@ -114,6 +115,10 @@ class AgentExporter(BaseExporter, ExporterMixin):
         self._termination = get_is_termination_message(
             agent=self.agent, agent_name=self._agent_name
         )
+        self._reasoning = get_reasoning_agent_extras(
+            agent=self.agent,
+            serializer=self.serializer,
+        )
 
     def get_imports(self) -> Optional[List[Tuple[str, ImportPosition]]]:
         """Get the imports.
@@ -135,7 +140,10 @@ class AgentExporter(BaseExporter, ExporterMixin):
         # if the agent has skills, add the register_function import.
         if self.agent.data.skills:
             agent_imports.add("from autogen import register_function")
-        return [(import_string, position) for import_string in agent_imports]
+        return sorted(
+            [(import_string, position) for import_string in agent_imports],
+            key=lambda x: x[0],
+        )
 
     def get_system_message_arg(self) -> str:
         """Get the system message argument.
@@ -223,6 +231,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
             default_auto_reply = (
                 f'"{self.string_escape(agent.data.agent_default_auto_reply)}"'
             )
+        extras = f"{group_chat_arg}{retrieve_arg}{self._reasoning}"
         agent_str = f"""{agent_name} = {agent_class}(
     name="{agent_name}",
     description="{agent.description}"{system_message_arg},
@@ -230,7 +239,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
     max_consecutive_auto_reply={agent.data.max_consecutive_auto_reply},
     default_auto_reply={default_auto_reply},
     code_execution_config={code_execution_arg},
-    is_termination_msg={is_termination},{group_chat_arg}{retrieve_arg}
+    is_termination_msg={is_termination},{extras}
 """
         if self._swarm[1]:
             agent_str += self._swarm[1]

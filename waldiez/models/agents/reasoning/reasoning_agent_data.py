@@ -21,8 +21,9 @@ class WaldiezReasoningAgentData(WaldiezAssistantData):
             title="Maximum depth",
             description="Maximum depth of the reasoning tree",
             alias="maxDepth",
+            deprecated=True,
         ),
-    ]
+    ] = 4
     beam_size: Annotated[
         int,
         Field(
@@ -32,7 +33,7 @@ class WaldiezReasoningAgentData(WaldiezAssistantData):
             alias="beamSize",
             deprecated=True,
         ),
-    ]
+    ] = 3
     answer_approach: Annotated[
         Literal["pool", "best"],
         Field(
@@ -42,7 +43,7 @@ class WaldiezReasoningAgentData(WaldiezAssistantData):
             alias="answerApproach",
             deprecated=True,
         ),
-    ]
+    ] = "pool"
     verbose: Annotated[
         bool,
         Field(
@@ -72,7 +73,7 @@ class WaldiezReasoningAgentData(WaldiezAssistantData):
         """
         reason_dict: Dict[str, Any] = {
             "method": self.reason_config.method,
-            "max_depth": self.max_depth,
+            "max_depth": self.reason_config.max_depth,
             "forest_size": self.reason_config.forest_size,
             "rating_scale": self.reason_config.rating_scale,
         }

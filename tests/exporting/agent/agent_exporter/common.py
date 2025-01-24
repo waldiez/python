@@ -2,22 +2,34 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
 # pylint: disable=too-many-locals,too-many-statements,line-too-long
-"""Test waldiez.exporting.agent.AgentExporter."""
+"""Common functions for testing waldiez.exporting.agent.AgentExporter."""
 
-import shutil
-from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Type
 
-from waldiez.models import WaldiezAgent, WaldiezModel, WaldiezSkill
+from waldiez.models import (
+    WaldiezAgent,
+    WaldiezAgentType,
+    WaldiezAssistant,
+    WaldiezGroupManager,
+    WaldiezModel,
+    WaldiezRagUser,
+    WaldiezReasoningAgent,
+    WaldiezSkill,
+    WaldiezSwarmAgent,
+    WaldiezUserProxy,
+)
 
 
 def create_agent(
     counter: int,
+    agent_type: WaldiezAgentType,
 ) -> Tuple[WaldiezAgent, List[WaldiezSkill], List[WaldiezModel]]:
     """Create an agent.
 
     Parameters
     ----------
+    agent_type : WaldiezAgentType
+        The agent type.
     counter : int
         The counter to use for the id and name.
 
@@ -61,12 +73,25 @@ def create_agent(
         description=f"model{counter}_2 description",
         data={"apiType": "nim"},  # type: ignore
     )
-    agent = WaldiezAgent(  # type: ignore
+    agent_cls: Type[WaldiezAgent] = WaldiezAgent
+    if agent_type == "user":
+        agent_cls = WaldiezUserProxy
+    if agent_type == "assistant":
+        agent_cls = WaldiezAssistant
+    if agent_type == "rag_user":
+        agent_cls = WaldiezRagUser
+    if agent_type == "manager":
+        agent_cls = WaldiezGroupManager
+    if agent_type == "swarm":
+        agent_cls = WaldiezSwarmAgent
+    if agent_type == "reasoning":
+        agent_cls = WaldiezReasoningAgent
+    agent = agent_cls(  # type: ignore
         id=f"wa-{counter}",
         name=f"agent{counter}",
-        agent_type="assistant",
         description=f"agent{counter} description",
         data={  # type: ignore
+            "system_message": f"system message of agent {counter}",
             "skills": [
                 {
                     "id": f"ws-{counter}_1",
@@ -81,17 +106,3 @@ def create_agent(
         },
     )
     return agent, [skill1, skill2], [model1, model2]
-
-
-def test_agent_exporter(tmp_path: Path) -> None:
-    """Test AgentExporter.
-
-    Parameters
-    ----------
-    tmp_path : Path
-        The temporary path.
-    """
-    output_dir = tmp_path / "test_agent_exporter"
-    output_dir.mkdir(exist_ok=True)
-    agent, _, __ = create_agent(1)
-    shutil.rmtree(output_dir)

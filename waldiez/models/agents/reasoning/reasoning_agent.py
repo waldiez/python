@@ -17,7 +17,7 @@ class WaldiezReasoningAgent(WaldiezAgent):
     agent_type: Annotated[
         Literal["reasoning"],
         Field(
-            "assistant",
+            "reasoning",
             title="Agent type",
             description="The agent type in a graph: 'reasoning'",
             alias="agentType",

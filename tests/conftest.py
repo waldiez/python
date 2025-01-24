@@ -143,6 +143,7 @@ def get_runnable_flow() -> WaldiezFlow:
         managers=[],
         rag_users=[],
         swarm_agents=[],
+        reasoning_agents=[],
     )
     flow = WaldiezFlow(
         id="wf-1",
