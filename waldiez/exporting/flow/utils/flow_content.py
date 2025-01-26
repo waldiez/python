@@ -141,9 +141,13 @@ def get_after_run_content(
         if agent.agent_type == "reasoning":
             agent_name = agent_names[agent.id]
             content += f"""
+{space}# pylint: disable=broad-except,too-many-try-statements
 {space}try:
 {space}{space}visualize_tree({agent_name}._root)  # pylint: disable=protected-access
-{space}except BaseException:  # pylint: disable=broad-except
+{space}{space}if os.path.exists("tree_of_thoughts.png"):
+{space}{space}{space}new_name = "{agent_name}_tree_of_thoughts.png"
+{space}{space}{space}os.rename("tree_of_thoughts.png", new_name)
+{space}except BaseException:
 {space}{space}pass
 """
     return content
