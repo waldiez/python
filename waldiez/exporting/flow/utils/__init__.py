@@ -11,7 +11,11 @@ from .agent_utils import (
 )
 from .chat_utils import add_after_chat_content, add_before_chat_content
 from .def_main import get_def_main
-from .flow_content import get_ipynb_content_start, get_py_content_start
+from .flow_content import (
+    get_after_run_content,
+    get_ipynb_content_start,
+    get_py_content_start,
+)
 from .flow_names import ensure_unique_names
 from .importing_utils import (
     gather_imports,
@@ -35,6 +39,7 @@ __all__ = [
     "ensure_unique_names",
     "gather_agent_outputs",
     "gather_imports",
+    "get_after_run_content",
     "get_def_main",
     "get_py_content_start",
     "get_ipynb_content_start",

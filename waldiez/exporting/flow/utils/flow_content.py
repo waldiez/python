@@ -2,7 +2,7 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Utils to generate the content of a flow."""
 
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 from waldiez.models import Waldiez
 
@@ -110,3 +110,27 @@ def get_pylint_ignore_comment(
     if notebook is True:
         line = "\n" + line
     return line + "\n"
+
+
+def get_after_run_content(waldiez: Waldiez, agent_names: Dict[str, str]) -> str:
+    """Get content to add after the flow is run.
+
+    Parameters
+    ----------
+    waldiez : Waldiez
+        The waldiez object.
+    agent_names : Dict[str, str]
+        The dictionary of agent names and their corresponding ids
+    Returns
+    -------
+    str
+        The content to add after the flow is run.
+    """
+    # if th eflow has reasoning agents, we add
+    # visualize_tree(agent._root) for each agent
+    content = ""
+    for agent in waldiez.agents:
+        if agent.agent_type == "reasoning":
+            agent_name = agent_names[agent.id]
+            content += f"visualize_tree({agent_name}._root)\n"
+    return content
