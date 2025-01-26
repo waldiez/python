@@ -124,7 +124,13 @@ def get_the_imports_string(
     while not final_string.endswith("\n\n"):
         final_string += "\n"
     if is_async:
-        final_string += "\nimport anyio"
+        final_string += (
+            "\nimport aiofiles"
+            "\nimport aiosqlite"
+            "\nimport anyio"
+            "\nfrom aiocsv import AsyncDictWriter"
+            "\nfrom asyncer import asyncify"
+        )
     if got_import_autogen:
         final_string += "\nimport autogen  # type: ignore\n"
     if autogen_imports:

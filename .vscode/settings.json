@@ -20,8 +20,10 @@
     "cSpell.words": [
         "addopts",
         "agentchat",
+        "aiocsv",
         "aiplatform",
         "asyncer",
+        "asyncify",
         "asyncio",
         "autobuild",
         "autoflake",

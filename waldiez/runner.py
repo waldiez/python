@@ -14,7 +14,7 @@ import sys
 import tempfile
 from pathlib import Path
 from types import TracebackType
-from typing import TYPE_CHECKING, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union
 
 from asyncer import syncify
 
@@ -164,7 +164,7 @@ class WaldiezRunner:
         output_path: Optional[Union[str, Path]],
         uploads_root: Optional[Union[str, Path]],
         skip_mmd: bool = False,
-    ) -> Union["ChatResult", List["ChatResult"]]:
+    ) -> Union["ChatResult", List["ChatResult"], Dict[int, "ChatResult"]]:
         """Run the Waldiez workflow.
 
         Parameters
@@ -223,7 +223,7 @@ class WaldiezRunner:
         output_path: Optional[Union[str, Path]],
         uploads_root: Optional[Union[str, Path]],
         skip_mmd: bool = False,
-    ) -> Union["ChatResult", List["ChatResult"]]:
+    ) -> Union["ChatResult", List["ChatResult"], Dict[int, "ChatResult"]]:
         """Run the Waldiez workflow asynchronously."""
         temp_dir = Path(tempfile.mkdtemp())
         file_name = before_run(output_path, uploads_root)

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
+# flake8: noqa: E501
+# pylint: disable=inconsistent-quotes, line-too-long
 """Get the main function."""
-
-from .logging_utils import get_logging_stop_string, get_sqlite_out_call
 
 
 def get_def_main(flow_chats: str, is_async: bool) -> str:
@@ -29,31 +29,33 @@ def get_def_main(flow_chats: str, is_async: bool) -> str:
     if is_async:
         content += "async "
     content += "def main():\n"
-    content += "    # type: () -> Union[ChatResult, List[ChatResult]]\n"
+    content += "    # type: () -> Union[ChatResult, List[ChatResult], Dict[int, ChatResult]]\n"
     content += '    """Start chatting."""\n'
     content += f"{flow_chats}" + "\n"
-    content += get_logging_stop_string(1) + "\n"
-    content += get_sqlite_out_call(1) + "\n"
-    content += "    return results\n\n\n"
+    if is_async:
+        content += "    await stop_logging()"
+    else:
+        content += "    stop_logging()"
+    content += "\n    return results\n\n\n"
     if is_async:
         content += "async def call_main():\n"
     else:
         content += "def call_main() -> None:\n"
     content += '    """Run the main function and print the results."""\n'
-    # fmt: off
+    content += "    results: Union[ChatResult, List[ChatResult], Dict[int, ChatResult]] = "
     if is_async:
-        content += (
-            "    results: Union[ChatResult, List[ChatResult]] = await main()\n"
-        )
-    else:
-        content += (
-            "    results: Union[ChatResult, List[ChatResult]] = main()\n"
-        )
-    # fmt: on
-    content += "    if not isinstance(results, list):\n"
-    content += "        results = [results]\n"
-    content += "    for result in results:\n"
-    content += "        pprint(asdict(result))\n\n\n"
+        content += "await "
+    content += "main()\n"
+    content += "    if isinstance(results, dict):\n"
+    content += "        # order by key\n"
+    content += "        ordered_results = dict(sorted(results.items()))\n"
+    content += "        for _, result in ordered_results.items():\n"
+    content += "            pprint(asdict(result))\n"
+    content += "    elif isinstance(results, list):\n"
+    content += "        for result in results:\n"
+    content += "            pprint(asdict(result))\n"
+    content += "    else:\n"
+    content += "        pprint(asdict(results))\n"
     content += 'if __name__ == "__main__":\n'
     if is_async:
         content += "    anyio.run(call_main)\n"

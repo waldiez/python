@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
+# flake8: noqa: E501
 """Logging related string generation functions.
 
 Functions
@@ -15,9 +16,8 @@ get_sqlite_to_csv_call_string
 """
 
 
-# pylint: disable=inconsistent-quotes
-def get_logging_start_string(tabs: int = 0) -> str:
-    """Get the logging start string.
+def get_start_logging(tabs: int = 0) -> str:
+    """Get the logging start call string.
 
     Parameters
     ----------
@@ -32,47 +32,28 @@ def get_logging_start_string(tabs: int = 0) -> str:
     Example
     -------
     ```python
-    >>> get_logging_start_string()
-    runtime_logging.start(
-        logger_type="sqlite",
-        config={"dbname": "flow.db"},
-    )
-    ```
+    >>> get_start_logging()
+    def start_logging() -> None:
+        \"\"\"Start logging.\"\"\"
+        runtime_logging.start(
+            logger_type="sqlite",
+            config={"dbname": "flow.db"},
+        )
     """
     tab = "    " * tabs
-    content = f"{tab}runtime_logging.start(" + "\n"
-    content += f'{tab}    logger_type="sqlite",' + "\n"
-    content += f'{tab}    config={{"dbname": "flow.db"}},' + "\n"
-    content += f"{tab})" + "\n"
+    content = f'''
+{tab}def start_logging() -> None:
+{tab}    """Start logging."""
+{tab}    runtime_logging.start(
+{tab}        logger_type="sqlite",
+{tab}        config={{"dbname": "flow.db"}},
+{tab}    )
+'''
     return content
 
 
-def get_logging_stop_string(tabs: int = 0) -> str:
-    """Get the logging stop string.
-
-    Parameters
-    ----------
-    tabs : int, optional
-        The number of tabs to use for indentation, by default 0
-
-    Returns
-    -------
-    str
-        The logging stop string
-
-    Example
-    -------
-    ```python
-    >>> get_logging_stop_string()
-    runtime_logging.stop()
-    ```
-    """
-    tab = "    " * tabs
-    return f"{tab}runtime_logging.stop()" + "\n"
-
-
 # pylint: disable=differing-param-doc,differing-type-doc
-def get_sqlite_out() -> str:
+def get_sync_sqlite_out() -> str:
     """Get the sqlite to csv and json conversion code string.
 
     Returns
@@ -153,13 +134,118 @@ def get_sqlite_out() -> str:
     return content
 
 
-def get_sqlite_out_call(tabs: int = 0) -> str:
+# pylint: disable=differing-param-doc,differing-type-doc,line-too-long
+def get_async_sqlite_out() -> str:
+    """Get the sqlite to csv and json conversion code string.
+
+    Returns
+    -------
+    str
+        The sqlite to csv and json conversion code string.
+
+    Example
+    -------
+    ```python
+    >>> get_sqlite_outputs()
+    async def get_sqlite_out(dbname: str, table: str, csv_file: str) -> None:
+        \"\"\"Convert a sqlite table to csv and json files.
+
+        Parameters
+        ----------
+        dbname : str
+            The sqlite database name.
+        table : str
+            The table name.
+        csv_file : str
+            The csv file name.
+        \"\"\"
+        conn = await aiosqlite.connect(dbname)
+        query = f"SELECT * FROM {table}"  # nosec
+        try:
+            cursor = await conn.execute(query)
+        except BaseException:  # pylint: disable=broad-except
+            await conn.close()
+            return
+        rows = await cursor.fetchall()
+        column_names = [description[0] for description in cursor.description]
+        data = [dict(zip(column_names, row)) for row in rows]
+        await cursor.close()
+        await conn.close()
+        async with aiofiles.open(csv_file, "w", newline="", encoding="utf-8") as file:
+            csv_writer = csv.DictWriter(file, fieldnames=column_names)
+            csv_writer.writeheader()
+            csv_writer.writerows(data)
+        json_file = csv_file.replace(".csv", ".json")
+        async with aiofiles.open(json_file, "w", encoding="utf-8") as file:
+            await file.write(json.dumps(data, indent=4, ensure_ascii=False)
+    ```
+    """
+    content = "\n\n"
+    content += "async def get_sqlite_out(dbname: str, table: str, csv_file: str) -> None:\n"
+    content += '    """Convert a sqlite table to csv and json files.\n\n'
+    content += "    Parameters\n"
+    content += "    ----------\n"
+    content += "    dbname : str\n"
+    content += "        The sqlite database name.\n"
+    content += "    table : str\n"
+    content += "        The table name.\n"
+    content += "    csv_file : str\n"
+    content += "        The csv file name.\n"
+    content += '    """\n'
+    content += "    conn = await aiosqlite.connect(dbname)\n"
+    content += '    query = f"SELECT * FROM {table}"  # nosec\n'
+    content += "    try:\n"
+    content += "        cursor = await conn.execute(query)\n"
+    content += "    except BaseException:  # pylint: disable=broad-except\n"
+    content += "        await conn.close()\n"
+    content += "        return\n"
+    content += "    rows = await cursor.fetchall()\n"
+    content += "    column_names = [description[0] for description "
+    content += "in cursor.description]\n"
+    content += "    data = [dict(zip(column_names, row)) for row in rows]\n"
+    content += "    await cursor.close()\n"
+    content += "    await conn.close()\n"
+    content += (
+        '    async with aiofiles.open(csv_file, "w", newline="", '
+        'encoding="utf-8") as file:\n'
+    )
+    content += '        csv_writer = AsyncDictWriter(file, fieldnames=column_names, dialect="unix")\n'
+    content += "        await csv_writer.writeheader()\n"
+    content += "        await csv_writer.writerows(data)\n"
+    content += '    json_file = csv_file.replace(".csv", ".json")\n'
+    content += '    async with aiofiles.open(json_file, "w", encoding="utf-8") as file:\n'
+    content += "        await file.write(json.dumps(data, indent=4, ensure_ascii=False))\n"
+    content += "\n\n"
+    return content
+
+
+def get_sqlite_out(is_async: bool) -> str:
+    """Get the sqlite to csv and json conversion code string.
+
+    Parameters
+    ----------
+    is_async : bool
+        Whether to use async mode.
+
+    Returns
+    -------
+    str
+        The sqlite to csv and json conversion code string.
+    """
+    if is_async:
+        return get_async_sqlite_out()
+    return get_sync_sqlite_out()
+
+
+def get_sqlite_out_call(tabs: int, is_async: bool) -> str:
     """Get the sqlite to csv and json conversion call string.
 
     Parameters
     ----------
-    tabs : int, optional
-        The number of tabs to use for indentation, by default 0
+    tabs : int
+        The number of tabs to use for indentation
+    is_async : bool
+        Whether to use async mode
 
     Returns
     -------
@@ -203,5 +289,53 @@ def get_sqlite_out_call(tabs: int = 0) -> str:
         content += tab + f'    "{table}",' + "\n"
     content += tab + "]:\n"
     content += tab + '    dest = os.path.join("logs", f"{table}.csv")' + "\n"
-    content += tab + '    get_sqlite_out("flow.db", table, dest)\n'
+    if is_async:
+        content += tab + '    await get_sqlite_out("flow.db", table, dest)\n'
+    else:
+        content += tab + '    get_sqlite_out("flow.db", table, dest)\n'
+    return content
+
+
+def get_stop_logging(tabs: int, is_async: bool) -> str:
+    """Get the function to stop logging and gather logs.
+
+    Parameters
+    ----------
+    tabs : int
+        The number of tabs to use for indentation
+    is_async : bool
+        Whether to use async mode
+
+    Returns
+    -------
+    str
+        The logging stop string.
+
+    Example
+    -------
+    ```python
+    >>> get_logging_stop_string()
+    def stop_logging() -> None:
+        \"\"\"Stop logging.\"\"\"
+        runtime_logging.stop()
+        for table in [
+            "chat_completions",
+            "agents",
+            "oai_wrappers",
+            "oai_clients",
+            "version",
+            "events",
+            "function_calls",
+        ]:
+            dest = os.path.join("logs", f"{table}.csv")
+            get_sqlite_out("flow.db", table, dest)
+    """
+    tab = "    " * tabs
+    content = "\n" + tab
+    if is_async:
+        content += "async "
+    content += "def stop_logging() -> None:\n"
+    content += '    """Stop logging."""\n'
+    content += f"{tab}    runtime_logging.stop()\n"
+    content += get_sqlite_out_call(tabs + 1, is_async)
     return content

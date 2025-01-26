@@ -22,6 +22,9 @@ classifiers = [
   "Intended Audience :: Developers",
 ]
 dependencies =[
+    "aiocsv==1.3.2",
+    "aiofiles==24.1.0",
+    "aiosqlite==0.20.0",
     "asyncer==0.0.8",
     "pandas>=2",
     "pyautogen==0.7.2",

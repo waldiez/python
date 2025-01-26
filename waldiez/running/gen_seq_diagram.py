@@ -173,10 +173,13 @@ def generate_sequence_diagram(
     if file_path.suffix not in [".json", ".csv"]:
         raise ValueError("Input file must be a JSON or CSV file.")
     is_csv = file_path.suffix == ".csv"
-    if is_csv:
-        df_events = pd.read_csv(file_path)
-    else:
-        df_events = pd.read_json(file_path)
+    try:
+        if is_csv:
+            df_events = pd.read_csv(file_path)
+        else:
+            df_events = pd.read_json(file_path)
+    except pd.errors.EmptyDataError:
+        return
 
     # Generate the Mermaid sequence diagram text
     mermaid_text = process_events(df_events)

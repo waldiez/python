@@ -110,6 +110,13 @@ def run(
             _log_result(result, logger)
             sep = "-" * 80
             print("\n" + f"{sep}" + "\n")
+    elif isinstance(results, dict):
+        logger.info("Results:")
+        for key, result in results.items():
+            logger.info(f"Order: {key}")
+            _log_result(result, logger)
+            sep = "-" * 80
+            print("\n" + f"{sep}" + "\n")
     else:
         _log_result(results, logger)
 

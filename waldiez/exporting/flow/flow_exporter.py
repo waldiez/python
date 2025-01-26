@@ -51,11 +51,10 @@ from .utils import (
     gather_imports,
     get_def_main,
     get_ipynb_content_start,
-    get_logging_start_string,
-    get_logging_stop_string,
     get_py_content_start,
     get_sqlite_out,
-    get_sqlite_out_call,
+    get_start_logging,
+    get_stop_logging,
     get_the_imports_string,
 )
 
@@ -201,6 +200,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
         str
             The merged export contents.
         """
+        is_async = self.waldiez.is_async
         content = (
             get_py_content_start(self.waldiez)
             if not self.for_notebook
@@ -209,7 +209,8 @@ class FlowExporter(BaseExporter, ExporterMixin):
         content += self.get_comment("imports", self.for_notebook) + "\n"
         content += imports[0] + "\n"
         content += self.get_comment("logging", self.for_notebook) + "\n"
-        content += get_logging_start_string(tabs=0) + "\n\n"
+        content += get_start_logging(tabs=0) + "\n"
+        content += "start_logging()\n\n"
         if models_output:
             content += self.get_comment("models", self.for_notebook) + "\n"
             content += models_output + "\n"
@@ -221,7 +222,8 @@ class FlowExporter(BaseExporter, ExporterMixin):
             content += agents_content + "\n"
         if before_chats:
             content += before_chats + "\n"
-        content += get_sqlite_out() + "\n"
+        content += get_sqlite_out(is_async=is_async) + "\n"
+        content += get_stop_logging(tabs=0, is_async=is_async) + "\n"
         content += self.get_comment("run", self.for_notebook) + "\n"
         if self.for_notebook is False:
             content += get_def_main(
@@ -229,8 +231,10 @@ class FlowExporter(BaseExporter, ExporterMixin):
             )
         else:
             content += "\n" + chats_content + "\n"
-            content += get_logging_stop_string(tabs=0) + "\n"
-            content += get_sqlite_out_call(tabs=0) + "\n"
+            if is_async:
+                content += "await stop_logging()"
+            else:
+                content += "stop_logging()"
         content = content.replace("\n\n\n\n", "\n\n\n")
         return content
 

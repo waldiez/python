@@ -19,10 +19,10 @@ from .importing_utils import (
     get_the_imports_string,
 )
 from .logging_utils import (
-    get_logging_start_string,
-    get_logging_stop_string,
     get_sqlite_out,
     get_sqlite_out_call,
+    get_start_logging,
+    get_stop_logging,
 )
 
 __all__ = [
@@ -38,8 +38,8 @@ __all__ = [
     "get_def_main",
     "get_py_content_start",
     "get_ipynb_content_start",
-    "get_logging_start_string",
-    "get_logging_stop_string",
+    "get_start_logging",
+    "get_stop_logging",
     "get_sqlite_out",
     "get_sqlite_out_call",
     "get_standard_imports",
