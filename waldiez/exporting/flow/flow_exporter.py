@@ -229,6 +229,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
         after_run = get_after_run_content(
             waldiez=self.waldiez,
             agent_names=self.agent_names,
+            tabs=0 if self.for_notebook else 1,
         )
         if self.for_notebook is False:
             content += get_def_main(

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
+# flake8: noqa E501
 """Utils to generate the content of a flow."""
 
 from typing import Callable, Dict, List, Optional
@@ -112,7 +113,11 @@ def get_pylint_ignore_comment(
     return line + "\n"
 
 
-def get_after_run_content(waldiez: Waldiez, agent_names: Dict[str, str]) -> str:
+def get_after_run_content(
+    waldiez: Waldiez,
+    agent_names: Dict[str, str],
+    tabs: int,
+) -> str:
     """Get content to add after the flow is run.
 
     Parameters
@@ -121,6 +126,8 @@ def get_after_run_content(waldiez: Waldiez, agent_names: Dict[str, str]) -> str:
         The waldiez object.
     agent_names : Dict[str, str]
         The dictionary of agent names and their corresponding ids
+    tabs : int
+        The number of tabs to add before the content.
     Returns
     -------
     str
@@ -129,13 +136,14 @@ def get_after_run_content(waldiez: Waldiez, agent_names: Dict[str, str]) -> str:
     # if th eflow has reasoning agents, we add
     # visualize_tree(agent._root) for each agent
     content = ""
+    space = "    " * tabs
     for agent in waldiez.agents:
         if agent.agent_type == "reasoning":
             agent_name = agent_names[agent.id]
             content += f"""
-    try:
-        visualize_tree({agent_name}._root)  # pylint: disable=protected-access
-    except BaseException:  # pylint: disable=broad-except
-        pass
+{space}try:
+{space}{space}visualize_tree({agent_name}._root)  # pylint: disable=protected-access
+{space}except BaseException:  # pylint: disable=broad-except
+{space}{space}pass
 """
     return content
