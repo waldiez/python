@@ -25,12 +25,26 @@ RUN python -m build
 #####################################################################################
 FROM python:3.12-slim
 
-ENV PYTHONUNBUFFERED=1
-
 LABEL maintainer="waldiez <development@waldiez.io>"
 LABEL org.opencontainers.image.source="quay.io/waldiez/waldiez"
 LABEL org.opencontainers.image.title="waldiez/waldiez"
 LABEL org.opencontainers.image.description="Python 3.12-slim image with waldiez"
+
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND="noninteractive"
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
+
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y --no-install-recommends \
+    bzip2 \
+    ca-certificates \
+    zip \
+    unzip \
+    graphviz && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 COPY --from=builder /app/dist/*.whl /tmp/
 RUN pip install /tmp/*.whl && \
