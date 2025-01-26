@@ -51,6 +51,7 @@
         "forlint",
         "funcdef",
         "funcdefs",
+        "graphviz",
         "groq",
         "huggingface",
         "hypermodern",
