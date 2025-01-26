@@ -5,7 +5,7 @@
 """Get the main function."""
 
 
-def get_def_main(flow_chats: str, is_async: bool) -> str:
+def get_def_main(flow_chats: str, after_run: str, is_async: bool) -> str:
     """Get the main function.
 
     When exporting to python, waldiez_chats string will be the
@@ -18,6 +18,8 @@ def get_def_main(flow_chats: str, is_async: bool) -> str:
     ----------
     flow_chats : str
         The content of the main function.
+    after_run : str
+        The content after the run of the flow.
     is_async : bool
         Whether the main function is asynchronous.
     Returns
@@ -36,6 +38,7 @@ def get_def_main(flow_chats: str, is_async: bool) -> str:
         content += "    await stop_logging()"
     else:
         content += "    stop_logging()"
+    content += after_run
     content += "\n    return results\n\n\n"
     if is_async:
         content += "async def call_main():\n"

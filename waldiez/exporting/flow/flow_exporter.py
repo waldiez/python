@@ -49,6 +49,7 @@ from .utils import (
     ensure_unique_names,
     gather_agent_outputs,
     gather_imports,
+    get_after_run_content,
     get_def_main,
     get_ipynb_content_start,
     get_py_content_start,
@@ -225,9 +226,15 @@ class FlowExporter(BaseExporter, ExporterMixin):
         content += get_sqlite_out(is_async=is_async) + "\n"
         content += get_stop_logging(tabs=0, is_async=is_async) + "\n"
         content += self.get_comment("run", self.for_notebook) + "\n"
+        after_run = get_after_run_content(
+            waldiez=self.waldiez,
+            agent_names=self.agent_names,
+        )
         if self.for_notebook is False:
             content += get_def_main(
-                chats_content, is_async=self.waldiez.is_async
+                chats_content,
+                after_run=after_run,
+                is_async=self.waldiez.is_async,
             )
         else:
             content += "\n" + chats_content + "\n"
@@ -235,6 +242,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
                 content += "await stop_logging()"
             else:
                 content += "stop_logging()"
+                content += after_run
         content = content.replace("\n\n\n\n", "\n\n\n")
         return content
 

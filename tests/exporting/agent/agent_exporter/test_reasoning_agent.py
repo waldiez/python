@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
+# flake8: noqa: E501
 """Test waldiez.exporting.agent.AgentExporter."""
 
 import shutil
@@ -35,9 +36,9 @@ def test_export_reasoning_agent() -> None:
     imports = [x[0] for x in output["imports"]]
     # pylint: disable=line-too-long
     assert (
-        "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent"
+        "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent, visualize_tree"
         in imports
-    )  # noqa: E501
+    )
     content = output["content"]
     assert content == (
         f"{agent.name} = ReasoningAgent(\n"

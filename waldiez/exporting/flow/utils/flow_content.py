@@ -132,5 +132,10 @@ def get_after_run_content(waldiez: Waldiez, agent_names: Dict[str, str]) -> str:
     for agent in waldiez.agents:
         if agent.agent_type == "reasoning":
             agent_name = agent_names[agent.id]
-            content += f"visualize_tree({agent_name}._root)\n"
+            content += f"""
+    try:
+        visualize_tree({agent_name}._root)  # pylint: disable=protected-access
+    except BaseException:  # pylint: disable=broad-except
+        pass
+"""
     return content

@@ -48,5 +48,5 @@ def test_get_agent_imports() -> None:
     }
     assert reasoning_agent_imports == {
         "import autogen",
-        "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent",
+        "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent, visualize_tree",
     }

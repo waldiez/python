@@ -48,7 +48,7 @@ def get_agent_imports(agent_class: str) -> Set[str]:
     elif agent_class == "ReasoningAgent":
         # pylint: disable=line-too-long
         imports.add(
-            "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent"  # noqa: E501
+            "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent, visualize_tree"  # noqa: E501
         )
     else:
         imports.add("from autogen import ConversableAgent")
