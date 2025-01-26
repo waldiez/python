@@ -230,7 +230,7 @@ class Waldiez:
             requirements.add(f"pyautogen=={autogen_version}")
         if self.has_multimodal_agents:
             requirements.add(f"pyautogen[lmm]=={autogen_version}")
-        # ref: https://github.com/ag2ai/ag2/blob/main/setup.py
+        # ref: https://github.com/ag2ai/ag2/blob/main/pyproject.toml
         models_with_additional_requirements = [
             "together",
             "gemini",
@@ -241,6 +241,9 @@ class Waldiez:
             "bedrock",
         ]
         for model in self.models:
+            if model.data.api_type == "google":
+                requirements.add(f"pyautogen[gemini]=={autogen_version}")
+                continue
             if model.data.api_type in models_with_additional_requirements:
                 requirements.add(
                     f"pyautogen[{model.data.api_type}]=={autogen_version}"
