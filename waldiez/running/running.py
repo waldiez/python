@@ -257,6 +257,10 @@ def copy_results(
         ):
             continue
         if item.is_file():
+            # let's also copy the tree of thoughts image
+            # to the output directory
+            if item.name.endswith("tree_of_thoughts.png"):
+                shutil.copy(item, output_dir / item.name)
             shutil.copy(item, destination_dir)
         else:
             shutil.copytree(item, destination_dir / item.name)
