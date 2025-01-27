@@ -37,6 +37,7 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 RUN apt update && \
     apt upgrade -y && \
     apt install -y --no-install-recommends \
+    build-essential \
     bzip2 \
     ca-certificates \
     zip \
