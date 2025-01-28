@@ -149,5 +149,12 @@ def get_after_run_content(
 {space}{space}{space}os.rename("tree_of_thoughts.png", new_name)
 {space}except BaseException:
 {space}{space}pass
+{space}# save the tree to json
+{space}try:
+{space}{space}data = {agent_name}._root.to_dict()  # pylint: disable=protected-access
+{space}{space}with open("{agent_name}_reasoning_tree.json", "w", encoding="utf-8") as f:
+{space}{space}{space}json.dump(data, f)
+{space}except BaseException:
+{space}{space}pass
 """
     return content

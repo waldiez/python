@@ -12,6 +12,7 @@ from ..common import WaldiezBase, now
 from .model_data import WaldiezModelAPIType, WaldiezModelData
 
 DEFAULT_BASE_URLS: Dict[WaldiezModelAPIType, str] = {
+    "deepseek": "https://api.deepseek.com/v1",
     "google": "https://generativelanguage.googleapis.com/v1beta",
     "anthropic": "https://api.anthropic.com/v1",
     "mistral": "https://api.mistral.ai/v1",
@@ -110,6 +111,7 @@ class WaldiezModel(WaldiezBase):
 
         - openai: 'OPENAI_API_KEY',
         - azure: 'AZURE_API_KEY',
+        - deepseek: 'DEEPSEEK_API_KEY',
         - google: 'GOOGLE_GEMINI_API_KEY',
         - anthropic: 'ANTHROPIC_API_KEY',
         - mistral: 'MISTRAL_API_KEY',
@@ -133,6 +135,7 @@ class WaldiezModel(WaldiezBase):
 
             - openai: 'OPENAI_API_KEY',
             - azure: 'AZURE_API_KEY',
+            - deepseek: 'DEEPSEEK_API_KEY',
             - google: 'GOOGLE_GEMINI_API_KEY',
             - anthropic: 'ANTHROPIC_API_KEY',
             - mistral: 'MISTRAL_API_KEY',
