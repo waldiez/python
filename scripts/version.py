@@ -116,6 +116,42 @@ def update_extras(version_string: str) -> None:
         file.writelines(lines)
 
 
+def check_versions_match() -> str:
+    """Check if the versions of the core and the extras match.
+
+    Returns
+    -------
+    str
+        The version string in the format x.y.z
+
+    Raises
+    ------
+    ValueError
+        If the version strings do not match
+    FileNotFoundError
+        If the pyproject.toml file was not found
+    """
+    core_version = read_version_from_file()
+    studio_version = jupyter_version = ""
+    pyproject_toml_path = ROOT_DIR / "pyproject.toml"
+    if not pyproject_toml_path.exists():
+        raise FileNotFoundError("The pyproject.toml file was not found")
+    with open(pyproject_toml_path, "r", encoding="utf-8") as file:
+        for line in file:
+            if "waldiez_studio" in line:
+                studio_version = line.split("==")[1].strip().strip('",')
+            elif "waldiez_jupyter" in line:
+                jupyter_version = line.split("==")[1].strip().strip('",')
+    if (
+        core_version != studio_version
+        or core_version != jupyter_version
+        or not studio_version
+        or not jupyter_version
+    ):
+        raise ValueError("The version strings do not match")
+    return f"The core and the extras match with version {core_version}"
+
+
 def main() -> None:
     """Handle the command line arguments."""
     parser = argparse.ArgumentParser()
@@ -125,6 +161,11 @@ def main() -> None:
     parser.add_argument(
         "--get", action="store_true", help="Get the current version"
     )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Check if the versions of the core and the extras match",
+    )
     args, _ = parser.parse_known_args()
 
     if args.set:
@@ -132,6 +173,8 @@ def main() -> None:
         update_extras(args.set)
     elif args.get:
         print(read_version_from_file())
+    elif args.check:
+        print(check_versions_match())
     else:
         parser.print_help()
 

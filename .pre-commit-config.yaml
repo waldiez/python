@@ -21,3 +21,10 @@ repos:
         types: [python]
         language: system
         pass_filenames: false
+
+      - id: check_version
+        name: Check version
+        entry: python scripts/version.py --check
+        types: [python]
+        language: system
+        pass_filenames: false
