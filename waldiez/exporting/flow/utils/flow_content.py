@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # flake8: noqa E501
+# pylint: disable=line-too-long
 """Utils to generate the content of a flow."""
 
 from typing import Callable, Dict, List, Optional
@@ -56,9 +57,8 @@ def get_ipynb_content_start(
     content += "import sys\n"
     requirements = " ".join(waldiez.requirements)
     if requirements:
-        # pylint: disable=line-too-long
         # fmt: off
-        content += "# " + f"!{{sys.executable}} -m pip install -q {requirements}" + "\n"  # noqa: E501
+        content += "# " + f"!{{sys.executable}} -m pip install -q {requirements}" + "\n"
         # fmt: on
     content += "# flake8: noqa E501"
     content += get_pylint_ignore_comment(True)
