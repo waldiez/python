@@ -13,7 +13,7 @@ HAVE_STUDIO = False
 studio_app: Callable[..., Any] | None = None
 
 try:
-    from waldiez_studio.cli import run  # type: ignore[import-untyped, unused-ignore, import-not-found]  # noqa
+    from waldiez_studio.cli import run  # type: ignore[unused-ignore, import-untyped]  # noqa  # flake8: noqa
 
     studio_app = run
 
