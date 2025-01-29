@@ -1,11 +1,13 @@
 ---
 site_name: "Waldiez"
-site_description: "Waldiez."
-site_url: https://waldiez.github.io/waldiez/python/
+site_description: "Make AI Agents Collaborate: Drag, Drop, and Orchestrate with Waldiez."
+site_url: https://waldiez.github.io/python/
 repo_name: waldiez/python
-repo_url: https://github.com/waldiez/python.git
+repo_url: https://github.com/waldiez/python
 edit_uri_template: "blob/main/docs/{path}"
-copyright: "Copyright &copy; 2025 Waldiez"
+copyright: >
+  Copyright &copy; 2025 Waldiez & Contributors
+
 theme:
   name: material
   palette:
@@ -133,3 +135,16 @@ nav:
       - Waldiez: waldiez.md
       - WaldiezRunner: runner.md
       - WaldiezExporter: exporter.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/waldiez/waldiez
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/Waldiez_io
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/waldiez
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/@waldiez
+    - icon: fontawesome/brands/instagram
+      link: https://www.instagram.com/waldiez

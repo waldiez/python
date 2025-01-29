@@ -24,21 +24,21 @@ python -m pip install waldiez
 From the repository:
 
 ```bash
-python -m pip install git+https://github.com/waldiez/waldiez.git
+python -m pip install git+https://github.com/waldiez/python.git
 ```
 
 !!! note
-`autogen-agentchat` package conflicts with `ag2` / `pyautogen`. Ensure that `autogen-agentchat` is uninstalled before installing `waldiez`. If you have already installed `autogen-agentchat`, you can uninstall it with the following command:
+    `autogen-agentchat` package conflicts with `ag2` / `pyautogen`. Ensure that `autogen-agentchat` is uninstalled before installing `waldiez`. If you have already installed `autogen-agentchat`, you can uninstall it with the following command:
 
-    ```shell
-    pip uninstall autogen-agentchat -y
-    ```
+        ```shell
+        pip uninstall autogen-agentchat -y
+        ```
 
-    If already installed waldiez you might need to reinstall it after uninstalling `autogen-agentchat`:
+        If already installed waldiez you might need to reinstall it after uninstalling `autogen-agentchat`:
 
-      ```shell
-      pip install --force --no-cache waldiez pyautogen
-      ```
+        ```shell
+        pip install --force --no-cache waldiez pyautogen
+        ```
 
 ## Usage
 
