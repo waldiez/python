@@ -16,8 +16,6 @@ from pathlib import Path
 from types import TracebackType
 from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union
 
-from asyncer import syncify
-
 from .exporter import WaldiezExporter
 from .models.waldiez import Waldiez
 from .running import (
@@ -291,9 +289,16 @@ class WaldiezRunner:
             If the workflow is already running.
         """
         if self.waldiez.is_async:
-            return syncify(self.a_run, raise_sync_error=False)(
-                output_path, uploads_root
-            )
+            # pylint: disable=import-outside-toplevel
+            from anyio.from_thread import start_blocking_portal
+
+            with start_blocking_portal(backend="asyncio") as portal:
+                return portal.call(
+                    self._a_run,
+                    output_path,
+                    uploads_root,
+                    skip_mmd,
+                )
         if self._running is True:
             raise RuntimeError("Workflow already running")
         self._running = True

@@ -128,6 +128,7 @@ def get_the_imports_string(
             "\nimport aiofiles"
             "\nimport aiosqlite"
             "\nimport anyio"
+            "\nimport nest_asyncio"
             "\nfrom aiocsv import AsyncDictWriter"
             "\nfrom asyncer import asyncify"
         )
@@ -143,6 +144,8 @@ def get_the_imports_string(
         final_string += "\n".join(local_imports) + "\n"
     while not final_string.endswith("\n\n"):
         final_string += "\n"
+    if is_async:
+        final_string += "\nnest_asyncio.apply()\n"
     return final_string.replace("\n\n\n", "\n\n")  # avoid too many newlines
 
 
