@@ -31,7 +31,7 @@ class ResultType(TypedDict):
 def ensure_unique_names(
     waldiez: Waldiez,
     get_valid_instance_name: Callable[..., Dict[str, str]],
-    max_length: int = 64,
+    max_length: int = 46,
     flow_name_max_length: int = 20,
 ) -> ResultType:
     """Ensure unique names for agents, models, skills, and chats and flow.

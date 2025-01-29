@@ -9,6 +9,8 @@ import parso
 import parso.python
 import parso.tree
 
+MAX_VAR_NAME_LENGTH = 64
+
 
 def parse_code_string(
     code_string: str,
@@ -220,6 +222,8 @@ def generate_function(
     str
         The generated function.
     """
+    if len(function_name) > MAX_VAR_NAME_LENGTH:
+        function_name = function_name[:MAX_VAR_NAME_LENGTH]
     function_string = f"def {function_name}("
     if not function_args:
         function_string += ")"

@@ -15,11 +15,13 @@ get_escaped_string
 import re
 from typing import Dict, Tuple
 
+MAX_VARIABLE_LENGTH = 46
+
 
 def get_valid_python_variable_name(
     possible: str,
     prefix: str = "w",
-    max_length: int = 64,
+    max_length: int = MAX_VARIABLE_LENGTH,
 ) -> str:
     """Get a valid Python variable name from a possible name.
 
@@ -78,7 +80,7 @@ def get_valid_instance_name(
     instance: Tuple[str, str],
     current_names: Dict[str, str],
     prefix: str = "w",
-    max_length: int = 64,
+    max_length: int = MAX_VARIABLE_LENGTH,
 ) -> Dict[str, str]:
     """Get a valid instance name.
 
@@ -109,7 +111,9 @@ def get_valid_instance_name(
         # already in the current names (it's id)
         return current_names
     new_names = current_names.copy()
-    name = get_valid_python_variable_name(possible_name, prefix=prefix)
+    name = get_valid_python_variable_name(
+        possible_name, prefix=prefix, max_length=max_length
+    )
     if name in current_names.values():
         name = f"{prefix}_{name}"
     if name in current_names.values():
