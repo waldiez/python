@@ -146,7 +146,9 @@ class WaldiezFlowData(WaldiezBase):
         for index, chat in enumerate(self.chats):
             id_to_chat_id[chat.id] = index
             chat.set_chat_id(index)
-        # also update the chat prerequisites
+        if not self.is_async:
+            return self
+        # also update the chat prerequisites (if async)
         #  we have ids(str), not chat_ids(int)
         for chat in self.chats:
             chat_prerequisites = []
