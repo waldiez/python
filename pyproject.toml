@@ -33,10 +33,8 @@ dependencies =[
     "parso==0.8.4",
     "pydantic>=2.6.1,<3",
     # together(ag2 extra) 1.2.0 depends on typer<0.13 and >=0.9
-    "typer>=0.9,<0.13",
-    # mistralai and anthropic need httpx<0.28
-    # TypeError: Client.__init__() got an unexpected keyword argument 'proxies'
-    "httpx<0.28.0,>=0.27.0",
+    "typer>=0.9,<0.16",
+    "httpx<1",
 ]
 
 [project.urls]
@@ -53,23 +51,23 @@ exclude = [ "**/example.py" ]
 
 [project.optional-dependencies]
 studio = [
-    "waldiez_studio==0.3.9",
+    "waldiez_studio==0.3.10",
 ]
 jupyter = [
-    "waldiez_jupyter==0.3.9",
+    "waldiez_jupyter==0.3.10",
     "jupyterlab>=4.3.0",
 ]
 dev = [
     'autoflake==2.3.1',
     'bandit==1.8.2',
-    'black[jupyter]==24.10.0',
+    'black[jupyter]==25.1.0',
     'flake8==7.1.1',
-    'isort==5.13.2',
+    'isort==6.0.0',
     'mypy==1.14.1',
     "pandas-stubs",
     'pre-commit==4.1.0',
     'pydocstyle==6.3.0',
-    'pylint==3.3.3',
+    'pylint==3.3.4',
     'python-dotenv==1.0.1',
     'ruff==0.9.3',
     'types-PyYAML==6.0.12.20241230',
@@ -122,11 +120,11 @@ ag2_extras =[
     'pyautogen[together]==0.7.2',
     'pyautogen[together]==0.7.2',
     'pyautogen[websurfer]==0.7.2',
-    'pymongo==4.10.1',
+    'pymongo>=4.10.1',
 ]
 test = [
     'pytest==8.3.4',
-    'pytest-asyncio==0.25.2',
+    'pytest-asyncio==0.25.3',
     'pytest-cov==6.0.0',
     'pytest-html==4.1.1',
     'pytest-sugar==1.0.0',
