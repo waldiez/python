@@ -56,7 +56,6 @@ def get_jupyter_app() -> Callable[..., None]:
     )
 
     @jupyter_app.callback(
-        name="start",
         help="Start JupyterLab.",
         context_settings={
             "help_option_names": ["-h", "--help"],
