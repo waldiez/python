@@ -145,11 +145,14 @@ class WaldiezModel(WaldiezBase):
             - other: 'OPENAI_API_KEY'
         """
         if self.data.api_key and self.data.api_key != "REPLACE_ME":
+            os.environ[self.api_key_env_key] = self.data.api_key
             return self.data.api_key
         env_key = self.api_key_env_key
         api_key = os.environ.get(
             env_key, getattr(self.data, "api_key", "REPLACE_ME")
         )
+        if api_key and api_key != "REPLACE_ME":
+            os.environ[env_key] = api_key
         return api_key or "REPLACE_ME"
 
     @property

@@ -64,3 +64,7 @@ class WaldiezBase(BaseModel):
         if not isinstance(by_alias, bool):
             by_alias = True
         return super().model_dump_json(by_alias=by_alias, **kwargs)
+
+    def __hash__(self) -> int:
+        """Return the hash of the object."""
+        return id(self)
