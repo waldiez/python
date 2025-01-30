@@ -32,6 +32,7 @@ class ModelsExporter(BaseExporter, ExporterMixin):
         models: List[WaldiezModel],
         model_names: Dict[str, str],
         for_notebook: bool,
+        cache_seed: Optional[int],
         output_dir: Optional[Union[str, Path]] = None,
     ) -> None:
         """Initialize the models exporter.
@@ -46,6 +47,10 @@ class ModelsExporter(BaseExporter, ExporterMixin):
             The models.
         model_names : Dict[str, str]
             The model names.
+        for_notebook : bool
+            Whether the export is for a notebook or not.
+        cache_seed : Optional[int]
+            The cache seed if any, by default None
         output_dir : Optional[Union[str, Path]], optional
             The output directory if any, by default None
         """
@@ -57,6 +62,7 @@ class ModelsExporter(BaseExporter, ExporterMixin):
         self.model_names = model_names
         if output_dir is not None and not isinstance(output_dir, Path):
             output_dir = Path(output_dir)
+        self.cache_seed = cache_seed
         self.output_dir = output_dir
         self._exported_string = None
 
@@ -127,6 +133,7 @@ class ModelsExporter(BaseExporter, ExporterMixin):
                         agent,
                         all_models=self.models,
                         model_names=self.model_names,
+                        cache_seed=self.cache_seed,
                     ),
                     AgentPosition(
                         agent=agent, position=AgentPositions.AS_ARGUMENT

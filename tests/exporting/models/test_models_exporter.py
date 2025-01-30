@@ -65,6 +65,7 @@ def test_models_exporter(tmp_path: Path) -> None:
         model_names=model_names,
         for_notebook=False,
         output_dir=None,
+        cache_seed=42,
     )
     imports = models_exporter.get_imports()
     assert imports is None
@@ -100,6 +101,7 @@ def test_models_exporter(tmp_path: Path) -> None:
         model_names=model_names,
         for_notebook=True,
         output_dir=str(tmp_path),
+        cache_seed=42,
     )
     imports = models_exporter.get_imports()
     assert imports is not None
@@ -120,6 +122,7 @@ def test_models_exporter(tmp_path: Path) -> None:
         f"            {model1_name}_llm_config," + "\n"
         f"            {model2_name}_llm_config," + "\n"
         "        ],\n"
+        '        "cache_seed": 42,\n'
         "    },\n"
     )
     assert (tmp_path / f"{flow_name}_api_keys.py").exists()
@@ -142,6 +145,7 @@ def test_models_exporter(tmp_path: Path) -> None:
         model_names=model_names,
         for_notebook=False,
         output_dir=str(tmp_path),
+        cache_seed=43,
     )
     assert models_exporter.get_imports() is not None
     generated_string = models_exporter.generate()
@@ -156,6 +160,7 @@ def test_models_exporter(tmp_path: Path) -> None:
         model_names=model_names,
         for_notebook=True,
         output_dir=str(tmp_path),
+        cache_seed=None,
     )
     imports = models_exporter.get_imports()
     assert imports is not None
@@ -186,6 +191,7 @@ def test_models_exporter(tmp_path: Path) -> None:
         model_names=model_names,
         for_notebook=False,
         output_dir=str(tmp_path),
+        cache_seed=None,
     )
     assert models_exporter.get_imports() is not None
     after_export = models_exporter.get_after_export()

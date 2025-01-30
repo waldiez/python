@@ -115,8 +115,8 @@ class WaldiezAgents(WaldiezBase):
             If the agents are invalid.
         """
         all_agent_ids = [agent.id for agent in self.members]
-        if len(all_agent_ids) < 2:
-            raise ValueError("At least two agents are required.")
+        if len(all_agent_ids) < 1:
+            raise ValueError("At least one agent is required.")
         if len(all_agent_ids) != len(set(all_agent_ids)):
             raise ValueError("Agent IDs must be unique.")
         return self

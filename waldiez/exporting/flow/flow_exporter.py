@@ -332,6 +332,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
             model_names=self.model_names,
             for_notebook=self.for_notebook,
             output_dir=self.output_dir,
+            cache_seed=self.waldiez.cache_seed,
         )
         return exporter.export()
 

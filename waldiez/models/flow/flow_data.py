@@ -2,7 +2,7 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez flow data."""
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Self
@@ -40,6 +40,8 @@ class WaldiezFlowData(WaldiezBase):
         The chats of the flow. See `WaldiezChat`.
     is_async : bool
         Whether the flow is asynchronous or not.
+    cache_seed : Optional[int]
+        The seed for the cache. If None, the seed is not set. Default is 41.
     """
 
     # the ones below (nodes,edges, viewport) we ignore
@@ -109,6 +111,18 @@ class WaldiezFlowData(WaldiezBase):
             title="Is Async",
         ),
     ]
+    cache_seed: Annotated[
+        Optional[int],
+        Field(
+            41,
+            alias="cacheSeed",
+            description=(
+                "The seed for the cache. If None, the seed is not set."
+                "Default is 41."
+            ),
+            title="Cache Seed",
+        ),
+    ] = 41
 
     @model_validator(mode="after")
     def validate_flow_chats(self) -> Self:

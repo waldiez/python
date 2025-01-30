@@ -212,6 +212,16 @@ class Waldiez:
         return self.flow.is_async
 
     @property
+    def cache_seed(self) -> Optional[int]:
+        """Get the cache seed."""
+        return self.flow.cache_seed
+
+    @property
+    def is_single_agent_mode(self) -> bool:
+        """Check if the flow is single agent mode."""
+        return self.flow.is_single_agent_mode
+
+    @property
     def requirements(self) -> List[str]:
         """Get the flow requirements."""
         autogen_version = _get_autogen_version()

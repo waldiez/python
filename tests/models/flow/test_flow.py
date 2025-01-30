@@ -596,3 +596,187 @@ def test_waldiez_flow() -> None:
     swarm_members, swarm_user = flow.get_swarm_chat_members(user)
     assert not swarm_members
     assert swarm_user is None
+
+
+def test_empty_flow() -> None:
+    """Test empty flow."""
+    with pytest.raises(ValueError):
+        WaldiezFlow(
+            id="wf-1",
+            name="flow",
+            type="flow",
+            description="Flow",
+            tags=["flow"],
+            requirements=["flow"],
+            storage_id="flow-1",
+            created_at="2021-01-01T00:00:00.000Z",
+            updated_at="2021-01-00T00:00:00.000Z",
+            data=WaldiezFlowData(
+                nodes=[],
+                edges=[],
+                viewport={},
+                agents=WaldiezAgents(
+                    users=[],
+                    assistants=[],
+                    managers=[],
+                    rag_users=[],
+                    swarm_agents=[],
+                    reasoning_agents=[],
+                ),
+                models=[],
+                skills=[],
+                chats=[],
+                is_async=False,
+            ),
+        )
+
+
+def test_single_agent_mode() -> None:
+    """Test single agent mode."""
+    assistant = WaldiezAssistant(
+        id="wa-2",
+        name="assistant",
+        type="agent",
+        agent_type="assistant",
+        description="Assistant",
+        tags=["assistant"],
+        requirements=["assistant"],
+        created_at="2021-01-01T00:00:00.000Z",
+        updated_at="2021-01-01T00:00:00.000Z",
+        data=WaldiezAssistantData(
+            system_message="Assistant message",
+            human_input_mode="ALWAYS",
+            max_consecutive_auto_reply=1,
+            code_execution_config=False,
+            agent_default_auto_reply="Assistant auto reply",
+            teachability=WaldiezAgentTeachability(
+                enabled=False,
+                verbosity=0,
+                reset_db=False,
+                recall_threshold=0.0,
+                max_num_retrievals=0,
+            ),
+            termination=WaldiezAgentTerminationMessage(
+                type="keyword",
+                criterion="found",
+                keywords=["TERMINATE"],
+                method_content=None,
+            ),
+            model_ids=[],
+            skills=[],
+            nested_chats=[],
+        ),
+    )
+    agents = WaldiezAgents(
+        users=[],
+        assistants=[assistant],
+        managers=[],
+        rag_users=[],
+        swarm_agents=[],
+        reasoning_agents=[],
+    )
+    flow_data = WaldiezFlowData(
+        nodes=[],
+        edges=[],
+        viewport={},
+        agents=agents,
+        models=[],
+        skills=[],
+        chats=[],
+        is_async=False,
+    )
+    flow = WaldiezFlow(
+        id="wf-1",
+        name="flow",
+        type="flow",
+        description="Flow",
+        tags=["flow"],
+        requirements=["flow"],
+        storage_id="flow-1",
+        created_at="2021-01-01T00:00:00.000Z",
+        updated_at="2021-01-01T00:00:00.000Z",
+        data=flow_data,
+    )
+    assert flow.is_single_agent_mode is True
+
+    # if manager or swarm, it should raise ValueError
+    manager = WaldiezGroupManager(
+        id="wa-3",
+        name="manager",
+        type="agent",
+        agent_type="manager",
+        description="Manager",
+        tags=["manager"],
+        requirements=["manager"],
+        created_at="2021-01-01T00:00:00.000Z",
+        updated_at="2021-01-01T00:00:00.000Z",
+        data=WaldiezGroupManagerData(
+            system_message="Manager message",
+            human_input_mode="ALWAYS",
+            max_consecutive_auto_reply=1,
+            code_execution_config=False,
+            agent_default_auto_reply="Manager auto reply",
+            teachability=WaldiezAgentTeachability(
+                enabled=False,
+                verbosity=0,
+                reset_db=False,
+                recall_threshold=0.0,
+                max_num_retrievals=0,
+            ),
+            termination=WaldiezAgentTerminationMessage(
+                type="keyword",
+                criterion="found",
+                keywords=["TERMINATE"],
+                method_content=None,
+            ),
+            model_ids=[],
+            skills=[],
+            nested_chats=[],
+            max_round=1,
+            enable_clear_history=False,
+            admin_name="user",
+            send_introductions=False,
+            speakers=WaldiezGroupManagerSpeakers(
+                selection_method="round_robin",
+                selection_custom_method=None,
+                selection_mode="transition",
+                transitions_type="allowed",
+                allow_repeat=True,
+                allowed_or_disallowed_transitions={
+                    "wa-1": ["wa-2"],
+                },
+                max_retries_for_selecting=1,
+            ),
+        ),
+    )
+    agents = WaldiezAgents(
+        users=[],
+        assistants=[],
+        managers=[manager],
+        rag_users=[],
+        swarm_agents=[],
+        reasoning_agents=[],
+    )
+    with pytest.raises(ValueError):
+        flow_data = WaldiezFlowData(
+            nodes=[],
+            edges=[],
+            viewport={},
+            agents=agents,
+            models=[],
+            skills=[],
+            chats=[],
+            is_async=False,
+        )
+        WaldiezFlow(
+            id="wf-1",
+            name="flow",
+            type="flow",
+            description="Flow",
+            tags=["flow"],
+            requirements=["flow"],
+            storage_id="flow-1",
+            created_at="2021-01-01T00:00:00.000Z",
+            updated_at="2021-01-01T00:00:00.000Z",
+            data=flow_data,
+        )

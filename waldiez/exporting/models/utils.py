@@ -63,6 +63,7 @@ def get_agent_llm_config_arg(
     agent: WaldiezAgent,
     all_models: List[WaldiezModel],
     model_names: Dict[str, str],
+    cache_seed: Optional[int],
     tabs: int = 1,
 ) -> str:
     """Get the string representation of the agent's llm config argument.
@@ -75,6 +76,8 @@ def get_agent_llm_config_arg(
         All the models in the flow.
     model_names : Dict[str, str]
         A mapping of model ids to model names.
+    cache_seed : Optional[int]
+        The cache seed.
     tabs : int, optional
         The number of tabs for indentation, by default 1.
 
@@ -98,6 +101,7 @@ def get_agent_llm_config_arg(
     if not got_at_least_one_model:  # pragma: no cover
         return f"{tab}llm_config=False," + "\n"
     content += "\n" + f"{tab}    ]," + "\n"
+    content += f'{tab}    "cache_seed": {cache_seed},' + "\n"
     content += tab + "},\n"
     return content
 

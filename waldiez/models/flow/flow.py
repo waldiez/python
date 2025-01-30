@@ -126,6 +126,7 @@ class WaldiezFlow(WaldiezBase):
     _ordered_flow: Optional[
         List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]]
     ] = None
+    _single_agent_mode: bool = False
 
     @property
     def is_async(self) -> bool:
@@ -139,15 +140,15 @@ class WaldiezFlow(WaldiezBase):
         return self.data.is_async
 
     @property
-    def has_shared_skill(self) -> bool:
-        """Check if the flow has a skill with shared variables (global).
+    def cache_seed(self) -> Optional[int]:
+        """Check if the flow has caching disabled.
 
         Returns
         -------
         bool
-            True if the flow has shared skills, False otherwise.
+            True if the flow has caching disabled, False otherwise.
         """
-        return any(skill.is_shared for skill in self.data.skills)
+        return self.data.cache_seed
 
     @property
     def is_swarm_flow(self) -> bool:
@@ -161,6 +162,17 @@ class WaldiezFlow(WaldiezBase):
         return any(
             agent.agent_type == "swarm" for agent in self.data.agents.members
         )
+
+    @property
+    def is_single_agent_mode(self) -> bool:
+        """Check if the flow is in single agent mode.
+
+        Returns
+        -------
+        bool
+            True if the flow is in single agent mode, False otherwise.
+        """
+        return self._single_agent_mode
 
     @property
     def ordered_flow(
@@ -417,6 +429,7 @@ class WaldiezFlow(WaldiezBase):
 
         - unique node ids
         - there are at least two agents
+            - (or a single agent but not a group manager or a swarm agent)
         - all the agents connect to at least one other agent
         - all the linked agent skills are found in the flow
         - all the linked agent models are found in the flow
@@ -440,14 +453,13 @@ class WaldiezFlow(WaldiezBase):
             If the agents do not connect to any other node.
             If the manager's group chat has no members.
         """
+        all_members = list(self.data.agents.members)
+        if len(all_members) == 1:
+            return self.validate_single_agent_mode(all_members[0])
         if not self.ordered_flow:
             raise ValueError("The ordered flow is empty.")
-        model_ids = [model.id for model in self.data.models]
-        if len(model_ids) != len(set(model_ids)):
-            raise ValueError("Model IDs must be unique.")
-        skills_ids = [skill.id for skill in self.data.skills]
-        if len(skills_ids) != len(set(skills_ids)):
-            raise ValueError("Skill IDs must be unique.")
+        model_ids = self.validate_flow_models()
+        skills_ids = self.validate_flow_skills()
         self.data.agents.validate_flow(model_ids, skills_ids)
         self._validate_agent_connections()
         if self.is_swarm_flow:
@@ -457,4 +469,70 @@ class WaldiezFlow(WaldiezBase):
                     all_agents=list(self.data.agents.members),
                     all_chats=self.data.chats,
                 )
+        return self
+
+    def validate_flow_models(self) -> List[str]:
+        """Validate the flow models.
+
+        Returns
+        -------
+        List[str]
+            The list of model IDs.
+
+        Raises
+        ------
+        ValueError
+            If the model IDs are not unique.
+        """
+        model_ids = [model.id for model in self.data.models]
+        if len(model_ids) != len(set(model_ids)):
+            raise ValueError("Model IDs must be unique.")
+        return model_ids
+
+    def validate_flow_skills(self) -> List[str]:
+        """Validate the flow skills.
+
+        Returns
+        -------
+        List[str]
+            The list of skill IDs.
+
+        Raises
+        ------
+        ValueError
+            If the skill IDs are not unique.
+        """
+        skill_ids = [skill.id for skill in self.data.skills]
+        if len(skill_ids) != len(set(skill_ids)):
+            raise ValueError("Skill IDs must be unique.")
+        return skill_ids
+
+    def validate_single_agent_mode(self, member: WaldiezAgent) -> Self:
+        """Flow validation for single agent mode.
+
+        Parameters
+        ----------
+        member : WaldiezAgent
+            The only agent in the flow
+        Returns
+        -------
+        WaldiezFlow
+            The validated flow.
+
+        Raises
+        ------
+        ValueError
+            - If the only agent is a group manager or a swarm agent.
+            - If the model IDs are not unique.
+            - If the skill IDs are not unique.
+        """
+        if member.agent_type in ["manager", "swarm"]:
+            raise ValueError(
+                "In single agent mode, "
+                "the agent must not be a group manager or a swarm agent."
+            )
+        model_ids = self.validate_flow_models()
+        skills_ids = self.validate_flow_skills()
+        self.data.agents.validate_flow(model_ids, skills_ids)
+        self._single_agent_mode = True
         return self
