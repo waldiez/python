@@ -97,17 +97,17 @@ def callable_message(sender, recipient, context):
     assert not after_export
     generated = exporter.generate()
     expected = """
-    results = agent1.initiate_chat(
-        agent2,
-        summary_method="reflection_with_llm",
-        summary_args={
-            "summary_prompt": "Summarize the chat.",
-            "summary_role": "system"
-        },
-        variable1="value1",
-        n_results=2,
-        message=callable_message_chat1,
-    )
+        results = agent1.initiate_chat(
+            agent2,
+            summary_method="reflection_with_llm",
+            summary_args={
+                "summary_prompt": "Summarize the chat.",
+                "summary_role": "system"
+            },
+            variable1="value1",
+            n_results=2,
+            message=callable_message_chat1,
+        )
 """
     assert generated == expected
 
@@ -177,7 +177,11 @@ def test_empty_chat() -> None:
     after_export = exporter.get_after_export()
     assert not after_export
     generated = exporter.generate()
-    expected = "\n    results = agent1.initiate_chat(\n        agent2,\n    )\n"
+    expected = (
+        "\n        results = agent1.initiate_chat("
+        "\n            agent2,"
+        "\n        )\n"
+    )
     assert generated == expected
 
 
@@ -263,19 +267,20 @@ def test_chat_with_rag_and_carryover() -> None:
     assert not after_export
     generated = exporter.generate()
     tab = "    "
+    space = tab * 2
     expected = (
         "\n"
-        f"{tab}results = {agent1_name}.initiate_chat("
+        f"{space}results = {agent1_name}.initiate_chat("
         "\n"
-        f"{tab}{tab}{agent2_name},"
+        f"{space}{tab}{agent2_name},"
         "\n"
-        f'{tab}{tab}problem="summarization",'
+        f'{space}{tab}problem="summarization",'
         "\n"
-        f'{tab}{tab}model="one/model/name",'
+        f'{space}{tab}model="one/model/name",'
         "\n"
-        f"{tab}{tab}message=callable_message_{chat_name},"
+        f"{space}{tab}message=callable_message_{chat_name},"
         "\n"
-        f"{tab})"
+        f"{space})"
         "\n"
     )
     assert generated == expected
@@ -349,17 +354,18 @@ def test_chat_with_rag_no_carryover() -> None:
     assert not after_export
     generated = exporter.generate()
     tab = "    "
+    space = tab * 2
     expected = (
         "\n"
-        f"{tab}results = {agent1_name}.initiate_chat("
+        f"{space}results = {agent1_name}.initiate_chat("
         "\n"
-        f"{tab}{tab}{agent2_name},"
+        f"{space}{tab}{agent2_name},"
         "\n"
-        f'{tab}{tab}key1="value1",'
+        f'{space}{tab}key1="value1",'
         "\n"
-        f"{tab}{tab}message={agent1_name}.message_generator,"
+        f"{space}{tab}message={agent1_name}.message_generator,"
         "\n"
-        f"{tab})"
+        f"{space})"
         "\n"
     )
     assert generated == expected

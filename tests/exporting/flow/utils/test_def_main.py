@@ -9,10 +9,11 @@ def test_get_def_main() -> None:
     """Test get_def_main."""
     flow_chats = "flow chats content"
     after_run = "after run content"
+    cache_seed = 42
     is_async = True
-    result = get_def_main(flow_chats, after_run, is_async)
+    result = get_def_main(flow_chats, after_run, is_async, cache_seed)
     assert isinstance(result, str)
-    assert "async def main():" in result
+    assert "async def main()" in result
     assert "flow chats content" in result
     assert "stop_logging()" in result
     assert "after run content" in result
@@ -21,10 +22,10 @@ def test_get_def_main() -> None:
     assert "anyio.run" in result
 
     is_async = False
-    result = get_def_main(flow_chats, after_run, is_async)
+    result = get_def_main(flow_chats, after_run, is_async, cache_seed)
     assert isinstance(result, str)
-    assert "async def main():" not in result
-    assert "def main():" in result
+    assert "async def main()" not in result
+    assert "def main()" in result
     assert "flow chats content" in result
     assert "after run content" in result
     assert "return results" in result

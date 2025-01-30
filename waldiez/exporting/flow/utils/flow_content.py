@@ -136,25 +136,26 @@ def get_after_run_content(
     # if th eflow has reasoning agents, we add
     # visualize_tree(agent._root) for each agent
     content = ""
-    space = "    " * tabs
+    tab = "    "
+    space = tab * tabs
     for agent in waldiez.agents:
         if agent.agent_type == "reasoning":
             agent_name = agent_names[agent.id]
             content += f"""
 {space}# pylint: disable=broad-except,too-many-try-statements
 {space}try:
-{space}{space}visualize_tree({agent_name}._root)  # pylint: disable=protected-access
-{space}{space}if os.path.exists("tree_of_thoughts.png"):
-{space}{space}{space}new_name = "{agent_name}_tree_of_thoughts.png"
-{space}{space}{space}os.rename("tree_of_thoughts.png", new_name)
+{space}{tab}visualize_tree({agent_name}._root)  # pylint: disable=protected-access
+{space}{tab}if os.path.exists("tree_of_thoughts.png"):
+{space}{tab}{tab}new_name = "{agent_name}_tree_of_thoughts.png"
+{space}{tab}{tab}os.rename("tree_of_thoughts.png", new_name)
 {space}except BaseException:
-{space}{space}pass
+{space}{tab}pass
 {space}# save the tree to json
 {space}try:
-{space}{space}data = {agent_name}._root.to_dict()  # pylint: disable=protected-access
-{space}{space}with open("{agent_name}_reasoning_tree.json", "w", encoding="utf-8") as f:
-{space}{space}{space}json.dump(data, f)
+{space}{tab}data = {agent_name}._root.to_dict()  # pylint: disable=protected-access
+{space}{tab}with open("{agent_name}_reasoning_tree.json", "w", encoding="utf-8") as f:
+{space}{tab}{tab}json.dump(data, f)
 {space}except BaseException:
-{space}{space}pass
+{space}{tab}pass
 """
     return content

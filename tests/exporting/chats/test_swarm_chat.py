@@ -273,17 +273,17 @@ def callable_message(sender, recipient, context):
     )
     generated = exporter.generate()
     expected = """
-    results, _, __ = initiate_swarm_chat(
-        initial_agent=agent2,
-        agents=[agent2, agent3, agent4],
-        messages=[{"role": "user", "content": "Hello wa-2 from wa-1!"}],
-        context_variables={
-            "variable1": "value1"
-        },
-        user_agent=agent1,
-        after_work=AFTER_WORK(AfterWorkOption.REVERT_TO_USER),
-        max_rounds=10,
-    )
+        results, _, __ = initiate_swarm_chat(
+            initial_agent=agent2,
+            agents=[agent2, agent3, agent4],
+            messages=[{"role": "user", "content": "Hello wa-2 from wa-1!"}],
+            context_variables={
+                "variable1": "value1"
+            },
+            user_agent=agent1,
+            after_work=AFTER_WORK(AfterWorkOption.REVERT_TO_USER),
+            max_rounds=10,
+        )
 """
     assert generated == expected
     chat_imports = exporter.get_imports()

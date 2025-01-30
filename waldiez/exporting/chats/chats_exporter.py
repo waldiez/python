@@ -97,7 +97,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
                     recipient=recipient,
                     serializer=self.serializer,
                     string_escape=self.string_escape,
-                    tabs=0 if self.for_notebook else 1,
+                    tabs=1 if self.for_notebook else 2,
                     is_async=self.is_async,
                 )
                 return
@@ -109,7 +109,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
                 chat_names=self.chat_names,
                 serializer=self.serializer,
                 string_escape=self.string_escape,
-                tabs=0 if self.for_notebook else 1,
+                tabs=1 if self.for_notebook else 2,
                 is_async=self.is_async,
             )
             return
@@ -119,7 +119,7 @@ class ChatsExporter(BaseExporter, ExporterMixin):
             chat_names=self.chat_names,
             serializer=self.serializer,
             string_escape=self.string_escape,
-            tabs=0 if self.for_notebook else 1,
+            tabs=1 if self.for_notebook else 2,
             is_async=self.is_async,
         )
 

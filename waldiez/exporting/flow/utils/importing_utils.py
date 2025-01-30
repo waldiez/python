@@ -28,6 +28,7 @@ TYPING_IMPORTS = [
 ]
 COMMON_AUTOGEN_IMPORTS = [
     "from autogen import Agent",
+    "from autogen import Cache",
     "from autogen import ConversableAgent",
     "from autogen import ChatResult",
     "from autogen import GroupChat",

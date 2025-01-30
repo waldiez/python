@@ -183,12 +183,12 @@ def nested_chat_message(recipient, messages, sender, config):
     )
     generated = exporter.generate()
     expected = """
-    results = agent1.initiate_chat(
-        agent2,
-        summary_method="last_msg",
-        variable1="value1",
-        message="Hello wa-2 from wa-1",
-    )
+        results = agent1.initiate_chat(
+            agent2,
+            summary_method="last_msg",
+            variable1="value1",
+            message="Hello wa-2 from wa-1",
+        )
 """
     assert generated == expected
     after_export = exporter.get_after_export()

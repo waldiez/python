@@ -4,8 +4,12 @@
 # pylint: disable=inconsistent-quotes, line-too-long
 """Get the main function."""
 
+from typing import Optional
 
-def get_def_main(flow_chats: str, after_run: str, is_async: bool) -> str:
+
+def get_def_main(
+    flow_chats: str, after_run: str, is_async: bool, cache_seed: Optional[int]
+) -> str:
     """Get the main function.
 
     When exporting to python, waldiez_chats string will be the
@@ -22,17 +26,21 @@ def get_def_main(flow_chats: str, after_run: str, is_async: bool) -> str:
         The content after the run of the flow.
     is_async : bool
         Whether the main function is asynchronous.
+    cache_seed : Optional[int]
+        The seed for the cache. If None, cache should be disabled.
     Returns
     -------
     str
         The main function.
     """
+    if flow_chats.startswith("\n"):
+        flow_chats = flow_chats[1:]
     content = ""
     if is_async:
         content += "async "
-    content += "def main():\n"
-    content += "    # type: () -> Union[ChatResult, List[ChatResult], Dict[int, ChatResult]]\n"
+    content += "def main() -> Union[ChatResult, List[ChatResult], Dict[int, ChatResult]]:\n"
     content += '    """Start chatting."""\n'
+    content += f"    with Cache.disk(cache_seed={cache_seed}" + "):\n"
     content += f"{flow_chats}" + "\n"
     if is_async:
         content += "    await stop_logging()"
@@ -45,7 +53,7 @@ def get_def_main(flow_chats: str, after_run: str, is_async: bool) -> str:
     else:
         content += "def call_main() -> None:\n"
     content += '    """Run the main function and print the results."""\n'
-    content += "    results: Union[ChatResult, List[ChatResult], Dict[int, ChatResult]] = "
+    content += "    results = "
     if is_async:
         content += "await "
     content += "main()\n"

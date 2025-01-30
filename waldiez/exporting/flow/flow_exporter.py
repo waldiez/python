@@ -202,6 +202,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
             The merged export contents.
         """
         is_async = self.waldiez.is_async
+        cache_seed = self.waldiez.cache_seed
         content = (
             get_py_content_start(self.waldiez)
             if not self.for_notebook
@@ -236,9 +237,18 @@ class FlowExporter(BaseExporter, ExporterMixin):
                 chats_content,
                 after_run=after_run,
                 is_async=self.waldiez.is_async,
+                cache_seed=cache_seed,
             )
         else:
-            content += "\n" + chats_content + "\n"
+            # content += f"    with Cache.disk(cache_seed={cache_seed}" + "):\n"
+            # content += f"{flow_chats}" + "\n"
+            # content += "\n" + chats_content + "\n"
+            if chats_content.startswith("\n"):
+                chats_content = chats_content[1:]
+            content += (
+                "\n" + f"with Cache.disk(cache_seed={cache_seed}):"
+                "\n" + chats_content + "\n"
+            )
             if is_async:
                 content += "await stop_logging()"
             else:
