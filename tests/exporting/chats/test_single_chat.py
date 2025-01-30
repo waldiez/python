@@ -99,6 +99,7 @@ def callable_message(sender, recipient, context):
     expected = """
         results = agent1.initiate_chat(
             agent2,
+            cache=cache,
             summary_method="reflection_with_llm",
             summary_args={
                 "summary_prompt": "Summarize the chat.",
@@ -180,6 +181,7 @@ def test_empty_chat() -> None:
     expected = (
         "\n        results = agent1.initiate_chat("
         "\n            agent2,"
+        "\n            cache=cache,"
         "\n        )\n"
     )
     assert generated == expected
@@ -274,6 +276,8 @@ def test_chat_with_rag_and_carryover() -> None:
         "\n"
         f"{space}{tab}{agent2_name},"
         "\n"
+        f"{space}{tab}cache=cache,"
+        "\n"
         f'{space}{tab}problem="summarization",'
         "\n"
         f'{space}{tab}model="one/model/name",'
@@ -360,6 +364,8 @@ def test_chat_with_rag_no_carryover() -> None:
         f"{space}results = {agent1_name}.initiate_chat("
         "\n"
         f"{space}{tab}{agent2_name},"
+        "\n"
+        f"{space}{tab}cache=cache,"
         "\n"
         f'{space}{tab}key1="value1",'
         "\n"

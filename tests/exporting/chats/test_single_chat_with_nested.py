@@ -185,6 +185,7 @@ def nested_chat_message(recipient, messages, sender, config):
     expected = """
         results = agent1.initiate_chat(
             agent2,
+            cache=cache,
             summary_method="last_msg",
             variable1="value1",
             message="Hello wa-2 from wa-1",

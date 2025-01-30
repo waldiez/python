@@ -86,6 +86,7 @@ def export_single_chat(
     agent1.initiate_chat(
         agent2,
         message="Hello, how are you?",
+        cache=cache,
     )
     ```
     """
@@ -167,6 +168,7 @@ def get_simple_chat_string(
     recipient_name = agent_names[recipient.id]
     chat_string = "\n" + f"{tab}results = {sender_name}.{initiate}(" + "\n"
     chat_string += f"{tab}    {recipient_name},"
+    chat_string += "\n" + f"{tab}    cache=cache,"
     for key, value in chat_args.items():
         if isinstance(value, str):
             chat_string += "\n" + f'{tab}    {key}="{value}",'
@@ -228,6 +230,7 @@ def get_empty_simple_chat_string(
     initiate = "a_initiate_chat" if is_async else "initiate_chat"
     content = "\n" + f"{tab}results = {sender_name}.{initiate}(" + "\n"
     content += f"{tab}    {recipient_name}," + "\n"
+    content += f"{tab}    cache=cache," + "\n"
     message_arg, _ = get_chat_message(
         tab=tab,
         chat=chat,

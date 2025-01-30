@@ -93,6 +93,7 @@ def test_sequential_chat() -> None:
             {
                 "sender": agent1,
                 "recipient": agent2,
+                "cache": cache,
                 "summary_method": "last_msg",
                 "chat_id": 0,
                 "message": "Hello, how are you?",
@@ -100,6 +101,7 @@ def test_sequential_chat() -> None:
             {
                 "sender": agent2,
                 "recipient": agent3,
+                "cache": cache,
                 "summary_method": "last_msg",
                 "chat_id": 0,
                 "message": "Hello, how are you?",

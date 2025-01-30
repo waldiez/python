@@ -181,6 +181,7 @@ def _get_chat_dict_string(
     chat_string = "{"
     chat_string += "\n" + f'{tab}    "sender": {agent_names[sender.id]},'
     chat_string += "\n" + f'{tab}    "recipient": {agent_names[recipient.id]},'
+    chat_string += "\n" + f'{tab}    "cache": cache,'
     additional_methods_string = ""
     for key, value in chat_args.items():
         if isinstance(value, str):
