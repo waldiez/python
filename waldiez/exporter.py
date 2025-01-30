@@ -6,21 +6,12 @@ to an autogen's flow with one or more chats.
 
 The resulting file(s): a `flow.py` file with one `main()` function
 to trigger the chat(s).
-If additional tools/skills are used,
-they are exported as their `skill_name` in the same directory with
-the `flow.py` file. So the `flow.py` could have entries like:
-`form {flow_name}_{skill1_name} import {skill1_name}`
-`form {flow_name}_{skill2_name} import {skill2_name}`
 """
 
-# pylint: disable=inconsistent-quotes
-
-import os
-import shutil
-import subprocess
-import sys
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Union
+
+import jupytext  # type: ignore[import-untyped]
 
 from .exporting import FlowExporter
 from .models import Waldiez
@@ -125,25 +116,10 @@ class WaldiezExporter:
         py_path = path.with_suffix(".tmp.py")
         with open(py_path, "w", encoding="utf-8", newline="\n") as f:
             f.write(content)
-        if not shutil.which("jupytext"):  # pragma: no cover
-            run_command(
-                [sys.executable, "-m", "pip", "install", "jupytext"],
-                allow_error=False,
-            )
-        run_command(
-            [
-                sys.executable,
-                "-m",
-                "jupytext",
-                "--to",
-                "notebook",
-                str(py_path),
-            ],
-            allow_error=False,
-        )
+        with open(py_path, "r", encoding="utf-8") as py_out:
+            content = jupytext.read(py_out, fmt="py:light")
         ipynb_path = str(py_path).replace(".tmp.py", ".tmp.ipynb")
-        if not os.path.exists(ipynb_path):  # pragma: no cover
-            raise RuntimeError("Could not generate notebook")
+        jupytext.write(content, ipynb_path, fmt="ipynb")
         Path(ipynb_path).rename(ipynb_path.replace(".tmp.ipynb", ".ipynb"))
         py_path.unlink(missing_ok=True)
 
@@ -182,42 +158,3 @@ class WaldiezExporter:
         """
         with open(file_path, "w", encoding="utf-8", newline="\n") as file:
             file.write(self.waldiez.model_dump_json())
-
-
-def run_command(
-    cmd: List[str],
-    cwd: Optional[Path] = None,
-    allow_error: bool = True,
-) -> None:
-    """Run a command.
-
-    Parameters
-    ----------
-    cmd : List[str]
-        The command to run.
-    cwd : Path, optional
-        The working directory, by default None (current working directory).
-    allow_error : bool, optional
-        Whether to allow errors, by default True.
-
-    Raises
-    ------
-    RuntimeError
-        If the command fails and allow_error is False.
-    """
-    if not cwd:
-        cwd = Path.cwd()
-    # pylint: disable=broad-except
-    try:
-        subprocess.run(
-            cmd,
-            check=True,
-            cwd=cwd,
-            env=os.environ,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )  # nosemgrep # nosec
-    except BaseException as error:  # pragma: no cover
-        if allow_error:
-            return
-        raise RuntimeError(f"Error running command: {error}") from error
