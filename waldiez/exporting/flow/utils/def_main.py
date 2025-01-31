@@ -66,7 +66,7 @@ def get_def_main(
     content += "        for result in results:\n"
     content += "            pprint(asdict(result))\n"
     content += "    else:\n"
-    content += "        pprint(asdict(results))\n"
+    content += "        pprint(asdict(results))\n\n\n"
     content += 'if __name__ == "__main__":\n'
     if is_async:
         content += "    anyio.run(call_main)\n"
