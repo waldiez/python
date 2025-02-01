@@ -44,6 +44,8 @@
         "dmypy",
         "docparams",
         "dotenv",
+        "easyocr",
+        "embedchain",
         "epytext",
         "exitfirst",
         "fastembed",

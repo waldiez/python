@@ -4,7 +4,7 @@
 
 import uuid
 from datetime import datetime, timezone
-from typing import List
+from typing import Any, Dict, List, Optional
 
 from ..agents import (
     WaldiezAgent,
@@ -170,3 +170,63 @@ def merge_nested_chat_messages(
             chat_ids_added.append(chat.id)
     nested_chat.messages.sort(key=lambda x: chat_ids_added.index(x.id))
     return [nested_chat]
+
+
+def get_flow_data(
+    data: Dict[str, Any],
+    flow_id: Optional[str] = None,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[List[str]] = None,
+    requirements: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """Get the flow from the passed data dict.
+
+    Parameters
+    ----------
+    data : Dict[str, Any]
+        The data dict.
+    flow_id : Optional[str], optional
+        The flow ID, by default None.
+    name : Optional[str], optional
+        The flow name, by default None.
+    description : Optional[str], optional
+        The flow description, by default None.
+    tags : Optional[List[str]], optional
+        The flow tags, by default None.
+    requirements : Optional[List[str]], optional
+        The flow requirements, by default None.
+
+    Returns
+    -------
+    Dict[str, Any]
+        The flow data.
+
+    Raises
+    ------
+    ValueError
+        If the flow type is not "flow".
+    """
+    item_type = data.get("type", "flow")
+    if item_type != "flow":
+        # empty flow (from exported model/skill ?)
+        raise ValueError(f"Invalid flow type: {item_type}")
+    from_args = {
+        "id": flow_id,
+        "name": name,
+        "description": description,
+        "tags": tags,
+        "requirements": requirements,
+    }
+    for key, value in from_args.items():
+        if value:
+            data[key] = value
+    if "name" not in data:
+        data["name"] = "Waldiez Flow"
+    if "description" not in data:
+        data["description"] = "Waldiez Flow description"
+    if "tags" not in data:
+        data["tags"] = []
+    if "requirements" not in data:
+        data["requirements"] = []
+    return data

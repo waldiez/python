@@ -2,6 +2,7 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Common utils for all models."""
 
+from .ag2_version import get_autogen_version
 from .base import WaldiezBase
 from .date_utils import now
 from .dict_utils import update_dict
@@ -16,6 +17,7 @@ __all__ = [
     "WaldiezBase",
     "now",
     "check_function",
+    "get_autogen_version",
     "get_function",
     "generate_function",
     "parse_code_string",

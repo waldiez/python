@@ -4,8 +4,10 @@
 
 from .flow import WaldiezFlow
 from .flow_data import WaldiezFlowData
+from .utils import get_flow_data
 
 __all__ = [
+    "get_flow_data",
     "WaldiezFlow",
     "WaldiezFlowData",
 ]

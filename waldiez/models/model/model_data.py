@@ -20,6 +20,7 @@ WaldiezModelAPIType = Literal[
     "groq",
     "together",
     "nim",
+    "cohere",
     "other",
 ]
 
@@ -53,7 +54,7 @@ class WaldiezModelData(WaldiezBase):
         The base url of the model, by default None.
     api_key : Optional[str]
         The api key to use with the model, by default None.
-    api_type : Literal["openai","azure","deepseek","google","anthropic","mistral","groq","together","nim","other"]
+    api_type : WaldiezModelAPIType
         The api type of the model.
     api_version : Optional[str]
         The api version of the model, by default None.

@@ -1,23 +1,32 @@
 -r main.txt
-autogen[captainagent]==0.7.3; platform_system == "Linux"
-chromadb; platform_system != "Linux"
-huggingface-hub; platform_system != "Linux"
+beautifulsoup4
+chromadb>=0.5.23
+crewai-tools==0.33.0
+crewai>0.98.0; python_version < "3.13"
+embedchain==0.1.126
+huggingface-hub
+ipython
+langchain-community>=0.3.12,<1
+markdownify
 pgvector>=0.3.6
+pgvector>=0.3.6
+protobuf>=4.25.3
 psycopg[binary]>=3.2.3
+psycopg[binary]>=3.2.4
 pyautogen[anthropic]==0.7.3
 pyautogen[bedrock]==0.7.3
+pyautogen[cohere]==0.7.3
 pyautogen[gemini]==0.7.3
 pyautogen[groq]==0.7.3
 pyautogen[lmm]==0.7.3
 pyautogen[mistral]==0.7.3
 pyautogen[neo4j]==0.7.3
-pyautogen[retrievechat-mongodb]==0.7.3
-pyautogen[retrievechat-pgvector]==0.7.3
-pyautogen[retrievechat-qdrant]==0.7.3; python_version < "3.13"
-pyautogen[retrievechat]==0.7.3
-pyautogen[together]==0.7.3
+pyautogen[ollama]==0.7.3
 pyautogen[together]==0.7.3
 pyautogen[websurfer]==0.7.3
-pymongo>=4.10.1
-qdrant-client[fastembed]; python_version >= "3.13"
-sentence-transformers; platform_system != "Linux"
+pydantic-ai==0.0.21
+pymongo>=4.11
+pypdf
+qdrant-client[fastembed]
+sentence-transformers
+weaviate-client==4.10.2

@@ -19,6 +19,7 @@ DEFAULT_BASE_URLS: Dict[WaldiezModelAPIType, str] = {
     "groq": "https://api.groq.com/openai/v1",
     "together": "https://api.together.xyz/v1",
     "nim": "https://integrate.api.nvidia.com/v1",
+    "cohere": "https://api.cohere.com",
 }
 
 
@@ -63,7 +64,7 @@ class WaldiezModel(WaldiezBase):
     description: Annotated[
         str,
         Field(
-            ...,
+            "Model's Description",
             title="Description",
             description="The description of the model.",
         ),
@@ -118,6 +119,7 @@ class WaldiezModel(WaldiezBase):
         - groq: 'GROQ_API_KEY',
         - together: 'TOGETHER_API_KEY',
         - nim: 'NIM_API_KEY',
+        - cohere: 'COHERE_API_KEY',
         - other: 'OPENAI_API_KEY'
         """
         env_key = "OPENAI_API_KEY"
@@ -142,6 +144,7 @@ class WaldiezModel(WaldiezBase):
             - groq: 'GROQ_API_KEY',
             - together: 'TOGETHER_API_KEY',
             - nim: 'NIM_API_KEY',
+            - cohere: 'COHERE_API_KEY',
             - other: 'OPENAI_API_KEY'
         """
         if self.data.api_key and self.data.api_key != "REPLACE_ME":
@@ -222,7 +225,7 @@ def set_default_base_url(
     Dict[str, Any]
         The llm config dictionary with the default base url set.
     """
-    if api_type in ("openai", "other", "azure"):
+    if api_type in ("openai", "other", "azure", "cohere"):
         return llm_config
     if "base_url" not in llm_config or not llm_config["base_url"]:
         dict_copy = llm_config.copy()

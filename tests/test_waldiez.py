@@ -34,7 +34,8 @@ def test_waldiez() -> None:
     assert next(waldiez2.models)
     assert waldiez2.has_rag_agents
     skill = next(waldiez2.skills)
-    assert f"pyautogen[retrievechat]=={ag2_version}" in waldiez2.requirements
+    assert f"pyautogen=={ag2_version}" in waldiez2.requirements
+    assert "chromadb>=0.5.23" in waldiez2.requirements
     assert "SKILL_KEY" in skill.secrets
     assert "SKILL_KEY" == waldiez2.get_flow_env_vars()[0][0]
     for agent in waldiez2.agents:

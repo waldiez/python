@@ -18,6 +18,10 @@ from .agent import (
 )
 from .agents import WaldiezAgents
 from .assistant import WaldiezAssistant, WaldiezAssistantData
+from .extra_requirements import (
+    get_captain_agent_extra_requirements,
+    get_retrievechat_extra_requirements,
+)
 from .group_manager import (
     CUSTOM_SPEAKER_SELECTION,
     CUSTOM_SPEAKER_SELECTION_ARGS,
@@ -77,6 +81,8 @@ from .swarm_agent import (
 from .user_proxy import WaldiezUserProxy, WaldiezUserProxyData
 
 __all__ = [
+    "get_retrievechat_extra_requirements",
+    "get_captain_agent_extra_requirements",
     "IS_TERMINATION_MESSAGE",
     "IS_TERMINATION_MESSAGE_ARGS",
     "IS_TERMINATION_MESSAGE_TYPES",
