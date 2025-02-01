@@ -19,6 +19,7 @@ from waldiez.models.chat.chat_nested import (
     NESTED_CHAT_TYPES,
 )
 from waldiez.models.common.method_utils import (
+    MAX_VAR_NAME_LENGTH,
     check_function,
     generate_function,
     get_function,
@@ -290,6 +291,29 @@ def test_generate_function() -> None:
         "    config,  # type: Dict[str, Any]\n"
         "):\n"
         "    # type: (...) -> Union[Dict[str, Any], str]\n"
+        "    return 'Hello'\n"
+    )
+    # Given
+    function_name = (
+        "a_function_name_that_is_longer_than_64_characters_should_be_truncated"
+    )
+    function_args = ["arg1", "arg2", "arg3"]
+    function_types = ["str", "int", "float"], "str"
+    function_body = "    return 'Hello'"
+    # When
+    function_string = generate_function(
+        function_name=function_name,
+        function_args=function_args,
+        function_types=function_types,
+        function_body=function_body,
+    )
+    # Then
+    assert function_string == (
+        f"def {function_name[:MAX_VAR_NAME_LENGTH]}" + "(\n"
+        "    arg1: str,\n"
+        "    arg2: int,\n"
+        "    arg3: float,\n"
+        ") -> str:\n"
         "    return 'Hello'\n"
     )
 

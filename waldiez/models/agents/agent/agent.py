@@ -2,7 +2,7 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Base agent class to be inherited by all agents."""
 
-from typing import List
+from typing import List, Set
 
 from pydantic import Field
 from typing_extensions import Annotated, Literal
@@ -128,6 +128,66 @@ class WaldiezAgent(WaldiezBase):
             default_factory=WaldiezAgentData,
         ),
     ]
+
+    @property
+    def ag2_class(self) -> str:
+        """Return the AG2 class of the agent."""
+        class_name = "ConversableAgent"
+        if self.data.is_multimodal:
+            return "MultimodalConversableAgent"
+        if self.agent_type == "assistant":
+            class_name = "AssistantAgent"
+        if self.agent_type == "user":
+            class_name = "UserProxyAgent"
+        if self.agent_type == "manager":
+            class_name = "GroupChatManager"
+        if self.agent_type == "rag_user":
+            class_name = "RetrieveUserProxyAgent"
+        if self.agent_type == "swarm":
+            class_name = "SwarmAgent"
+        if self.agent_type == "reasoning":
+            class_name = "ReasoningAgent"
+        return class_name
+
+    @property
+    def ag2_imports(self) -> Set[str]:
+        """Return the AG2 imports of the agent."""
+        agent_class = self.ag2_class
+        imports = set(["import autogen"])
+        if agent_class == "AssistantAgent":
+            imports.add("from autogen import AssistantAgent")
+        elif agent_class == "UserProxyAgent":
+            imports.add("from autogen import UserProxyAgent")
+        elif agent_class == "GroupChatManager":
+            imports.add("from autogen import GroupChatManager")
+        elif agent_class == "RetrieveUserProxyAgent":
+            imports.add(
+                "from autogen.agentchat.contrib.retrieve_user_proxy_agent "
+                "import RetrieveUserProxyAgent"
+            )
+        elif agent_class == "MultimodalConversableAgent":
+            imports.add(
+                "from autogen.agentchat.contrib.multimodal_conversable_agent "
+                "import MultimodalConversableAgent"
+            )
+        elif agent_class == "SwarmAgent":
+            imports.add(
+                "from autogen import "
+                "AFTER_WORK, "
+                "ON_CONDITION, "
+                "UPDATE_SYSTEM_MESSAGE, "
+                "AfterWorkOption, "
+                "SwarmAgent, "
+                "SwarmResult"
+            )
+        elif agent_class == "ReasoningAgent":
+            imports.add(
+                "from autogen.agentchat.contrib.reasoning_agent "
+                "import ReasoningAgent, visualize_tree"
+            )
+        else:  # pragma: no cover
+            imports.add("from autogen import ConversableAgent")
+        return imports
 
     def validate_linked_skills(
         self, skill_ids: List[str], agent_ids: List[str]

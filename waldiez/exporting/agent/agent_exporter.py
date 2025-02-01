@@ -18,9 +18,7 @@ from ..base import (
     ImportPosition,
 )
 from .utils import (
-    get_agent_class_name,
     get_agent_code_execution_config,
-    get_agent_imports,
     get_group_manager_extras,
     get_is_termination_message,
     get_rag_user_extras,
@@ -79,7 +77,6 @@ class AgentExporter(BaseExporter, ExporterMixin):
         self.chats = chats
         self.is_async = is_async
         self._agent_name = agent_names[agent.id]
-        self._agent_class = get_agent_class_name(self.agent)
         # content, argument, import
         self._code_execution = get_agent_code_execution_config(
             agent=self.agent,
@@ -130,7 +127,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
         """
         position = ImportPosition.THIRD_PARTY
         # default imports based on the agent class.
-        agent_imports = get_agent_imports(self._agent_class)
+        agent_imports = self.agent.ag2_imports
         # if code execution is enabled, update the imports.
         if self._code_execution[2]:
             agent_imports.add(self._code_execution[2])
@@ -220,7 +217,6 @@ class AgentExporter(BaseExporter, ExporterMixin):
         """
         agent = self.agent
         agent_name = self._agent_name
-        agent_class = self._agent_class
         retrieve_arg = self._rag[1]
         group_chat_arg = self._group_chat[1]
         is_termination = self._termination[0]
@@ -232,7 +228,7 @@ class AgentExporter(BaseExporter, ExporterMixin):
                 f'"{self.string_escape(agent.data.agent_default_auto_reply)}"'
             )
         extras = f"{group_chat_arg}{retrieve_arg}{self._reasoning}"
-        agent_str = f"""{agent_name} = {agent_class}(
+        agent_str = f"""{agent_name} = {self.agent.ag2_class}(
     name="{agent_name}",
     description="{agent.description}"{system_message_arg},
     human_input_mode="{agent.data.human_input_mode}",

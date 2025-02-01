@@ -4,7 +4,7 @@
 
 import pytest
 
-from waldiez.models.agents.agent import (
+from waldiez.models.agents import (
     WaldiezAgent,
     WaldiezAgentCodeExecutionConfig,
     WaldiezAgentData,
@@ -12,6 +12,13 @@ from waldiez.models.agents.agent import (
     WaldiezAgentNestedChat,
     WaldiezAgentTeachability,
     WaldiezAgentTerminationMessage,
+    WaldiezAssistant,
+    WaldiezAssistantData,
+    WaldiezGroupManager,
+    WaldiezRagUser,
+    WaldiezReasoningAgent,
+    WaldiezSwarmAgent,
+    WaldiezUserProxy,
 )
 
 
@@ -83,3 +90,109 @@ def test_waldiez_agent() -> None:
         agent.validate_linked_skills(skill_ids=["ws-2"], agent_ids=["wa-1"])
     with pytest.raises(ValueError):
         agent.validate_linked_skills(skill_ids=["ws-1"], agent_ids=["wa-2"])
+
+
+def test_agent_ag2_class() -> None:
+    """Test WaldiezAgent.ag2_class."""
+    user_proxy = WaldiezUserProxy(  # type: ignore
+        id="wa-1",
+        name="user_proxy",
+    )
+    assistant = WaldiezAssistant(  # type: ignore
+        id="wa-2",
+        name="assistant",
+    )
+    group_manager = WaldiezGroupManager(  # type: ignore
+        id="wa-3",
+        name="group_manager",
+    )
+    rag_user = WaldiezRagUser(  # type: ignore
+        id="wa-4",
+        name="rag_user",
+    )
+    multimodal_agent = WaldiezAssistant(  # type: ignore
+        id="wa-5",
+        name="multimodal_agent",
+        data=WaldiezAssistantData(  # type: ignore
+            is_multimodal=True,
+        ),
+    )
+    swarm_agent = WaldiezSwarmAgent(  # type: ignore
+        id="wa-6",
+        name="swarm_agent",
+    )
+    reasoning_agent = WaldiezReasoningAgent(  # type: ignore
+        id="wa-7",
+        name="reasoning_agent",
+    )
+    assert user_proxy.ag2_class == "UserProxyAgent"
+    assert assistant.ag2_class == "AssistantAgent"
+    assert group_manager.ag2_class == "GroupChatManager"
+    assert rag_user.ag2_class == "RetrieveUserProxyAgent"
+    assert multimodal_agent.ag2_class == "MultimodalConversableAgent"
+    assert swarm_agent.ag2_class == "SwarmAgent"
+    assert reasoning_agent.ag2_class == "ReasoningAgent"
+
+
+def test_agent_ag2_imports() -> None:
+    """Test WaldiezAgent.ag2_imports."""
+    user_proxy = WaldiezUserProxy(  # type: ignore
+        id="wa-1",
+        name="user_proxy",
+    )
+    assistant = WaldiezAssistant(  # type: ignore
+        id="wa-2",
+        name="assistant",
+    )
+    group_manager = WaldiezGroupManager(  # type: ignore
+        id="wa-3",
+        name="group_manager",
+    )
+    rag_user = WaldiezRagUser(  # type: ignore
+        id="wa-4",
+        name="rag_user",
+    )
+    multimodal_agent = WaldiezAssistant(  # type: ignore
+        id="wa-5",
+        name="multimodal_agent",
+        data=WaldiezAssistantData(  # type: ignore
+            is_multimodal=True,
+        ),
+    )
+    swarm_agent = WaldiezSwarmAgent(  # type: ignore
+        id="wa-6",
+        name="swarm_agent",
+    )
+    reasoning_agent = WaldiezReasoningAgent(  # type: ignore
+        id="wa-7",
+        name="reasoning_agent",
+    )
+    assert user_proxy.ag2_imports == {
+        "import autogen",
+        "from autogen import UserProxyAgent",
+    }
+    assert assistant.ag2_imports == {
+        "import autogen",
+        "from autogen import AssistantAgent",
+    }
+    assert group_manager.ag2_imports == {
+        "import autogen",
+        "from autogen import GroupChatManager",
+    }
+    # pylint: disable=line-too-long
+    assert rag_user.ag2_imports == {
+        "import autogen",
+        "from autogen.agentchat.contrib.retrieve_user_proxy_agent import RetrieveUserProxyAgent",  # noqa: E501
+    }
+    assert multimodal_agent.ag2_imports == {
+        "import autogen",
+        "from autogen.agentchat.contrib.multimodal_conversable_agent import MultimodalConversableAgent",  # noqa: E501
+    }
+    assert swarm_agent.ag2_imports == {
+        "import autogen",
+        "from autogen import AFTER_WORK, ON_CONDITION, UPDATE_SYSTEM_MESSAGE, AfterWorkOption, SwarmAgent, SwarmResult",  # noqa: E501
+    }
+    assert reasoning_agent.ag2_imports == {
+        "import autogen",
+        "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent, visualize_tree",  # noqa: E501
+    }
