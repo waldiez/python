@@ -103,7 +103,7 @@ ag2_extras =[
     'psycopg[binary]>=3.2.4',
     'crewai-tools==0.33.0',
     'embedchain==0.1.126',
-    'crewai>0.98.0; python_version',
+    'crewai>0.98.0',
     'weaviate-client==4.10.2',
     'langchain-community>=0.3.12,<1',
     'pydantic-ai==0.0.21',
