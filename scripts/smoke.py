@@ -48,11 +48,15 @@ EXAMPLES = [
 ]
 
 
-def download_example(example_url: str, example_path: str) -> None:
+def download_example(
+    pool: urllib3.PoolManager, example_url: str, example_path: str
+) -> None:
     """Download an example from the git repo.
 
     Parameters
     ----------
+    pool : urllib3.PoolManager
+        The pool manager.
     example_url : str
         The URL of the example.
     example_path : str
@@ -62,10 +66,7 @@ def download_example(example_url: str, example_path: str) -> None:
     ------
     Exception
         If the download fails.
-
     """
-    timeout = Timeout(connect=10.0, read=30.0)
-    pool = urllib3.PoolManager(timeout=timeout)
     response = pool.request("GET", example_url)
     if response.status != 200:
         # pylint: disable=broad-exception-raised
@@ -103,13 +104,16 @@ def convert_examples() -> None:
         If the conversion fails.
     """
     temp_dir = tempfile.mkdtemp()
+    timeout = Timeout(connect=10.0, read=30.0)
+    pool = urllib3.PoolManager(timeout=timeout)
     for example in EXAMPLES:
-        print(f"Converting {example}")
         example_dir = os.path.dirname(example)
         example_url = f"{REPO_URL}/{example}"
         example_path = os.path.join(temp_dir, example)
         os.makedirs(os.path.dirname(example_path), exist_ok=True)
-        download_example(example_url, example_path)
+        print(f"Downloading {example} ...")
+        download_example(pool, example_url, example_path)
+        print(f"Converting {example} ...")
         flow = WaldiezExporter.load(Path(example_path))
         output_path = example_path.replace(".waldiez", ".py")
         WaldiezExporter.export(flow, output_path)
