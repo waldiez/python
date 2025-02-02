@@ -14,6 +14,8 @@ from waldiez.models import (
     WaldiezAgentTerminationMessage,
     WaldiezAssistant,
     WaldiezAssistantData,
+    WaldiezCaptainAgent,
+    WaldiezCaptainAgentData,
     WaldiezChat,
     WaldiezChatData,
     WaldiezChatMessage,
@@ -592,13 +594,66 @@ def get_reasoning_agent(agent_id: str = "wa-6") -> WaldiezReasoningAgent:
     )
 
 
-def get_chats(count: int = 6) -> List[WaldiezChat]:
+def get_captain_agent() -> WaldiezCaptainAgent:
+    """Get a WaldiezCaptainAgent.
+
+    Returns
+    -------
+    WaldiezCaptainAgent
+        A WaldiezCaptainAgent instance.
+    """
+    data = WaldiezCaptainAgentData(
+        system_message=None,
+        human_input_mode="NEVER",
+        code_execution_config=WaldiezAgentCodeExecutionConfig(
+            work_dir="coding",
+            use_docker=False,
+            last_n_messages=3,
+            functions=[],
+            timeout=120,
+        ),
+        agent_default_auto_reply="I am a captain agent.",
+        max_consecutive_auto_reply=5,
+        termination=WaldiezAgentTerminationMessage(
+            type="keyword",
+            criterion="ending",
+            keywords=["bye", "goodbye"],
+            method_content=None,
+        ),
+        model_ids=[],
+        skills=[],
+        nested_chats=[],
+        teachability=WaldiezAgentTeachability(
+            enabled=False,
+            verbosity=0,
+            reset_db=False,
+            recall_threshold=1.5,
+            max_num_retrievals=10,
+        ),
+        use_agent_lib=False,
+        use_tool_lib=True,
+    )
+    return WaldiezCaptainAgent(
+        id="wa-7",
+        name="captain_agent",
+        description="Captain Agent",
+        type="agent",
+        agent_type="captain",
+        tags=["captain"],
+        requirements=[],
+        created_at="2021-01-01T00:00:00.000Z",
+        updated_at="2021-01-01T00:00:00.000Z",
+        data=data,
+    )
+
+
+def get_chats(count: int = 7) -> List[WaldiezChat]:
     """Get a list of WaldiezChat instances.
 
     Parameters
     ----------
     count : int, optional
-        The number of chats to generate, by default 4
+        The number of chats to generate, by default 7
 
     Returns
     -------
@@ -706,6 +761,7 @@ def get_flow(is_async: bool = False) -> WaldiezFlow:
     rag_user = get_rag_user()
     swarm_agent = get_swarm_agent()
     reasoning_agent = get_reasoning_agent()
+    captain_agent = get_captain_agent()
     chats = get_chats()
     agents = WaldiezAgents(
         users=[user],
@@ -714,6 +770,7 @@ def get_flow(is_async: bool = False) -> WaldiezFlow:
         rag_users=[rag_user],
         swarm_agents=[swarm_agent],
         reasoning_agents=[reasoning_agent],
+        captain_agents=[captain_agent],
     )
     flow = WaldiezFlow(
         id="wf-1",

@@ -10,7 +10,8 @@ from typing_extensions import Annotated, Self
 from ..common import WaldiezBase
 from .agent import WaldiezAgent
 from .assistant import WaldiezAssistant
-from .group_manager.group_manager import WaldiezGroupManager
+from .captain_agent import WaldiezCaptainAgent
+from .group_manager import WaldiezGroupManager
 from .rag_user import WaldiezRagUser
 from .reasoning import WaldiezReasoningAgent
 from .swarm_agent import WaldiezSwarmAgent
@@ -80,6 +81,14 @@ class WaldiezAgents(WaldiezBase):
             default_factory=list,
         ),
     ]
+    captain_agents: Annotated[
+        List[WaldiezCaptainAgent],
+        Field(
+            title="Captain Agents.",
+            description="Captain agents",
+            default_factory=list,
+        ),
+    ]
 
     @property
     def members(self) -> Iterator[WaldiezAgent]:
@@ -96,6 +105,7 @@ class WaldiezAgents(WaldiezBase):
         yield from self.reasoning_agents
         yield from self.swarm_agents
         yield from self.managers
+        yield from self.captain_agents
 
     @model_validator(mode="after")
     def validate_agents(self) -> Self:

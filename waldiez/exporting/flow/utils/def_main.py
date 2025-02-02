@@ -53,7 +53,7 @@ def get_def_main(
     else:
         content += "def call_main() -> None:\n"
     content += '    """Run the main function and print the results."""\n'
-    content += "    results = "
+    content += "    results: Union[ChatResult, List[ChatResult], Dict[int, ChatResult]] = "
     if is_async:
         content += "await "
     content += "main()\n"
@@ -62,11 +62,12 @@ def get_def_main(
     content += "        ordered_results = dict(sorted(results.items()))\n"
     content += "        for _, result in ordered_results.items():\n"
     content += "            pprint(asdict(result))\n"
-    content += "    elif isinstance(results, list):\n"
+    content += "    else:\n"
+    content += "        if not isinstance(results, list):\n"
+    content += "            results = [results]\n"
     content += "        for result in results:\n"
     content += "            pprint(asdict(result))\n"
-    content += "    else:\n"
-    content += "        pprint(asdict(results))\n\n\n"
+    content += "\n\n"
     content += 'if __name__ == "__main__":\n'
     if is_async:
         content += "    anyio.run(call_main)\n"

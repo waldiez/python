@@ -12,7 +12,7 @@ from .agent_data import WaldiezAgentData
 from .code_execution import WaldiezAgentCodeExecutionConfig
 
 WaldiezAgentType = Literal[
-    "user", "assistant", "manager", "rag_user", "swarm", "reasoning"
+    "user", "assistant", "manager", "rag_user", "swarm", "reasoning", "captain"
 ]
 
 
@@ -25,9 +25,7 @@ class WaldiezAgent(WaldiezBase):
         The ID of the agent.
     type : Literal["agent"]
         The type of the "node" in a graph: "agent"
-    agent_type : Literal[
-            "user", "assistant", "manager", "rag_user", "swarm", "reasoning"
-        ]
+    agent_type : WaldiezAgentType
         The type of the agent
     name: str
         The name of the agent.
@@ -65,9 +63,7 @@ class WaldiezAgent(WaldiezBase):
         ),
     ]
     agent_type: Annotated[
-        Literal[
-            "user", "assistant", "manager", "rag_user", "swarm", "reasoning"
-        ],
+        WaldiezAgentType,
         Field(
             ...,
             title="Agent type",

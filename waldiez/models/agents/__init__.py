@@ -18,6 +18,7 @@ from .agent import (
 )
 from .agents import WaldiezAgents
 from .assistant import WaldiezAssistant, WaldiezAssistantData
+from .captain_agent import WaldiezCaptainAgent, WaldiezCaptainAgentData
 from .extra_requirements import (
     get_captain_agent_extra_requirements,
     get_retrievechat_extra_requirements,
@@ -119,6 +120,8 @@ __all__ = [
     "WaldiezAgentNestedChatMessage",
     "WaldiezAgentTeachability",
     "WaldiezAgentTerminationMessage",
+    "WaldiezCaptainAgent",
+    "WaldiezCaptainAgentData",
     "WaldiezGroupManager",
     "WaldiezGroupManagerData",
     "WaldiezGroupManagerSpeakers",
