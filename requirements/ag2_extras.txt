@@ -2,7 +2,7 @@
 beautifulsoup4
 chromadb>=0.5.23
 crewai-tools==0.33.0
-crewai>0.98.0; python_version < "3.13"
+crewai>0.98.0
 embedchain==0.1.126
 huggingface-hub
 ipython
