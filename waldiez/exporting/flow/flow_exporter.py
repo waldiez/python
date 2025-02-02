@@ -246,7 +246,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
             if chats_content.startswith("\n"):
                 chats_content = chats_content[1:]
             content += (
-                "\n" + f"with Cache.disk(cache_seed={cache_seed}):"
+                "\n" + f"with Cache.disk(cache_seed={cache_seed}) as cache:"
                 "\n" + chats_content + "\n"
             )
             if is_async:
