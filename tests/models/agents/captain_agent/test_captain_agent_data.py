@@ -12,8 +12,8 @@ def test_waldiez_captain_agent_data() -> None:
     data = WaldiezCaptainAgentData(  # type: ignore
         use_agent_lib=True,
         use_tool_lib=True,
-        nested_config={"key": "value"},
+        max_round=20,
     )
     assert data.use_agent_lib is True
     assert data.use_tool_lib is True
-    assert data.nested_config == {"key": "value"}
+    assert data.max_round == 20

@@ -11,4 +11,4 @@ def test_waldiez_captain_agent() -> None:
     assert agent.agent_type == "captain"
     assert agent.data.use_agent_lib is False
     assert agent.data.use_tool_lib is False
-    assert agent.data.nested_config == {}
+    assert agent.data.max_round == 10
