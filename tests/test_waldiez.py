@@ -3,7 +3,7 @@
 """Test waldiez.waldiez.*."""
 
 import os
-import tempfile
+from pathlib import Path
 
 import pytest
 from autogen.version import __version__ as ag2_version  # type: ignore
@@ -13,19 +13,23 @@ from waldiez import Waldiez
 from .exporting.flow.flow_helpers import get_flow
 
 
-def test_waldiez() -> None:
-    """Test Waldiez with retrievechat requirement."""
+def test_waldiez(tmp_path: Path) -> None:
+    """Test Waldiez with retrievechat requirement.
+
+    Parameters
+    ----------
+    tmp_path : Path
+        A pytest fixture to provide a temporary directory.
+    """
     flow = get_flow()
     waldiez = Waldiez(flow=flow)
     assert waldiez.name == flow.name
 
     flow_dump = waldiez.model_dump_json(by_alias=True)
-    with tempfile.NamedTemporaryFile(
-        "w", suffix=".waldiez", delete=False
-    ) as file:
+    # pylint: disable=consider-using-with
+    file_path = os.path.join(tmp_path, "test_waldiez.waldiez")
+    with open(file_path, "w", encoding="utf-8") as file:
         file.write(flow_dump)
-        file_path = file.name
-        file.close()
     waldiez2 = Waldiez.load(file_path)
     os.remove(file_path)
     assert waldiez2.name == flow.name
@@ -47,8 +51,14 @@ def test_waldiez() -> None:
     assert waldiez2.chats
 
 
-def test_waldiez_errors() -> None:
-    """Test Waldiez errors."""
+def test_waldiez_errors(tmp_path: Path) -> None:
+    """Test Waldiez errors.
+
+    Parameters
+    ----------
+    tmp_path : Path
+        A pytest fixture to provide a temporary directory.
+    """
     with pytest.raises(ValueError):
         Waldiez.load("non_existent_file")
 
@@ -71,12 +81,9 @@ def test_waldiez_errors() -> None:
             data={"type": "other", "data": {}},
         )
 
-    with tempfile.NamedTemporaryFile(
-        "w", suffix=".waldiez", delete=False
-    ) as file:
+    file_path = os.path.join(tmp_path, "test_waldiez_errors.waldiez")
+    with open(file_path, "w", encoding="utf-8") as file:
         file.write("invalid json")
-        file_path = file.name
-        file.close()
     with pytest.raises(ValueError):
         Waldiez.load(file_path)
     os.remove(file_path)
