@@ -6,7 +6,7 @@
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from waldiez.models import WaldiezAgent, WaldiezChat
+from waldiez.models import WaldiezAgent, WaldiezChat, WaldiezModel
 
 from ..base import (
     AgentPosition,
@@ -19,6 +19,7 @@ from ..base import (
 )
 from .utils import (
     get_agent_code_execution_config,
+    get_captain_agent_extras,
     get_group_manager_extras,
     get_is_termination_message,
     get_rag_user_extras,
@@ -34,9 +35,9 @@ class AgentExporter(BaseExporter, ExporterMixin):
         self,
         agent: WaldiezAgent,
         agent_names: Dict[str, str],
-        model_names: Dict[str, str],
-        skill_names: Dict[str, str],
+        models: Tuple[List[WaldiezModel], Dict[str, str]],
         chats: Tuple[List[WaldiezChat], Dict[str, str]],
+        skill_names: Dict[str, str],
         is_async: bool,
         group_chat_members: List[WaldiezAgent],
         for_notebook: bool,
@@ -51,12 +52,12 @@ class AgentExporter(BaseExporter, ExporterMixin):
             The agent to export.
         agent_names : Dict[str, str]
             The agent ids to names mapping.
-        model_names : Dict[str, str]
-            The model ids to names mapping.
-        skill_names : Dict[str, str]
-            The skill ids to names mapping.
+        models : Tuple[List[WaldiezModel], Dict[str, str]]
+            All the models and the model ids to names mapping.
         chats : Tuple[List[WaldiezChat], Dict[str, str]]
             All the chats and the chat ids to names mapping.
+        skill_names : Dict[str, str]
+            The skill ids to names mapping.
         is_async : bool
             Whether the whole flow is async.
         for_notebook : bool
@@ -70,7 +71,8 @@ class AgentExporter(BaseExporter, ExporterMixin):
         if output_dir is not None and not isinstance(output_dir, Path):
             output_dir = Path(output_dir)
         self.output_dir = output_dir
-        self.model_names = model_names
+        self.models = models[0]
+        self.model_names = models[1]
         self.skill_names = skill_names
         self.arguments_resolver = arguments_resolver
         self.group_chat_members = group_chat_members
@@ -115,6 +117,13 @@ class AgentExporter(BaseExporter, ExporterMixin):
         self._reasoning = get_reasoning_agent_extras(
             agent=self.agent,
             serializer=self.serializer,
+        )
+        self._captain = get_captain_agent_extras(
+            agent=self.agent,
+            agent_names=self.agent_names,
+            all_models=self.models,
+            serializer=self.serializer,
+            output_dir=self.output_dir,
         )
 
     def get_imports(self) -> Optional[List[Tuple[str, ImportPosition]]]:
@@ -227,7 +236,9 @@ class AgentExporter(BaseExporter, ExporterMixin):
             default_auto_reply = (
                 f'"{self.string_escape(agent.data.agent_default_auto_reply)}"'
             )
-        extras = f"{group_chat_arg}{retrieve_arg}{self._reasoning}"
+        extras = (
+            f"{group_chat_arg}{retrieve_arg}{self._reasoning}{self._captain}"
+        )
         agent_str = f"""{agent_name} = {self.agent.ag2_class}(
     name="{agent_name}",
     description="{agent.description}"{system_message_arg},

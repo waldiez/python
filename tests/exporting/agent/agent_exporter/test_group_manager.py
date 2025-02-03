@@ -19,7 +19,7 @@ def test_export_group_manager() -> None:
     manager = create_agent(3, "manager")[0]
     output_dir = Path("test_group_manager_exporter")
     output_dir.mkdir(exist_ok=True)
-
+    model_names = {"wm-1_1": "model1_1", "wm-1_2": "model1_2"}
     exporter = AgentExporter(
         agent=manager,
         agent_names={
@@ -27,8 +27,8 @@ def test_export_group_manager() -> None:
             member1.id: member1.name,
             member2.id: member2.name,
         },
-        model_names={"wm-1_1": "model1_1", "wm-1_2": "model1_2"},
         skill_names={"ws-1_1": "skill1_1", "ws-1_2": "skill1_2"},
+        models=([], model_names),
         chats=([], {}),
         is_async=False,
         group_chat_members=[member1, member2],

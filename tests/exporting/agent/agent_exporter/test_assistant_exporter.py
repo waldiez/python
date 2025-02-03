@@ -25,7 +25,7 @@ def test_export_assistant(tmp_path: Path) -> None:
         agent=agent,
         agent_names={agent.id: agent.name},
         skill_names={skill.id: skill.name for skill in skills},
-        model_names={model.id: model.name for model in models},
+        models=(models, {model.id: model.name for model in models}),
         chats=([], {}),
         is_async=False,
         group_chat_members=[],

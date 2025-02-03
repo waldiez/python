@@ -19,7 +19,7 @@ def test_export_swarm_agent() -> None:
     agent, skills, models = create_agent(3, "swarm")
     output_dir = Path("test_swarm_agent_exporter")
     output_dir.mkdir(exist_ok=True)
-
+    model_names = {model.id: model.name for model in models}
     exporter = AgentExporter(
         agent=agent,
         agent_names={
@@ -27,8 +27,8 @@ def test_export_swarm_agent() -> None:
             member1.id: member1.name,
             member2.id: member2.name,
         },
-        model_names={model.id: model.name for model in models},
         skill_names={skill.id: skill.name for skill in skills},
+        models=(models, model_names),
         chats=([], {}),
         is_async=False,
         for_notebook=False,

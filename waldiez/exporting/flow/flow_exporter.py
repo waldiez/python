@@ -240,9 +240,6 @@ class FlowExporter(BaseExporter, ExporterMixin):
                 cache_seed=cache_seed,
             )
         else:
-            # content += f"    with Cache.disk(cache_seed={cache_seed}" + "):\n"
-            # content += f"{flow_chats}" + "\n"
-            # content += "\n" + chats_content + "\n"
             if chats_content.startswith("\n"):
                 chats_content = chats_content[1:]
             content += (
@@ -431,9 +428,9 @@ class FlowExporter(BaseExporter, ExporterMixin):
             exporter = AgentExporter(
                 agent=agent,
                 agent_names=self.agent_names,
-                model_names=self.model_names,
-                skill_names=self.skill_names,
+                models=(self.models, self.model_names),
                 chats=(self.chats, self.chat_names),
+                skill_names=self.skill_names,
                 is_async=self.waldiez.is_async,
                 for_notebook=self.for_notebook,
                 output_dir=self.output_dir,

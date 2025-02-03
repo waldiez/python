@@ -143,6 +143,8 @@ class WaldiezAgent(WaldiezBase):
             class_name = "SwarmAgent"
         if self.agent_type == "reasoning":
             class_name = "ReasoningAgent"
+        if self.agent_type == "captain":
+            class_name = "CaptainAgent"
         return class_name
 
     @property
@@ -181,8 +183,13 @@ class WaldiezAgent(WaldiezBase):
                 "from autogen.agentchat.contrib.reasoning_agent "
                 "import ReasoningAgent, visualize_tree"
             )
+        elif agent_class == "CaptainAgent":
+            imports.add(
+                "from autogen.agentchat.contrib.captainagent "
+                "import CaptainAgent"
+            )
         else:  # pragma: no cover
-            imports.add("from autogen import ConversableAgent")
+            imports.add("import ConversableAgent")
         return imports
 
     def validate_linked_skills(

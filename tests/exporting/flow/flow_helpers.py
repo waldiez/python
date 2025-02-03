@@ -49,6 +49,8 @@ from waldiez.models import (
     WaldiezUserProxyData,
 )
 
+from ...models.agents.captain_agent.example_agent_lib import EXAMPLE_AGENT_LIB
+
 
 def get_model(model_id: str = "wm-1") -> WaldiezModel:
     """Get a WaldiezModel.
@@ -620,7 +622,7 @@ def get_captain_agent() -> WaldiezCaptainAgent:
             keywords=["bye", "goodbye"],
             method_content=None,
         ),
-        model_ids=[],
+        model_ids=["wm-1"],
         skills=[],
         nested_chats=[],
         teachability=WaldiezAgentTeachability(
@@ -630,8 +632,8 @@ def get_captain_agent() -> WaldiezCaptainAgent:
             recall_threshold=1.5,
             max_num_retrievals=10,
         ),
-        use_agent_lib=False,
-        use_tool_lib=True,
+        agent_lib=EXAMPLE_AGENT_LIB,  # type: ignore
+        tool_lib="default",
     )
     return WaldiezCaptainAgent(
         id="wa-7",
