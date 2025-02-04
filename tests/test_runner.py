@@ -90,6 +90,7 @@ def test_waldiez_runner(
     shutil.rmtree(tmp_path / "waldiez_out")
 
 
+@pytest.mark.timeout(600)
 def test_waldiez_runner_requirements_with_captain_agent(
     waldiez_flow_with_captain_agent: WaldiezFlow,
 ) -> None:
