@@ -148,10 +148,7 @@ class WaldiezRunner:
             req for req in self.waldiez.requirements if req not in sys.modules
         )
         if self.waldiez.has_captain_agents:
-            if sys.platform == "linux":
-                extra_requirements.add("pysqlite3-binary")
-            else:  # pragma: no cover
-                check_pysqlite3()
+            check_pysqlite3()
         return extra_requirements
 
     def install_requirements(self) -> None:

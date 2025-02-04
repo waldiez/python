@@ -248,6 +248,25 @@ class Waldiez:
             requirements.update(rag_extras)
         if self.has_multimodal_agents:
             requirements.add(f"pyautogen[lmm]=={autogen_version}")
+        if self.has_captain_agents:
+            # pysqlite3-binary might not get installed on windows
+            captain_extras = [
+                "chromadb",
+                "sentence-transformers",
+                "huggingface-hub",
+                # tools:
+                "pillow",
+                "markdownify",
+                "arxiv",
+                "pymupdf",
+                "wikipedia-api",
+                "easyocr",
+                "python-pptx",
+                "openai-whisper",
+                "pandas",
+                "scipy",
+            ]
+            requirements.update(captain_extras)
         requirements.update(
             get_models_extra_requirements(self.models, autogen_version)
         )

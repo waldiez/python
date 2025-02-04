@@ -2,6 +2,8 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Common fixtures for tests."""
 
+import os
+
 import pytest
 
 from waldiez.models import (
@@ -10,6 +12,8 @@ from waldiez.models import (
     WaldiezAgentTerminationMessage,
     WaldiezAssistant,
     WaldiezAssistantData,
+    WaldiezCaptainAgent,
+    WaldiezCaptainAgentData,
     WaldiezChat,
     WaldiezChatData,
     WaldiezChatMessage,
@@ -17,6 +21,7 @@ from waldiez.models import (
     WaldiezChatSummary,
     WaldiezFlow,
     WaldiezFlowData,
+    WaldiezModel,
     WaldiezSwarmOnConditionAvailable,
     WaldiezUserProxy,
     WaldiezUserProxyData,
@@ -200,3 +205,52 @@ def waldiez_flow_no_human_input() -> WaldiezFlow:
     dumped["data"]["agents"]["users"][0]["data"]["humanInputMode"] = "NEVER"
     dumped["data"]["chats"][0]["data"]["maxTurns"] = 1
     return WaldiezFlow(**dumped)
+
+
+@pytest.fixture(scope="function")
+def waldiez_flow_with_captain_agent() -> WaldiezFlow:
+    """Get a valid, runnable WaldiezFlow instance with a captain agent.
+
+    with a dummy model
+
+    Returns
+    -------
+    WaldiezFlow
+        A WaldiezFlow instance.
+    """
+    flow = get_runnable_flow()
+    flow.data.agents.assistants = []
+    flow.data.models = [
+        WaldiezModel(
+            id="wm-1",
+            name="model",
+            type="model",
+            description="Model",
+            tags=[],
+            requirements=[],
+            created_at="2021-01-01T00:00:00.000Z",
+            updated_at="2021-01-01T00:00:00.000Z",
+            data={},  # type: ignore
+        ),
+    ]
+    os.environ["OPENAI_API_KEY"] = "sk-proj-something"
+    flow.data.agents.captain_agents = [
+        WaldiezCaptainAgent(
+            id="wa-2",
+            type="agent",
+            agent_type="captain",
+            name="captain",
+            description="Captain Agent",
+            tags=[],
+            requirements=[],
+            created_at="2021-01-01T00:00:00.000Z",
+            updated_at="2021-01-01T00:00:00.000Z",
+            data=WaldiezCaptainAgentData(  # type: ignore
+                model_ids=["wm-1"],
+            ),
+        )
+    ]
+    dumped = flow.model_dump(by_alias=True)
+    dumped["data"]["agents"]["users"][0]["data"]["humanInputMode"] = "NEVER"
+    dumped["data"]["chats"][0]["data"]["maxTurns"] = 1
+    return flow

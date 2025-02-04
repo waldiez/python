@@ -90,6 +90,23 @@ def test_waldiez_runner(
     shutil.rmtree(tmp_path / "waldiez_out")
 
 
+def test_waldiez_runner_requirements_with_captain_agent(
+    waldiez_flow_with_captain_agent: WaldiezFlow,
+) -> None:
+    """Test WaldiezRunner with requirements when captain agent is present.
+
+    Parameters
+    ----------
+    waldiez_flow_with_captain_agent : WaldiezFlow
+    """
+    waldiez = Waldiez.from_dict(
+        data=waldiez_flow_with_captain_agent.model_dump(by_alias=True)
+    )
+    runner = WaldiezRunner(waldiez)
+    with IOStream.set_default(CustomIOStream()):
+        runner.install_requirements()
+
+
 def test_waldiez_with_invalid_requirement(
     capsys: pytest.CaptureFixture[str],
     waldiez_flow: WaldiezFlow,
