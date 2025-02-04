@@ -156,6 +156,11 @@ class Waldiez:
         return any(agent.data.is_multimodal for agent in self.agents)
 
     @property
+    def has_captain_agents(self) -> bool:
+        """Check if the flow has captain agents."""
+        return any(agent.agent_type == "captain" for agent in self.agents)
+
+    @property
     def chats(self) -> List[Tuple[WaldiezChat, WaldiezAgent, WaldiezAgent]]:
         """Get the chats."""
         return self.flow.ordered_flow

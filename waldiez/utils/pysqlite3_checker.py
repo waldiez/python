@@ -213,10 +213,14 @@ def check_pysqlite3() -> None:
         # Re-import pysqlite3 as sqlite3
         import pysqlite3  # type: ignore[unused-ignore, import-untyped, import-not-found]  # noqa
 
+        sys.modules["sqlite3"] = sys.modules["pysqlite3"]
+
 
 def test_sqlite_usage() -> None:
     """Test the usage of the sqlite3 module."""
-    # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel, unused-import, line-too-long
+    import pysqlite3  # type: ignore[unused-ignore, import-untyped, import-not-found]  # noqa
+
     sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
     import sqlite3  # noqa
 

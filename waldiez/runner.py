@@ -14,7 +14,7 @@ import sys
 import tempfile
 from pathlib import Path
 from types import TracebackType
-from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Type, Union
 
 from .exporter import WaldiezExporter
 from .models.waldiez import Waldiez
@@ -30,6 +30,7 @@ from .running import (
     reset_env_vars,
     set_env_vars,
 )
+from .utils import check_pysqlite3
 
 if TYPE_CHECKING:
     from autogen import ChatResult  # type: ignore
@@ -135,13 +136,29 @@ class WaldiezRunner:
         """Get the running status."""
         return self._running
 
+    def gather_requirements(self) -> Set[str]:
+        """Gather extra requirements to install before running the flow.
+
+        Returns
+        -------
+        Set[str]
+            The extra requirements.
+        """
+        extra_requirements = set(
+            req for req in self.waldiez.requirements if req not in sys.modules
+        )
+        if self.waldiez.has_captain_agents:
+            if sys.platform == "linux":
+                extra_requirements.add("pysqlite3-binary")
+            else:  # pragma: no cover
+                check_pysqlite3()
+        return extra_requirements
+
     def install_requirements(self) -> None:
         """Install the requirements for the flow."""
         self._called_install_requirements = True
         printer = get_printer()
-        extra_requirements = set(
-            req for req in self.waldiez.requirements if req not in sys.modules
-        )
+        extra_requirements = self.gather_requirements()
         if extra_requirements:
             install_requirements(extra_requirements, printer)
             refresh_environment()
@@ -150,9 +167,7 @@ class WaldiezRunner:
         """Install the requirements for the flow asynchronously."""
         self._called_install_requirements = True
         printer = get_printer()
-        extra_requirements = set(
-            req for req in self.waldiez.requirements if req not in sys.modules
-        )
+        extra_requirements = self.gather_requirements()
         if extra_requirements:
             await a_install_requirements(extra_requirements, printer)
             refresh_environment()
