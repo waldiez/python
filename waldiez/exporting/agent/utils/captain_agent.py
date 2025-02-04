@@ -47,7 +47,7 @@ def get_captain_agent_extras(
         return ""
     agent_name = agent_names[agent.id]
     save_path = str(output_dir) if output_dir else "."
-    extra_args_content = "\n" + f'    agent_config_save_path=r"{save_path}",'
+    extra_args_content = "\n" + "    agent_config_save_path=os.getcwd(),"
     if agent.data.agent_lib:
         lib_dict = [
             lib.model_dump(by_alias=False) for lib in agent.data.agent_lib
@@ -56,7 +56,7 @@ def get_captain_agent_extras(
         agent_lib_path = os.path.join(save_path, lib_json_name)
         with open(agent_lib_path, "w", encoding="utf-8", newline="\n") as f:
             json.dump(lib_dict, f, ensure_ascii=False, indent=4)
-        extra_args_content += "\n" + f'    agent_lib=r"{agent_lib_path}",'
+        extra_args_content += "\n" + f'    agent_lib="{lib_json_name}",'
     if agent.data.tool_lib:
         extra_args_content += "\n" + f'    tool_lib="{agent.data.tool_lib}",'
     nested_config = generate_nested_config(
@@ -103,10 +103,9 @@ def generate_nested_config(
         config_file_or_env_path, "w", encoding="utf-8", newline="\n"
     ) as f:
         json.dump([llm_config], f, ensure_ascii=False, indent=4)
-    config_file_or_env = f'r"{config_file_or_env_path}"'
     nested_config = {
         "autobuild_init_config": {
-            "config_file_or_env": config_file_or_env,
+            "config_file_or_env": config_file_or_env_name,
             "builder_model": llm_config["model"],
             "agent_model": llm_config["model"],
         },

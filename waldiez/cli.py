@@ -86,10 +86,8 @@ def run(
     ),
 ) -> None:
     """Run a Waldiez flow."""
-    # a swarm chat without a user agent
-    # creates a new user (this has a default code execution with docker)
-    # temp (until we handle/detect docker setup)
     os.environ["AUTOGEN_USE_DOCKER"] = "0"
+    os.environ["NEP50_DISABLE_WARNING"] = "1"
     output_path = _get_output_path(output, force)
     with file.open("r", encoding="utf-8") as _file:
         try:

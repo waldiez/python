@@ -50,6 +50,16 @@ def refresh_environment() -> None:
         for mod in modules_to_reload:
             if mod not in sys.modules:
                 importlib.import_module(mod)
+        # a swarm chat without a user agent
+        # creates a new user (this has a default code execution with docker)
+        # captain also generates new agents that also have
+        # default code execution with docker
+        # temp (until we handle/detect docker setup)
+        os.environ["AUTOGEN_USE_DOCKER"] = "0"
+        # we might get:
+        # module 'numpy' has no attribute '_no_nep50_warning'
+        # in autogen/agentchat/contrib/captainagent/tool_retriever.py
+        os.environ["NEP50_DISABLE_WARNING"] = "1"
 
 
 def set_env_vars(flow_env_vars: List[Tuple[str, str]]) -> Dict[str, str]:
