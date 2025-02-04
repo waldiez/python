@@ -97,15 +97,12 @@ def generate_nested_config(
     """
     config_file_or_env_name = f"{agent_name}_llm_config.json"
     llm_config = get_llm_config(agent, all_models)
-    to_serialize = {
-        "config_list": [llm_config],
-    }
     os.makedirs(save_path, exist_ok=True)
     config_file_or_env_path = os.path.join(save_path, config_file_or_env_name)
     with open(
         config_file_or_env_path, "w", encoding="utf-8", newline="\n"
     ) as f:
-        json.dump(to_serialize, f, ensure_ascii=False, indent=4)
+        json.dump([llm_config], f, ensure_ascii=False, indent=4)
     config_file_or_env = f'r"{config_file_or_env_path}"'
     nested_config = {
         "autobuild_init_config": {
