@@ -7,15 +7,17 @@
         "**/dist": true,
         "**/out": true
     },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "always"
+    },
     "pylint.args": ["--rcfile=pyproject.toml"],
     "pylint.importStrategy": "fromEnvironment",
     "editor.defaultFormatter": "ms-python.black-formatter",
     "mypy.runUsingActiveInterpreter": true,
     "mypy-type-checker.args": ["--config pyproject.toml"],
     "yaml.customTags": [
-        "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format",
-        "tag:yaml.org,2002:python/name:mkdocs_exporter.formats.pdf.buttons.download.enabled",
-        "tag:yaml.org,2002:python/name:mkdocs_exporter.formats.pdf.buttons.download.attributes"
+        "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format"
     ],
     "cSpell.words": [
         "addopts",
