@@ -102,7 +102,10 @@ def move_to_dot_local(
     example_path_dir = os.path.dirname(example_path)
     api_keys_path = os.path.join(example_path_dir, f"{flow_name_}_api_keys.py")
     if os.path.exists(api_keys_path):
-        shutil.move(api_keys_path, dot_local_dir)
+        dst = os.path.join(dot_local_dir, f"{flow_name_}_api_keys.py")
+        if os.path.exists(dst):
+            os.remove(dst)
+        shutil.move(api_keys_path, dst)
 
 
 def convert_examples() -> None:
