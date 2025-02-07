@@ -24,9 +24,9 @@ pyautogen[neo4j]==0.7.3
 pyautogen[ollama]==0.7.3
 pyautogen[together]==0.7.3
 pyautogen[websurfer]==0.7.3
-pydantic-ai==0.0.21
+pydantic-ai>=0.0.21
 pymongo>=4.11
 pypdf
 qdrant-client[fastembed]
 sentence-transformers
-weaviate-client==4.10.2
+weaviate-client>=4.10.2
