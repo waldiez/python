@@ -210,7 +210,7 @@ def test_export_interop_skill(tmp_path: Path) -> None:
     agent1_name = "agent1"
     agent2_name = "agent2"
     skill1_name = "skill1"
-    skill2_name = "ag2_tool"
+    skill2_name = "wiki_tool"
     # fmt: off
     skill1_content = (
         f"def {skill1_name}():" + "\n" + f'    return "skill body of {skill1_name}"'
@@ -226,13 +226,13 @@ from langchain_community.tools import WikipediaQueryRun
 from langchain_community.utilities import WikipediaAPIWrapper
 api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=1000)
 wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
-ag2_tool = Interoperability().convert_tool(wiki_tool, type="langchain")
 '''
     skill2_expected_content = (
         '"""Wikipedia Query Run."""\n\n'
         'api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=1000)\n'
         'wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)\n'
-        'ag2_tool = Interoperability().convert_tool(wiki_tool, type="langchain")'
+        'ag2_wiki_tool_interop = Interoperability()\n'
+        'ag2_wiki_tool = ag2_wiki_tool_interop.convert_tool(wiki_tool, type="langchain")'
     )
     # fmt: on
     agent_names = {"wa-1": "agent1", "wa-2": "agent2"}
@@ -326,13 +326,13 @@ ag2_tool = Interoperability().convert_tool(wiki_tool, type="langchain")
         ")\n"
         "\n"
         "register_function(\n"
-        f"    {skill2_name},"
+        f"    ag2_{skill2_name},"
         "\n"
         f"    caller={agent1_name},"
         "\n"
         f"    executor={agent2_name},"
         "\n"
-        f'    name="{skill2_name}",'
+        f'    name="ag2_{skill2_name}",'
         "\n"
         f'    description="{skill2_name} description",'
         "\n"

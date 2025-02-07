@@ -99,7 +99,7 @@ def test_shared_skill() -> None:
 def test_langchain_skill() -> None:
     """Test langchain skill."""
     # When
-    skill_name = "ag2_wiki_tool"
+    skill_name = "wiki_tool"
     langchain_tool_content = """
 import os
 import sys
@@ -110,9 +110,6 @@ from langchain_community.tools import WikipediaQueryRun
 from langchain_community.utilities import WikipediaAPIWrapper
 api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=1000)
 wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
-ag2_wiki_tool = Interoperability().convert_tool(wiki_tool, type="langchain")
-ag2_wiki_tool.register_for_execution("user_agent")
-ag2_wiki_tool.register_for_llm("chatbot")
 """
     skill = WaldiezSkill(
         id="ws-1",
@@ -135,8 +132,7 @@ ag2_wiki_tool.register_for_llm("chatbot")
     assert skill.description == "langchain skill"
     assert skill.content == (
         "api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=1000)\n"
-        "wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)\n"
-        'ag2_wiki_tool = Interoperability().convert_tool(wiki_tool, type="langchain")'
+        "wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)"
     )
     assert not skill.secrets
     assert not skill.tags
@@ -163,9 +159,7 @@ import os
 from typing import List
 from autogen.interop import Interoperability
 from crewai_tools import ScrapeWebsiteTool
-crewai_scrape_tool = ScrapeWebsiteTool()
-interop = Interoperability()
-scrape_tool = interop.convert_tool(crewai_scrape_tool, type="crewai")
+scrape_tool = ScrapeWebsiteTool()
 
 """
     skill = WaldiezSkill(
@@ -187,11 +181,7 @@ scrape_tool = interop.convert_tool(crewai_scrape_tool, type="crewai")
     assert skill.id == "ws-1"
     assert skill.name == "scrape_tool"
     assert skill.description == "crewai skill"
-    assert skill.content == (
-        "crewai_scrape_tool = ScrapeWebsiteTool()\n"
-        "interop = Interoperability()\n"
-        'scrape_tool = interop.convert_tool(crewai_scrape_tool, type="crewai")'
-    )
+    assert skill.content == "scrape_tool = ScrapeWebsiteTool()"
     assert not skill.secrets
     assert not skill.tags
     assert skill.requirements == ["crewai"]
@@ -212,29 +202,33 @@ def test_pydantic_skill() -> None:
     description = "description"
     pydantic_ai_tool_content = '''
 
+from autogen.tools import Tool
 from autogen.interop import Interoperability
 from pydantic import BaseModel
 from pydantic_ai import RunContext
 from pydantic_ai.tools import Tool as PydanticAITool
 
-class Player(BaseModel):
-    name: str
-    age: int
+def ag2_pydantic_ai_tool() -> Tool:
+    """Get the pydantic tool."""
+
+    class Player(BaseModel):
+        name: str
+        age: int
 
 
-def get_player(ctx: RunContext[Player], additional_info: Optional[str] = None) -> str:
-    """Get the player's name.
+    def get_player(ctx: RunContext[Player], additional_info: Optional[str] = None) -> str:
+        """Get the player's name.
 
-    Args:
-        additional_info: Additional information which can be used.
-    """
-    return f"Name: {ctx.deps.name}, Age: {ctx.deps.age}, Additional info: {additional_info}"
+        Args:
+            additional_info: Additional information which can be used.
+        """
+        return f"Name: {ctx.deps.name}, Age: {ctx.deps.age}, Additional info: {additional_info}"
 
 
-pydantic_ai_tool = PydanticAITool(get_player, takes_ctx=True)
-interoperability = Interoperability()
-player = Player(name="John", age=25)
-ag2_pydantic_ai_tool = interoperability.convert_tool(pydantic_ai_tool, type="pydanticai", deps=player)
+    pydantic_ai_tool = PydanticAITool(get_player, takes_ctx=True)
+    interoperability = Interoperability()
+    player = Player(name="John", age=25)
+    return interoperability.convert_tool(pydantic_ai_tool, type="pydanticai", deps=player)
 
 '''
     # When
@@ -248,7 +242,7 @@ ag2_pydantic_ai_tool = interoperability.convert_tool(pydantic_ai_tool, type="pyd
         updated_at="2024-01-01T00:00:00Z",
         description=description,
         data=WaldiezSkillData(
-            skill_type="pydanticai",
+            skill_type="custom",
             content=pydantic_ai_tool_content,
             secrets={},
         ),
@@ -257,24 +251,27 @@ ag2_pydantic_ai_tool = interoperability.convert_tool(pydantic_ai_tool, type="pyd
     assert skill.id == skill_id
     assert skill.name == skill_name
     assert skill.description == description
-    content_without_imports = '''class Player(BaseModel):
-    name: str
-    age: int
+    content_without_imports = '''def ag2_pydantic_ai_tool() -> Tool:
+    """Get the pydantic tool."""
+
+    class Player(BaseModel):
+        name: str
+        age: int
 
 
-def get_player(ctx: RunContext[Player], additional_info: Optional[str] = None) -> str:
-    """Get the player's name.
+    def get_player(ctx: RunContext[Player], additional_info: Optional[str] = None) -> str:
+        """Get the player's name.
 
-    Args:
-        additional_info: Additional information which can be used.
-    """
-    return f"Name: {ctx.deps.name}, Age: {ctx.deps.age}, Additional info: {additional_info}"
+        Args:
+            additional_info: Additional information which can be used.
+        """
+        return f"Name: {ctx.deps.name}, Age: {ctx.deps.age}, Additional info: {additional_info}"
 
 
-pydantic_ai_tool = PydanticAITool(get_player, takes_ctx=True)
-interoperability = Interoperability()
-player = Player(name="John", age=25)
-ag2_pydantic_ai_tool = interoperability.convert_tool(pydantic_ai_tool, type="pydanticai", deps=player)'''
+    pydantic_ai_tool = PydanticAITool(get_player, takes_ctx=True)
+    interoperability = Interoperability()
+    player = Player(name="John", age=25)
+    return interoperability.convert_tool(pydantic_ai_tool, type="pydanticai", deps=player)'''
     assert skill.content == content_without_imports
     assert not skill.secrets
     assert not skill.tags
@@ -284,14 +281,15 @@ ag2_pydantic_ai_tool = interoperability.convert_tool(pydantic_ai_tool, type="pyd
     assert not skill_imports[0]
     assert skill_imports[1] == [
         "from autogen.interop import Interoperability",
+        "from autogen.tools import Tool",
         "from pydantic import BaseModel",
         "from pydantic_ai import RunContext",
         "from pydantic_ai.tools import Tool as PydanticAITool",
     ]
 
 
-def test_skill_missing_interop_convert() -> None:
-    """Test missing interop convert."""
+def test_skill_without_interop_convert() -> None:
+    """Test skill without interop convert."""
     # Given
     skill_name = "wiki_tool"
     langchain_tool_content = """
@@ -307,22 +305,21 @@ api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=1000)
 wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
 """
     # Then
-    with pytest.raises(ValueError):
-        WaldiezSkill(
-            id="ws-1",
-            type="skill",
-            tags=[],
-            requirements=["wikipedia"],
-            name=skill_name,
-            created_at="2024-01-01T00:00:00Z",
-            updated_at="2024-01-01T00:00:00Z",
-            description="langchain skill",
-            data=WaldiezSkillData(
-                skill_type="langchain",
-                content=langchain_tool_content,
-                secrets={},
-            ),
-        )
+    WaldiezSkill(
+        id="ws-1",
+        type="skill",
+        tags=[],
+        requirements=["wikipedia"],
+        name=skill_name,
+        created_at="2024-01-01T00:00:00Z",
+        updated_at="2024-01-01T00:00:00Z",
+        description="langchain skill",
+        data=WaldiezSkillData(
+            skill_type="langchain",
+            content=langchain_tool_content,
+            secrets={},
+        ),
+    )
 
 
 def test_skill_invalid_name() -> None:

@@ -161,6 +161,10 @@ def export_skills(
         if skill.is_shared:
             shared_skill_contents += skill_content + "\n\n"
         else:
+            if skill.is_interop:
+                skill_content += _add_interop_extras(
+                    skill=skill, skill_names=skill_names
+                )
             skill_contents += skill_content + "\n\n"
     skill_contents = shared_skill_contents + skill_contents
     # remove dupes from imports if any and sort them
@@ -170,6 +174,34 @@ def export_skills(
         skill_secrets,
         skill_contents.replace("\n\n\n", "\n\n"),
     )
+
+
+def _add_interop_extras(
+    skill: WaldiezSkill,
+    skill_names: Dict[str, str],
+) -> str:
+    """Add the interop conversion.
+
+    Parameters
+    ----------
+    skill : WaldiezSkill
+        The skill
+    skill_names : Dict[str, str]
+        The skill names.
+
+    Returns
+    -------
+    str
+        The extra content to convert the tool.
+    """
+    skill_name = skill_names[skill.id]
+    interop_instance = f"ag2_{skill_name}_interop = Interoperability()" + "\n"
+    extra_content = (
+        f"ag2_{skill_name} = "
+        f"ag2_{skill_name}_interop.convert_tool({skill_name}, "
+        f'type="{skill.skill_type}")'
+    )
+    return "\n" + interop_instance + extra_content
 
 
 def _sort_imports(
@@ -313,6 +345,9 @@ def get_agent_skill_registrations(
             skill for skill in all_skills if skill.id == linked_skill.id
         )
         skill_name = skill_names[linked_skill.id]
+        if waldiez_skill.is_interop:
+            # the name of the the converted to ag2 tool
+            skill_name = f"ag2_{skill_name}"
         skill_description = (
             waldiez_skill.description or f"Description of {skill_name}"
         )

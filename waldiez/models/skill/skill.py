@@ -112,7 +112,7 @@ class WaldiezSkill(WaldiezBase):
         -------
         WaldiezSkillType
             The type of the skill:
-            [shared, custom, langchain, crewai, pydanticai].
+            [shared, custom, langchain, crewai].
         """
         return self.data.skill_type
 
@@ -148,7 +148,7 @@ class WaldiezSkill(WaldiezBase):
         bool
             True if the skill is interoperability, False otherwise.
         """
-        return self.skill_type in ("langchain", "crewai", "pydanticai")
+        return self.skill_type in ("langchain", "crewai")
 
     def get_content(self) -> str:
         """Get the content of the skill.
@@ -179,18 +179,20 @@ class WaldiezSkill(WaldiezBase):
                 raise ValueError(
                     f"The skill name '{self.name}' is not in the content."
                 )
-            req_to_search = re.compile(
-                r"\.convert_tool\("
-                r".*type=['\"]"
-                rf"{self.skill_type}"
-                r"['\"].*"
-                r"\)"
-            )
-            if not req_to_search.search(self.data.content):
-                raise ValueError(
-                    "Missing .convert_tool(..., "
-                    f"type='{self.skill_type}', ...) call."
-                )
+            # we don't want the conversion to ag2 tool (we do it internally)
+            # or the skill registration (we do it after having the agent names)
+            # so no" .convert_tool(... type="...")
+            # or .register_for_llm(...), .register_for_execution(...)
+            to_exclude = [
+                r".convert_tool\(.+?type=",
+                rf"{self.name}.register_for_llm\(",
+                rf"{self.name}.register_for_execution\(",
+            ]
+            for exclude in to_exclude:
+                if re.search(exclude, self.data.content):
+                    raise ValueError(
+                        f"Invalid skill content: '{exclude}' is not allowed."
+                    )
 
     def _validate_custom_skill(self) -> None:
         """Validate a custom skill.
@@ -228,26 +230,6 @@ class WaldiezSkill(WaldiezBase):
         """
         self._validate_custom_skill()
         self._validate_interop_skill()
-        # we can't use here
-        # "agent.register_for_llm(...)" or"
-        # "agent.register_for_execution(...)" or
-        # "skill_name.register_..." calls
-        # cause we need the agent names in these calls
-        to_exclude = [
-            f"{self.name}.register_for",
-            ".register_for_llm(",
-            ".register_for_execution(",
-        ]
-        if any(exclude in self.data.content for exclude in to_exclude):
-            content_without_it = "\n".join(
-                line
-                for line in self.data.content.splitlines()
-                if all(exclude not in line for exclude in to_exclude)
-            )
-            error, tree = parse_code_string(content_without_it)
-            if error is not None or tree is None:
-                raise ValueError(f"Invalid skill content: {error}")
-            self.data.content = content_without_it
         self._skill_imports = gather_code_imports(
             self.data.content, self.is_interop
         )

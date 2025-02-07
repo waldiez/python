@@ -10,7 +10,10 @@ from typing_extensions import Annotated, Literal
 from ..common import WaldiezBase
 
 WaldiezSkillType = Literal[
-    "shared", "custom", "langchain", "crewai", "pydanticai"
+    "shared",
+    "custom",
+    "langchain",
+    "crewai",
 ]
 
 
@@ -20,7 +23,7 @@ class WaldiezSkillData(WaldiezBase):
     Attributes
     ----------
     skill_type : WaldiezSkillType
-        The type of the skill: shared, custom, langchain, crewai, pydanticai.
+        The type of the skill: shared, custom, langchain, crewai.
     content : str
         The content (source code) of the skill.
     secrets : Dict[str, str]
@@ -34,8 +37,7 @@ class WaldiezSkillData(WaldiezBase):
             alias="skillType",
             title="Skill Type",
             description=(
-                "The type of the skill: "
-                "shared, custom, langchain, crewai, pydanticai."
+                "The type of the skill: shared, custom, langchain, crewai."
             ),
         ),
     ] = "custom"
