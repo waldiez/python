@@ -94,6 +94,7 @@ def _write_skill_secrets(
         return
     if not isinstance(output_dir, Path):
         output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
     secrets_file = output_dir / f"{flow_name}_{skill_name}_secrets.py"
     first_line = f'"""Secrets for the skill: {skill_name}."""' + "\n"
     with secrets_file.open("w", encoding="utf-8", newline="\n") as f:

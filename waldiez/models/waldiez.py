@@ -12,10 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
-from .agents import (
-    WaldiezAgent,
-    get_retrievechat_extra_requirements,
-)
+from .agents import WaldiezAgent, get_retrievechat_extra_requirements
 from .chat import WaldiezChat
 from .common import get_autogen_version
 from .flow import WaldiezFlow, get_flow_data

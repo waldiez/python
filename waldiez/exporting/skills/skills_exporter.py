@@ -89,9 +89,9 @@ class SkillsExporter(BaseExporter, ExporterMixin):
         Tuple[str, int]
             The exported imports and the position of the imports.
         """
-        if not self.skill_imports:
-            return []
         imports: List[Tuple[str, ImportPosition]] = []
+        if not self.skill_imports:
+            return imports
         # standard imports
         for import_statement in self.skill_imports[0]:
             imports.append((import_statement, ImportPosition.BUILTINS))

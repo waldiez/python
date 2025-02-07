@@ -70,21 +70,26 @@ def parse_code_string(
     return None, tree
 
 
-def gather_code_imports(code_string: str) -> Tuple[List[str], List[str]]:
+def gather_code_imports(
+    code_string: str,
+    is_interop: bool,
+) -> Tuple[List[str], List[str]]:
     """Gather the imports from the code string.
 
     Parameters
     ----------
     code_string : str
         The code string.
+    is_interop : bool
+        If True, make sure the interoperability import is present.
 
     Returns
     -------
     Tuple[List[str], List[str]]
         The standard library imports and the third party imports.
     """
-    standard_lib_imports = []
-    third_party_imports = []
+    standard_lib_imports: List[str] = []
+    third_party_imports: List[str] = []
     tree = parso.parse(code_string)  # type: ignore
     for node in tree.iter_imports():
         if node.type == "import_name":
@@ -109,7 +114,25 @@ def gather_code_imports(code_string: str) -> Tuple[List[str], List[str]]:
                 standard_lib_imports.append(full_import_statement)
             else:
                 third_party_imports.append(full_import_statement)
-    return standard_lib_imports, third_party_imports
+    if is_interop and (
+        "from autogen.interop import Interoperability"
+        not in third_party_imports
+    ):
+        third_party_imports.append(
+            "from autogen.interop import Interoperability"
+        )
+    # sorted_standard_lib_imports =  # first import x, then from a import b
+    sorted_standard_lib_imports = sorted(
+        [stmt for stmt in standard_lib_imports if stmt.startswith("import ")]
+    ) + sorted(
+        [stmt for stmt in standard_lib_imports if stmt.startswith("from ")]
+    )
+    sorted_third_party_imports = sorted(
+        [stmt for stmt in third_party_imports if stmt.startswith("import ")]
+    ) + sorted(
+        [stmt for stmt in third_party_imports if stmt.startswith("from ")]
+    )
+    return sorted_standard_lib_imports, sorted_third_party_imports
 
 
 def check_function(

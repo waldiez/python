@@ -2,6 +2,7 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez Skill model."""
 
+import re
 from typing import Dict, List, Tuple
 
 from pydantic import Field, model_validator
@@ -110,7 +111,8 @@ class WaldiezSkill(WaldiezBase):
         Returns
         -------
         WaldiezSkillType
-            The type of the skill [shared, custom, langchain, crewai, pydantic].
+            The type of the skill:
+            [shared, custom, langchain, crewai, pydanticai].
         """
         return self.data.skill_type
 
@@ -137,6 +139,17 @@ class WaldiezSkill(WaldiezBase):
         """
         return self.skill_type == "shared" or self.name == SHARED_SKILL_NAME
 
+    @property
+    def is_interop(self) -> bool:
+        """Check if the skill is interoperability.
+
+        Returns
+        -------
+        bool
+            True if the skill is interoperability, False otherwise.
+        """
+        return self.skill_type in ("langchain", "crewai", "pydanticai")
+
     def get_content(self) -> str:
         """Get the content of the skill.
 
@@ -145,23 +158,42 @@ class WaldiezSkill(WaldiezBase):
         str
             The content of the skill.
         """
-        if self.is_shared or self.skill_type in (
-            "langchain",
-            "crewai",
-            "pydantic",
-        ):
+        if self.is_shared or self.is_interop:
             return self.data.content
         # if custom, only the function content
         return get_function(self.data.content, self.name)
 
-    @model_validator(mode="after")
-    def validate_data(self) -> Self:
-        """Validate the data.
+    def _validate_interop_skill(self) -> None:
+        """Validate the interoperability skill.
 
-        Returns
-        -------
-        WaldiezSkill
-            The skill.
+        Raises
+        ------
+        ValueError
+            If the skill name is not in the content.
+        """
+        if self.is_interop:
+            # we expect sth like:
+            # with single or double quotes for type={skill_type}
+            # {skill_name} = *.convert_tool(..., type="{skill_type}", ...)
+            if f"{self.name} = " not in self.data.content:
+                raise ValueError(
+                    f"The skill name '{self.name}' is not in the content."
+                )
+            req_to_search = re.compile(
+                r"\.convert_tool\("
+                r".*type=['\"]"
+                rf"{self.skill_type}"
+                r"['\"].*"
+                r"\)"
+            )
+            if not req_to_search.search(self.data.content):
+                raise ValueError(
+                    "Missing .convert_tool(..., "
+                    f"type='{self.skill_type}', ...) call."
+                )
+
+    def _validate_custom_skill(self) -> None:
+        """Validate a custom skill.
 
         Raises
         ------
@@ -178,19 +210,29 @@ class WaldiezSkill(WaldiezBase):
             error, tree = parse_code_string(self.data.content)
             if error is not None or tree is None:
                 raise ValueError(f"Invalid skill content: {error}")
-        if self.skill_type in ("langchain", "crewai", "pydantic"):
-            # we expect a var with that name
-            # and should exclude any {skill.name}.register_* calls
-            expected = f"{self.name} = "
-            if expected not in self.data.content:
-                raise ValueError(
-                    f"The skill name '{self.name}' is not in the content."
-                )
+
+    @model_validator(mode="after")
+    def validate_data(self) -> Self:
+        """Validate the data.
+
+        Returns
+        -------
+        WaldiezSkill
+            The skill.
+
+        Raises
+        ------
+        ValueError
+            If the skill name is not in the content.
+            If the skill content is invalid.
+        """
+        self._validate_custom_skill()
+        self._validate_interop_skill()
         # we can't use here
         # "agent.register_for_llm(...)" or"
         # "agent.register_for_execution(...)" or
         # "skill_name.register_..." calls
-        # since we need the agent's name in these calls
+        # cause we need the agent names in these calls
         to_exclude = [
             f"{self.name}.register_for",
             ".register_for_llm(",
@@ -206,7 +248,9 @@ class WaldiezSkill(WaldiezBase):
             if error is not None or tree is None:
                 raise ValueError(f"Invalid skill content: {error}")
             self.data.content = content_without_it
-        self._skill_imports = gather_code_imports(self.data.content)
+        self._skill_imports = gather_code_imports(
+            self.data.content, self.is_interop
+        )
         # remove the imports from the content
         # we 'll place them at the top of the file
         all_imports = self._skill_imports[0] + self._skill_imports[1]
