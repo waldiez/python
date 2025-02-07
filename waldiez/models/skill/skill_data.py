@@ -5,9 +5,13 @@
 from typing import Dict
 
 from pydantic import Field
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Literal
 
 from ..common import WaldiezBase
+
+WaldiezSkillType = Literal[
+    "shared", "custom", "langchain", "crewai", "pydantic"
+]
 
 
 class WaldiezSkillData(WaldiezBase):
@@ -15,12 +19,25 @@ class WaldiezSkillData(WaldiezBase):
 
     Attributes
     ----------
+    skill_type : WaldiezSkillType
+        The type of the skill: shared, custom, langchain, crewai, pydantic.
     content : str
         The content (source code) of the skill.
     secrets : Dict[str, str]
         The secrets (environment variables) of the skill.
     """
 
+    skill_type: Annotated[
+        WaldiezSkillType,
+        Field(
+            "custom",
+            title="Skill Type",
+            description=(
+                "The type of the skill: "
+                "shared, custom, langchain, crewai, pydantic."
+            ),
+        ),
+    ] = "custom"
     content: Annotated[
         str,
         Field(

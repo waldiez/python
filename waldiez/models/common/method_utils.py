@@ -3,6 +3,9 @@
 """Function related utilities."""
 
 import ast
+import importlib.util
+import sys
+import sysconfig
 from typing import List, Optional, Tuple
 
 import parso
@@ -10,6 +13,35 @@ import parso.python
 import parso.tree
 
 MAX_VAR_NAME_LENGTH = 64
+
+
+def is_standard_library(module_name: str) -> bool:
+    """Check if the module is part of the standard library.
+
+    Parameters
+    ----------
+    module_name : str
+        The module name.
+
+    Returns
+    -------
+    bool
+        True if the module is part of the standard library.
+    """
+    if module_name in sys.builtin_module_names:
+        return True
+    try:
+        spec = importlib.util.find_spec(module_name)
+    except BaseException:  # pylint: disable=broad-except
+        return False
+    if spec is None or not spec.origin:
+        return False
+    if "site-packages" in spec.origin:
+        return False
+    if spec.origin.startswith(sys.prefix) or spec.origin == "frozen":
+        return True
+    stdlib_path = sysconfig.get_path("stdlib")
+    return spec.origin.startswith(stdlib_path)
 
 
 def parse_code_string(
@@ -36,6 +68,48 @@ def parse_code_string(
     except BaseException as e:  # pragma: no cover
         return f"Invalid code: {e}, in " + "\n" + f"{code_string}", None
     return None, tree
+
+
+def gather_code_imports(code_string: str) -> Tuple[List[str], List[str]]:
+    """Gather the imports from the code string.
+
+    Parameters
+    ----------
+    code_string : str
+        The code string.
+
+    Returns
+    -------
+    Tuple[List[str], List[str]]
+        The standard library imports and the third party imports.
+    """
+    standard_lib_imports = []
+    third_party_imports = []
+    tree = parso.parse(code_string)  # type: ignore
+    for node in tree.iter_imports():
+        if node.type == "import_name":
+            full_import_statement = node.get_code().strip()
+            module_name = (
+                node.get_code().replace("import", "").strip().split(" ")[0]
+            )
+            if not module_name:
+                continue
+            if is_standard_library(module_name):
+                standard_lib_imports.append(full_import_statement)
+            else:
+                third_party_imports.append(full_import_statement)
+        elif node.type == "import_from":
+            full_import_statement = node.get_code().strip()
+            module_name = (
+                node.get_code().replace("from", "").strip().split(" ")[0]
+            )
+            if not module_name:
+                continue
+            if is_standard_library(module_name):
+                standard_lib_imports.append(full_import_statement)
+            else:
+                third_party_imports.append(full_import_statement)
+    return standard_lib_imports, third_party_imports
 
 
 def check_function(

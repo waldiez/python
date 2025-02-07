@@ -17,11 +17,7 @@ from .flow_content import (
     get_py_content_start,
 )
 from .flow_names import ensure_unique_names
-from .importing_utils import (
-    gather_imports,
-    get_standard_imports,
-    get_the_imports_string,
-)
+from .importing_utils import gather_imports, get_the_imports_string
 from .logging_utils import (
     get_sqlite_out,
     get_sqlite_out_call,
@@ -47,6 +43,5 @@ __all__ = [
     "get_stop_logging",
     "get_sqlite_out",
     "get_sqlite_out_call",
-    "get_standard_imports",
     "get_the_imports_string",
 ]

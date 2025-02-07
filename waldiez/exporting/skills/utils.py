@@ -108,7 +108,7 @@ def export_skills(
     skills: List[WaldiezSkill],
     skill_names: Dict[str, str],
     output_dir: Optional[Union[str, Path]] = None,
-) -> Tuple[List[str], List[Tuple[str, str]], str]:
+) -> Tuple[Tuple[List[str], List[str], List[str]], List[Tuple[str, str]], str]:
     """Get the skills' contents and secrets.
 
     If `output_dir` is provided, the contents are saved to that directory.
@@ -126,19 +126,26 @@ def export_skills(
 
     Returns
     -------
-    Tuple[Set[str], Set[Tuple[str, str]], str]
+    Tuple[Tuple[List[str], List[str], List[str]], List[Tuple[str, str]], str]
         - The skill imports to use in the main file.
         - The skill secrets to set as environment variables.
         - The skills contents.
     """
-    skill_imports: List[str] = []
+    skill_imports: Tuple[List[str], List[str], List[str]] = ([], [], [])
     skill_secrets: List[Tuple[str, str]] = []
     skill_contents: str = ""
     # if the skill.is_shared,
     # its contents must be first (before the other skills)
     shared_skill_contents = ""
     for skill in skills:
-        skill_imports.append(get_skill_imports(flow_name, skill))
+        standard_skill_imports, third_party_skill_imports = skill.get_imports()
+        if standard_skill_imports:
+            skill_imports[0].extend(standard_skill_imports)
+        if third_party_skill_imports:
+            skill_imports[1].extend(third_party_skill_imports)
+        secrets_import = get_skill_secrets_import(flow_name, skill)
+        if secrets_import:
+            skill_imports[2].append(secrets_import)
         for key, value in skill.secrets.items():
             skill_secrets.append((key, value))
         _write_skill_secrets(
@@ -155,6 +162,8 @@ def export_skills(
         else:
             skill_contents += skill_content + "\n\n"
     skill_contents = shared_skill_contents + skill_contents
+    # remove dupes from imports if any and sort them
+    skill_imports = _sort_imports(skill_imports)
     return (
         skill_imports,
         skill_secrets,
@@ -162,8 +171,48 @@ def export_skills(
     )
 
 
-def get_skill_imports(flow_name: str, skill: WaldiezSkill) -> str:
-    """Get the skill imports string.
+def _sort_imports(
+    skill_imports: Tuple[List[str], List[str], List[str]],
+) -> Tuple[List[str], List[str], List[str]]:
+    """Sort the imports.
+
+    Parameters
+    ----------
+    skill_imports : Tuple[List[str], List[str], List[str]]
+        The skill imports.
+
+    Returns
+    -------
+    Tuple[List[str], List[str], List[str]]
+        The sorted skill imports.
+    """
+
+    # "from x import y" and "import z"
+    # the "import a" should be first (and sorted)
+    # then the "from b import c" (and sorted)
+    standard_lib_imports = skill_imports[0]
+    third_party_imports = skill_imports[1]
+    secrets_imports = skill_imports[2]
+
+    sorted_standard_lib_imports = sorted(
+        [imp for imp in standard_lib_imports if imp.startswith("import ")]
+    ) + sorted([imp for imp in standard_lib_imports if imp.startswith("from ")])
+
+    sorted_third_party_imports = sorted(
+        [imp for imp in third_party_imports if imp.startswith("import ")]
+    ) + sorted([imp for imp in third_party_imports if imp.startswith("from ")])
+
+    sorted_secrets_imports = sorted(secrets_imports)
+
+    return (
+        sorted_standard_lib_imports,
+        sorted_third_party_imports,
+        sorted_secrets_imports,
+    )
+
+
+def get_skill_secrets_import(flow_name: str, skill: WaldiezSkill) -> str:
+    """Get the skill secrets import string.
 
     Parameters
     ----------

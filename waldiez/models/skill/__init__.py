@@ -3,10 +3,11 @@
 """Waldiez Skill related models."""
 
 from .skill import SHARED_SKILL_NAME, WaldiezSkill
-from .skill_data import WaldiezSkillData
+from .skill_data import WaldiezSkillData, WaldiezSkillType
 
 __all__ = [
     "SHARED_SKILL_NAME",
     "WaldiezSkill",
     "WaldiezSkillData",
+    "WaldiezSkillType",
 ]

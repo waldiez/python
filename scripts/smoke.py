@@ -76,7 +76,9 @@ def download_example(
         json.dump(flow_data, file)
 
 
-def move_to_dot_local(example_dir: str, example_path: str) -> None:
+def move_to_dot_local(
+    example_dir: str, example_path: str, flow_name: str
+) -> None:
     """Move the converted example to the .local directory.
 
     Parameters
@@ -85,6 +87,8 @@ def move_to_dot_local(example_dir: str, example_path: str) -> None:
         The directory of the example.
     example_path : str
         The path to the example.
+    flow_name : str
+        The name of the flow.
     """
     example_name = os.path.basename(example_path)
     dot_local_dir = os.path.join(DOT_LOCAL, "examples", example_dir)
@@ -93,6 +97,12 @@ def move_to_dot_local(example_dir: str, example_path: str) -> None:
     shutil.move(example_path, dot_local_path)
     dot_local_py_path = dot_local_path.replace(".waldiez", ".py")
     shutil.move(example_path.replace(".waldiez", ".py"), dot_local_py_path)
+    # check for {flow_name}_api_keys.py
+    flow_name_ = flow_name.replace(" ", "_").replace("-", "_").lower()
+    example_path_dir = os.path.dirname(example_path)
+    api_keys_path = os.path.join(example_path_dir, f"{flow_name_}_api_keys.py")
+    if os.path.exists(api_keys_path):
+        shutil.move(api_keys_path, dot_local_dir)
 
 
 def convert_examples() -> None:
@@ -120,7 +130,7 @@ def convert_examples() -> None:
         if not os.path.exists(output_path):
             # pylint: disable=broad-exception-raised
             raise Exception(f"Failed to convert {example}")
-        move_to_dot_local(example_dir, example_path)
+        move_to_dot_local(example_dir, example_path, flow.waldiez.name)
     shutil.rmtree(temp_dir)
 
 

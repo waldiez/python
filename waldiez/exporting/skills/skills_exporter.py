@@ -92,9 +92,15 @@ class SkillsExporter(BaseExporter, ExporterMixin):
         if not self.skill_imports:
             return []
         imports: List[Tuple[str, ImportPosition]] = []
-        for skill_import in self.skill_imports:
-            if (skill_import, ImportPosition.LOCAL) not in imports:
-                imports.append((skill_import, ImportPosition.LOCAL))
+        # standard imports
+        for import_statement in self.skill_imports[0]:
+            imports.append((import_statement, ImportPosition.BUILTINS))
+        # third party imports
+        for import_statement in self.skill_imports[1]:
+            imports.append((import_statement, ImportPosition.THIRD_PARTY))
+        # secrets/local imports
+        for import_statement in self.skill_imports[2]:
+            imports.append((import_statement, ImportPosition.LOCAL))
         return imports
 
     def get_before_export(

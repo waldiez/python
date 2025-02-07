@@ -8,6 +8,7 @@ from .date_utils import now
 from .dict_utils import update_dict
 from .method_utils import (
     check_function,
+    gather_code_imports,
     generate_function,
     get_function,
     parse_code_string,
@@ -17,6 +18,7 @@ __all__ = [
     "WaldiezBase",
     "now",
     "check_function",
+    "gather_code_imports",
     "get_autogen_version",
     "get_function",
     "generate_function",

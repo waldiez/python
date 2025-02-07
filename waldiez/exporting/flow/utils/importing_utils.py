@@ -36,21 +36,6 @@ COMMON_AUTOGEN_IMPORTS = [
 ]
 
 
-def get_standard_imports() -> str:
-    """Get the standard imports.
-
-    Returns
-    -------
-    str
-        The standard imports.
-    """
-    builtin_imports = BUILTIN_IMPORTS.copy()
-    imports_string = "\n".join(builtin_imports) + "\n"
-    typing_imports = "from typing import " + ", ".join(TYPING_IMPORTS)
-    imports_string += typing_imports
-    return imports_string
-
-
 def sort_imports(
     all_imports: List[Tuple[str, ImportPosition]],
 ) -> Tuple[List[str], List[str], List[str], List[str], bool]:
@@ -85,11 +70,21 @@ def sort_imports(
         elif position == ImportPosition.LOCAL:
             local_imports.append(import_string)
     autogen_imports = list(set(autogen_imports))
+    sorted_builtins = sorted(
+        [imp for imp in builtin_imports if imp.startswith("import ")]
+    ) + sorted([imp for imp in builtin_imports if imp.startswith("from ")])
+    sorted_third_party = sorted(
+        [imp for imp in third_party_imports if imp.startswith("import ")]
+    ) + sorted([imp for imp in third_party_imports if imp.startswith("from ")])
+    sorted_locals = sorted(
+        [imp for imp in local_imports if imp.startswith("import ")]
+    ) + sorted([imp for imp in local_imports if imp.startswith("from ")])
+
     return (
-        sorted(builtin_imports),
+        sorted_builtins,
         sorted(autogen_imports),
-        sorted(third_party_imports),
-        sorted(local_imports),
+        sorted_third_party,
+        sorted_locals,
         got_import_autogen,
     )
 
@@ -174,13 +169,14 @@ def gather_imports(
     Tuple[str, ImportPosition]
         The gathered imports.
     """
-    imports_string = get_standard_imports()
-    all_imports: List[Tuple[str, ImportPosition]] = [
-        (
-            imports_string,
-            ImportPosition.BUILTINS,
+    all_imports: List[Tuple[str, ImportPosition]] = []
+    for import_statement in BUILTIN_IMPORTS:
+        all_imports.append(
+            (
+                import_statement,
+                ImportPosition.BUILTINS,
+            )
         )
-    ]
     if model_imports:
         all_imports.extend(model_imports)
     if skill_imports:
@@ -189,4 +185,21 @@ def gather_imports(
         all_imports.extend(chat_imports)
     if agent_imports:
         all_imports.extend(agent_imports)
-    return list(set(all_imports))
+    # let's try to avoid this:
+    # from typing import Annotated
+    # from typing import Annotated, Any, Callable, Dict, ...Union
+    all_typing_imports = TYPING_IMPORTS.copy()
+    final_imports: List[Tuple[str, ImportPosition]] = []
+    for import_statement, import_position in all_imports:
+        if import_statement.startswith("from typing"):
+            to_import = import_statement.split("import")[1].strip()
+            if to_import:
+                all_typing_imports.append(to_import)
+        else:
+            final_imports.append((import_statement, import_position))
+    unique_typing_imports = list(set(all_typing_imports))
+    one_typing_import = "from typing import " + ", ".join(
+        sorted(unique_typing_imports)
+    )
+    final_imports.insert(1, (one_typing_import, ImportPosition.BUILTINS))
+    return list(set(final_imports))
