@@ -162,11 +162,12 @@ class SkillsExporter(BaseExporter, ExporterMixin):
             the before export strings, the after export strings,
             and the environment variables.
         """
+        content = self.generate()
         imports = self.get_imports()
         after_export = self.get_after_export()
         environment_variables = self.get_environment_variables()
         result: ExporterReturnType = {
-            "content": self.generate(),
+            "content": content,
             "imports": imports,
             "before_export": None,
             "after_export": after_export,

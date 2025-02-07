@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
+# pylint: disable=import-error
 # flake8: noqa: E501
 """Try to install pysqlite3-binary.
 

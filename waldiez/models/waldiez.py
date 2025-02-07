@@ -17,7 +17,7 @@ from .chat import WaldiezChat
 from .common import get_autogen_version
 from .flow import WaldiezFlow, get_flow_data
 from .model import WaldiezModel, get_models_extra_requirements
-from .skill import WaldiezSkill
+from .skill import WaldiezSkill, get_skills_extra_requirements
 
 
 @dataclass(frozen=True, slots=True)
@@ -267,6 +267,7 @@ class Waldiez:
         requirements.update(
             get_models_extra_requirements(self.models, autogen_version)
         )
+        requirements.update(get_skills_extra_requirements(self.skills))
         return sorted(list(requirements))
 
     def get_flow_env_vars(self) -> List[Tuple[str, str]]:

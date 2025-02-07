@@ -31,6 +31,7 @@ def test_get_models_extra_requirements() -> None:
             id="wm-3",
             name="model",
             description="model",
+            requirements=["requests"],
             data={  # type: ignore
                 "api_type": "together",
             },
@@ -71,6 +72,7 @@ def test_get_models_extra_requirements() -> None:
     models_iter: Iterator[WaldiezModel] = iter(models_list)
     autogen_version = get_autogen_version()
     expected_packages = [
+        "requests",
         f"pyautogen[gemini]=={autogen_version}",
         f"pyautogen[together]=={autogen_version}",
         f"pyautogen[mistral]=={autogen_version}",

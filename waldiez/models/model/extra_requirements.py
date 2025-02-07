@@ -36,6 +36,8 @@ def get_models_extra_requirements(
         "bedrock",  # we might add this later
     ]
     for model in models:
+        for requirement in model.requirements:
+            model_requirements.add(requirement)
         if model.data.api_type == "google":
             model_requirements.add(f"pyautogen[gemini]=={autogen_version}")
             continue
