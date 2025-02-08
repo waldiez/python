@@ -198,7 +198,8 @@ def _add_interop_extras(
     interop_instance = f"ag2_{skill_name}_interop = Interoperability()" + "\n"
     extra_content = (
         f"ag2_{skill_name} = "
-        f"ag2_{skill_name}_interop.convert_tool({skill_name}, "
+        f"ag2_{skill_name}_interop.convert_tool("
+        f"tool={skill_name}, "
         f'type="{skill.skill_type}")'
     )
     return "\n" + interop_instance + extra_content

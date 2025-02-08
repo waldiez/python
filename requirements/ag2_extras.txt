@@ -18,6 +18,8 @@ pyautogen[bedrock]==0.7.3
 pyautogen[cohere]==0.7.3
 pyautogen[gemini]==0.7.3
 pyautogen[groq]==0.7.3
+pyautogen[interop-crewai]==0.7.3
+pyautogen[interop-langchain]==0.7.3
 pyautogen[lmm]==0.7.3
 pyautogen[mistral]==0.7.3
 pyautogen[neo4j]==0.7.3

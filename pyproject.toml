@@ -86,6 +86,8 @@ ag2_extras =[
     'pyautogen[ollama]==0.7.3',
     'pyautogen[together]==0.7.3',
     # utils
+    'pyautogen[interop-crewai]==0.7.3',
+    'pyautogen[interop-langchain]==0.7.3',
     'pyautogen[neo4j]==0.7.3',
     'pyautogen[websurfer]==0.7.3',
     'chromadb>=0.5.23',

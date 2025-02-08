@@ -265,9 +265,17 @@ class Waldiez:
             ]
             requirements.update(captain_extras)
         requirements.update(
-            get_models_extra_requirements(self.models, autogen_version)
+            get_models_extra_requirements(
+                self.models,
+                autogen_version=autogen_version,
+            )
         )
-        requirements.update(get_skills_extra_requirements(self.skills))
+        requirements.update(
+            get_skills_extra_requirements(
+                self.skills,
+                autogen_version=autogen_version,
+            )
+        )
         return sorted(list(requirements))
 
     def get_flow_env_vars(self) -> List[Tuple[str, str]]:

@@ -232,7 +232,7 @@ wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
         'api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=1000)\n'
         'wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)\n'
         'ag2_wiki_tool_interop = Interoperability()\n'
-        'ag2_wiki_tool = ag2_wiki_tool_interop.convert_tool(wiki_tool, type="langchain")'
+        'ag2_wiki_tool = ag2_wiki_tool_interop.convert_tool(tool=wiki_tool, type="langchain")'
     )
     # fmt: on
     agent_names = {"wa-1": "agent1", "wa-2": "agent2"}
