@@ -2,8 +2,10 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 """Waldiez Skill model."""
 
+import json
 import re
-from typing import Dict, List, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Tuple, Union
 
 from pydantic import Field, model_validator
 from typing_extensions import Annotated, Literal, Self
@@ -103,6 +105,42 @@ class WaldiezSkill(WaldiezBase):
             description="The date and time when the skill was last updated.",
         ),
     ]
+
+    @staticmethod
+    def load(data_or_path: Union[str, Path, Dict[str, Any]]) -> "WaldiezSkill":
+        """Load a skill from a read-only file.
+
+        Parameters
+        ----------
+        data_or_path : Union[str, Path, Dict[str, Any]]
+            The path to the read-only file or the loaded data.
+
+        Returns
+        -------
+        WaldiezSkill
+            The skill.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the file is not found.
+        ValueError
+            If the JSON is invalid or the data is invalid.
+        """
+        if isinstance(data_or_path, dict):
+            return WaldiezSkill.model_validate(data_or_path)
+        if not isinstance(data_or_path, Path):
+            data_or_path = Path(data_or_path)
+        resolved = data_or_path.resolve()
+        if not resolved.is_file():
+            raise FileNotFoundError(f"File not found: {resolved}")
+        with resolved.open("r", encoding="utf-8") as file:
+            data_string = file.read()
+            try:
+                data_dict = json.loads(data_string)
+            except BaseException as exc:  # pylint: disable=broad-except
+                raise ValueError(f"Invalid WaldiezSkill/JSON: {exc}") from exc
+            return WaldiezSkill.model_validate(data_dict)
 
     @property
     def skill_type(self) -> WaldiezSkillType:

@@ -4,6 +4,8 @@
 
 from typing import Any, Dict, List, Optional
 
+from typing_extensions import Literal
+
 from waldiez.models import (
     WaldiezAgentCodeExecutionConfig,
     WaldiezAgentLinkedSkill,
@@ -122,6 +124,42 @@ def get_skill(skill_id: str = "ws-1") -> WaldiezSkill:
             secrets={
                 "SKILL_KEY": "skill_value",
             },
+        ),
+    )
+
+
+def get_interop_skill(
+    skill_id: str = "ws-2",
+    skill_type: Literal["langchain", "crewai"] = "langchain",
+) -> WaldiezSkill:
+    """Get an interop skill.
+
+    Parameters
+    ----------
+    skill_id : str, optional
+        The skill ID, by default "ws-2"
+    skill_type : Literal["langchain", "crewai"], optional
+        The skill type, by default "langchain"
+
+    Returns
+    -------
+    WaldiezSkill
+        A WaldiezSkill instance.
+    """
+    skill_name = f"{skill_type}_skill"
+    return WaldiezSkill(
+        id=skill_id,
+        name=skill_name,
+        description="Interop Skill Description",
+        tags=["interop_skill"],
+        requirements=[],
+        type="skill",
+        created_at="2021-01-01T00:00:00.000Z",
+        updated_at="2021-01-01T00:00:00.000Z",
+        data=WaldiezSkillData(
+            content=(f"{skill_name} = lambda: 'Interop Skill Response'"),
+            skill_type=skill_type,
+            secrets={},
         ),
     )
 
@@ -756,7 +794,9 @@ def get_flow(is_async: bool = False) -> WaldiezFlow:
         A WaldiezFlow instance.
     """
     model = get_model()
-    skill = get_skill()
+    custom_skill = get_skill()
+    langchain_skill = get_interop_skill(skill_type="langchain")
+    crewai_skill = get_interop_skill(skill_id="ws-3", skill_type="crewai")
     user = get_user_proxy()
     assistant = get_assistant()
     manager = get_group_manager()
@@ -791,7 +831,7 @@ def get_flow(is_async: bool = False) -> WaldiezFlow:
             viewport={},
             agents=agents,
             models=[model],
-            skills=[skill],
+            skills=[custom_skill, langchain_skill, crewai_skill],
             chats=chats,
         ),
     )
