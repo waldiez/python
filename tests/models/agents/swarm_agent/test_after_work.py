@@ -76,10 +76,10 @@ def custom_after_work(last_speaker, messages, groupchat):
     )
     expected_recipient_string = (
         "def my_custom_after_work(\n"
-        "    last_speaker: SwarmAgent,\n"
+        "    last_speaker: ConversableAgent,\n"
         "    messages: List[Dict[str, Any]],\n"
         "    groupchat: GroupChat,\n) -> "
-        "Union[AfterWorkOption, SwarmAgent, str]:\n"
+        "Union[AfterWorkOption, ConversableAgent, str]:\n"
         '    return "TERMINATE"\n'
     )
     recipient = after_work.get_recipient({}, name_prefix="my")

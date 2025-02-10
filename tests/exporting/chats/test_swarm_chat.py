@@ -326,10 +326,10 @@ def callable_message(sender, recipient, context):
     expected = (
         "\n"
         f"def custom_after_work_{chat2_name}("
-        "\n    last_speaker: SwarmAgent,"
+        "\n    last_speaker: ConversableAgent,"
         "\n    messages: List[Dict[str, Any]],"
         "\n    groupchat: GroupChat,"
-        "\n) -> Union[AfterWorkOption, SwarmAgent, str]:"
+        "\n) -> Union[AfterWorkOption, ConversableAgent, str]:"
         '\n    return "TERMINATE"\n\n'
     )
     assert expected == additional_method_string

@@ -25,8 +25,8 @@ WaldiezSwarmAfterWorkOption = Literal[
 CUSTOM_AFTER_WORK = "custom_after_work"
 CUSTOM_AFTER_WORK_ARGS = ["last_speaker", "messages", "groupchat"]
 CUSTOM_AFTER_WORK_TYPES = (
-    ["SwarmAgent", "List[Dict[str, Any]]", "GroupChat"],
-    "Union[AfterWorkOption, SwarmAgent, str]",
+    ["ConversableAgent", "List[Dict[str, Any]]", "GroupChat"],
+    "Union[AfterWorkOption, ConversableAgent, str]",
 )
 
 
@@ -45,15 +45,15 @@ class WaldiezSwarmAfterWork(WaldiezBase):
     recipient_type : WaldiezSwarmAfterWorkRecipientType
         The type of recipient.
         Can be 'agent', 'option', or 'callable'.
-        If 'agent', the recipient is a SwarmAgent.
+        If 'agent', the recipient is a Swarm Agent.
         If 'option', the recipient is an AfterWorkOption :
             ('TERMINATE', 'REVERT_TO_USER', 'STAY', 'SWARM_MANAGER').
         If 'callable', it should have the signature:
         def custom_after_work(
-            last_speaker: SwarmAgent,
+            last_speaker: ConversableAgent,
             messages: List[dict],
             groupchat: GroupChat,
-        ) -> Union[AfterWorkOption, SwarmAgent, str]:
+        ) -> Union[AfterWorkOption, ConversableAgent, str]:
 
     """
 
@@ -79,15 +79,15 @@ class WaldiezSwarmAfterWork(WaldiezBase):
             description=(
                 "The type of recipient. "
                 "Can be 'agent', 'option', or 'callable'. "
-                "If 'agent', the recipient is a SwarmAgent.  "
+                "If 'agent', the recipient is a Swarm Agent.  "
                 "If 'option', the recipient is an AfterWorkOption :"
                 "    ('TERMINATE', 'REVERT_TO_USER', 'STAY', 'SWARM_MANAGER'). "
                 "If 'callable', it should have the signature: "
                 "def custom_after_work("
-                "    last_speaker: SwarmAgent,"
+                "    last_speaker: ConversableAgent,"
                 "    messages: List[Dict[str, Any]],"
                 "    groupchat: GroupChat,"
-                ") -> Union[AfterWorkOption, SwarmAgent, str]:"
+                ") -> Union[AfterWorkOption, ConversableAgent, str]:"
             ),
         ),
     ]
