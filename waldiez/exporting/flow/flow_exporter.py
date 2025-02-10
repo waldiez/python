@@ -210,6 +210,10 @@ class FlowExporter(BaseExporter, ExporterMixin):
         )
         content += self.get_comment("imports", self.for_notebook) + "\n"
         content += imports[0] + "\n"
+        content += (
+            "# make sure we don't get: Module 'numpy' has no attribute '_no_nep50_warning'\n"
+            'os.environ["NEP50_DISABLE_WARNING"] = "1"\n'
+        )
         content += self.get_comment("logging", self.for_notebook) + "\n"
         content += get_start_logging(tabs=0) + "\n"
         content += "start_logging()\n\n"
