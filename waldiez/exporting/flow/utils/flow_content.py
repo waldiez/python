@@ -71,6 +71,7 @@ PYLINT_RULES = [
     "unknown-option-value",
     "unused-argument",
     "unused-import",
+    "unused-variable",
     "invalid-name",
     "import-error",
     "inconsistent-quotes",
