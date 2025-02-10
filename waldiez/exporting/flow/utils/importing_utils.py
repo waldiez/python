@@ -51,10 +51,10 @@ def sort_imports(
     Tuple[List[str], List[str], List[str], List[str], bool]
         The sorted imports and a flag if we got `import autogen`.
     """
-    builtin_imports = []
-    third_party_imports = []
-    local_imports = []
-    autogen_imports = COMMON_AUTOGEN_IMPORTS.copy()
+    builtin_imports: List[str] = []
+    third_party_imports: List[str] = []
+    local_imports: List[str] = []
+    autogen_imports: List[str] = COMMON_AUTOGEN_IMPORTS.copy()
     got_import_autogen = False
     for import_string, position in all_imports:
         if "import autogen" in import_string:
@@ -70,6 +70,7 @@ def sort_imports(
         elif position == ImportPosition.LOCAL:
             local_imports.append(import_string)
     autogen_imports = list(set(autogen_imports))
+    third_party_imports = ensure_np_import(third_party_imports)
     sorted_builtins = sorted(
         [imp for imp in builtin_imports if imp.startswith("import ")]
     ) + sorted([imp for imp in builtin_imports if imp.startswith("from ")])
@@ -143,6 +144,27 @@ def get_the_imports_string(
     if is_async:
         final_string += "\nnest_asyncio.apply()\n"
     return final_string.replace("\n\n\n", "\n\n")  # avoid too many newlines
+
+
+def ensure_np_import(third_party_imports: List[str]) -> List[str]:
+    """Ensure numpy is imported.
+
+    Parameters
+    ----------
+    third_party_imports : List[str]
+        The third party imports.
+
+    Returns
+    -------
+    List[str]
+        The third party imports with numpy.
+    """
+    if (
+        not third_party_imports
+        or "import numpy as np" not in third_party_imports
+    ):
+        third_party_imports.append("import numpy as np")
+    return third_party_imports
 
 
 def gather_imports(

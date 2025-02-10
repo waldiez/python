@@ -60,6 +60,8 @@ def refresh_environment() -> None:
         # module 'numpy' has no attribute '_no_nep50_warning'
         # in autogen/agentchat/contrib/captainagent/tool_retriever.py
         os.environ["NEP50_DISABLE_WARNING"] = "1"
+        os.environ["NEP50_DEPRECATION_WARNING"] = "0"
+        os.environ["NPY_PROMOTION_STATE"] = "weak"
 
 
 def set_env_vars(flow_env_vars: List[Tuple[str, str]]) -> Dict[str, str]:

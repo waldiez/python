@@ -160,3 +160,32 @@ def get_after_run_content(
 {space}{tab}pass
 """
     return content
+
+
+def get_np_no_nep50_handle() -> str:
+    """Handle catching the "module numpy has no attribute _no_pep50_warning" error.
+
+    Returns
+    -------
+    str
+        The content to handle the error.
+    """
+    # https://github.com/numpy/numpy/blob/v2.2.2/\
+    #   doc/source/release/2.2.0-notes.rst#nep-50-promotion-state-option-removed
+    content = '''
+# try to make sure we don't get:
+# module 'numpy' has no attribute '_no_nep50_warning'"
+os.environ["NEP50_DEPRECATION_WARNING"] = "0"
+os.environ["NEP50_DISABLE_WARNING"] = "1"
+os.environ["NPY_PROMOTION_STATE"] = "weak"
+if not hasattr(np, "_no_pep50_warning"):
+
+    import contextlib
+
+    @contextlib.contextmanager
+    def _np_no_nep50_warning():
+        """Dummy function to avoid the warning."""
+        yield
+    setattr(np, "_no_pep50_warning", _np_no_nep50_warning)  # type: ignore  # noqa
+'''
+    return content

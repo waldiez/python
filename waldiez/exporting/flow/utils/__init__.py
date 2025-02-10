@@ -14,6 +14,7 @@ from .def_main import get_def_main
 from .flow_content import (
     get_after_run_content,
     get_ipynb_content_start,
+    get_np_no_nep50_handle,
     get_py_content_start,
 )
 from .flow_names import ensure_unique_names
@@ -37,6 +38,7 @@ __all__ = [
     "gather_imports",
     "get_after_run_content",
     "get_def_main",
+    "get_np_no_nep50_handle",
     "get_py_content_start",
     "get_ipynb_content_start",
     "get_start_logging",

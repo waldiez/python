@@ -52,6 +52,7 @@ from .utils import (
     get_after_run_content,
     get_def_main,
     get_ipynb_content_start,
+    get_np_no_nep50_handle,
     get_py_content_start,
     get_sqlite_out,
     get_start_logging,
@@ -210,10 +211,7 @@ class FlowExporter(BaseExporter, ExporterMixin):
         )
         content += self.get_comment("imports", self.for_notebook) + "\n"
         content += imports[0] + "\n"
-        content += (
-            "# make sure we don't get: Module 'numpy' has no attribute '_no_nep50_warning'\n"
-            'os.environ["NEP50_DISABLE_WARNING"] = "1"\n'
-        )
+        content += get_np_no_nep50_handle() + "\n"
         content += self.get_comment("logging", self.for_notebook) + "\n"
         content += get_start_logging(tabs=0) + "\n"
         content += "start_logging()\n\n"
