@@ -117,13 +117,13 @@ class WaldiezSwarmAfterWork(WaldiezBase):
             The recipient string and the function content if applicable.
         """
         if self.recipient_type == "option":
-            return f"AFTER_WORK(AfterWorkOption.{self.recipient})", ""
+            return f"AfterWork(AfterWorkOption.{self.recipient})", ""
         if self.recipient_type == "agent":
             # the the recipient is passed as the agent name
             # (and not its id), care should be taken to ensure
             # the all the agents in the flow have unique names
             agent_instance = agent_names.get(self.recipient, self.recipient)
-            return f"AFTER_WORK({agent_instance})", ""
+            return f"AfterWork({agent_instance})", ""
 
         function_name = CUSTOM_AFTER_WORK
         if name_prefix:
@@ -131,7 +131,7 @@ class WaldiezSwarmAfterWork(WaldiezBase):
         if name_suffix:
             function_name = f"{function_name}_{name_suffix}"
         return (
-            f"AFTER_WORK({function_name})",
+            f"AfterWork({function_name})",
             generate_function(
                 function_name=function_name,
                 function_args=CUSTOM_AFTER_WORK_ARGS,

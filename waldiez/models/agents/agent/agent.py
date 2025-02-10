@@ -171,11 +171,11 @@ class WaldiezAgent(WaldiezBase):
         elif agent_class == "SwarmAgent":
             imports.add(
                 "from autogen import "
-                "AFTER_WORK, "
-                "ON_CONDITION, "
-                "UPDATE_SYSTEM_MESSAGE, "
+                "register_hand_off, "
+                "AfterWork, "
+                "OnCondition, "
+                "UpdateSystemMessage, "
                 "AfterWorkOption, "
-                "SwarmAgent, "
                 "SwarmResult"
             )
         elif agent_class == "ReasoningAgent":

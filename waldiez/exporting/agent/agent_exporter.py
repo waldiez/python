@@ -239,7 +239,11 @@ class AgentExporter(BaseExporter, ExporterMixin):
         extras = (
             f"{group_chat_arg}{retrieve_arg}{self._reasoning}{self._captain}"
         )
-        agent_str = f"""{agent_name} = {self.agent.ag2_class}(
+        ag2_class = self.agent.ag2_class
+        if agent.agent_type == "swarm":
+            # SwarmAgent is deprecated.
+            ag2_class = "ConversableAgent"
+        agent_str = f"""{agent_name} = {ag2_class}(
     name="{agent_name}",
     description="{agent.description}"{system_message_arg},
     human_input_mode="{agent.data.human_input_mode}",

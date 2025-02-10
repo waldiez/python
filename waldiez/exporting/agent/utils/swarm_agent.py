@@ -21,11 +21,11 @@ from waldiez.models import (
 # functions (List[Callable]):
 #   -A list of functions to register with the agent.
 # update_agent_state_before_reply (List[Callable]):
-# - A list of functions, including UPDATE_SYSTEM_MESSAGEs,
+# - A list of functions, including UpdateSystemMessage,
 #   called to update the agent before it replies.
 
 # Additional methods:
-# register_hand_off(hand_offs: List[AfterWork|OnCondition]):
+# register_hand_off(agent, hand_offs: List[AfterWork|OnCondition]):
 
 
 def get_swarm_extras(
@@ -173,14 +173,14 @@ def get_update_agent_state_before_reply_arg(
                     name_suffix=agent_names[agent.id],
                 )
                 arg_string += (
-                    "\n" + f"{tab}{tab}UPDATE_SYSTEM_MESSAGE({function_name}),"
+                    "\n" + f"{tab}{tab}UpdateSystemMessage({function_name}),"
                 )
                 before_agent += "\n" + function_content + "\n"
             else:
                 escaped_function = string_escape(function.update_function)
                 arg_string += (
                     "\n"
-                    + f'{tab}{tab}UPDATE_SYSTEM_MESSAGE("{escaped_function}"),'
+                    + f'{tab}{tab}UpdateSystemMessage("{escaped_function}"),'
                 )
         else:
             skill_name = skill_names.get(function, "")
@@ -233,7 +233,12 @@ def get_agent_handoff_registrations(
     if not agent.handoffs:
         return before_agent, after_agent
     tab = "    "
-    after_agent = f"{agent_name}.register_hand_off(" + "\n" + f"{tab}[" + "\n"
+    # change {agent}.register_hand_off([...
+    # to register_hand_off({agent}, [...
+    # after_agent = f"{agent_name}.register_hand_off(" + "\n" + f"{tab}[" + "\n"
+    after_agent = (
+        "register_hand_off(\n" + f"{tab}{agent_name}," + "\n" + f"{tab}[" + "\n"
+    )
     for hand_off in agent.handoffs:
         if isinstance(hand_off, WaldiezSwarmOnCondition):
             registration, before_handoff = get_agent_on_condition_handoff(
@@ -385,7 +390,7 @@ def _get_agent_on_condition_handoff_to_agent(
     before_agent = ""
     tab = "    "
     on_condition = (
-        f"{tab}{tab}ON_CONDITION(" + "\n"
+        f"{tab}{tab}OnCondition(" + "\n"
         f"{tab}{tab}{tab}target={recipient}," + "\n"
         f'{tab}{tab}{tab}condition="{condition}",' + "\n"
     )
@@ -431,7 +436,7 @@ def _get_agent_on_condition_handoff_to_nested_chat(
     before_agent += f"{chat_queue_var_name} = {chat_queue} " + "\n"
     condition_string = string_escape(condition)
     on_condition = (
-        f"{tab}{tab}ON_CONDITION(" + "\n"
+        f"{tab}{tab}OnCondition(" + "\n"
         f"{tab}{tab}{tab}target=" + "{\n"
         f'{tab}{tab}{tab}{tab}"chat_queue": {chat_queue_var_name},' + "\n"
         f'{tab}{tab}{tab}{tab}"config": None,' + "\n"

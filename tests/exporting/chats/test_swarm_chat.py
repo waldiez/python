@@ -281,7 +281,7 @@ def callable_message(sender, recipient, context):
                 "variable1": "value1"
             },
             user_agent=agent1,
-            after_work=AFTER_WORK(AfterWorkOption.REVERT_TO_USER),
+            after_work=AfterWork(AfterWorkOption.REVERT_TO_USER),
             max_rounds=10,
         )
 """
@@ -308,20 +308,20 @@ def callable_message(sender, recipient, context):
         agent_names=agent_names,
         name_suffix=chat_names[chat3.id],
     )
-    assert after_work_string == "AFTER_WORK(agent4)"
+    assert after_work_string == "AfterWork(agent4)"
     after_work_string, _ = get_swarm_after_work_string(
         chat=chat4,
         agent_names=agent_names,
         name_suffix=chat_names[chat4.id],
     )
-    assert after_work_string == "AFTER_WORK(AfterWorkOption.TERMINATE)"
+    assert after_work_string == "AfterWork(AfterWorkOption.TERMINATE)"
     after_work_string, additional_method_string = get_swarm_after_work_string(
         chat=chat2,
         agent_names=agent_names,
         name_suffix=chat_names[chat2.id],
     )
     chat2_name = chat_names[chat2.id]
-    assert after_work_string == f"AFTER_WORK(custom_after_work_{chat2_name})"
+    assert after_work_string == f"AfterWork(custom_after_work_{chat2_name})"
     # pylint: disable=line-too-long,inconsistent-quotes
     expected = (
         "\n"

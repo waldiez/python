@@ -42,12 +42,12 @@ def test_export_swarm_agent() -> None:
     assert output["imports"]
     imports = [x[0] for x in output["imports"]]
     assert (
-        "from autogen import AFTER_WORK, ON_CONDITION, UPDATE_SYSTEM_MESSAGE, AfterWorkOption, SwarmAgent, SwarmResult"  # noqa: E501
+        "from autogen import register_hand_off, AfterWork, OnCondition, UpdateSystemMessage, AfterWorkOption, SwarmResult"  # noqa: E501
         in imports
     )
     content = output["content"]
     assert content == (
-        f"{agent.name} = SwarmAgent(\n"
+        f"{agent.name} = ConversableAgent(\n"
         f'    name="{agent.name}",\n'
         f'    description="{agent.description}",\n'
         '    system_message="system message of agent 3",\n'

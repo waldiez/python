@@ -30,7 +30,7 @@ class WaldiezSwarmOnCondition(WaldiezBase):
         The condition for transitioning to the target agent
 
     available: str, optional
-        Optional condition to determine if this ON_CONDITION is available.
+        Optional condition to determine if this OnCondition is available.
         Can be a Callable or a string.  If a string, it will look up the
         value of the context variable with that name, which should be a bool.
 
@@ -73,7 +73,7 @@ class WaldiezSwarmOnCondition(WaldiezBase):
             default_factory=WaldiezSwarmOnConditionAvailable,
             title="Available",
             description=(
-                "Optional condition to determine if this ON_CONDITION "
+                "Optional condition to determine if this OnCondition "
                 "is available."
             ),
         ),

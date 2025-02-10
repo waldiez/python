@@ -196,7 +196,7 @@ def get_swarm_after_work_string(
         The after work string and the additional methods string.
     """
     if not chat.after_work:
-        return "AFTER_WORK(AfterWorkOption.TERMINATE)", ""
+        return "AfterWork(AfterWorkOption.TERMINATE)", ""
     additional_methods = ""
     after_work_string, function_content = chat.after_work.get_recipient(
         agent_names=agent_names,

@@ -190,7 +190,7 @@ def test_agent_ag2_imports() -> None:
     }
     assert swarm_agent.ag2_imports == {
         "import autogen",
-        "from autogen import AFTER_WORK, ON_CONDITION, UPDATE_SYSTEM_MESSAGE, AfterWorkOption, SwarmAgent, SwarmResult",  # noqa: E501
+        "from autogen import register_hand_off, AfterWork, OnCondition, UpdateSystemMessage, AfterWorkOption, SwarmResult",  # noqa: E501
     }
     assert reasoning_agent.ag2_imports == {
         "import autogen",

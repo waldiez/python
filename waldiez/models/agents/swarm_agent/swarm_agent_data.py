@@ -29,7 +29,7 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
         A list of functions (skill ids) to register with the agent.
 
     update_agent_state_before_reply : List[str]
-        A list of functions, including `UPDATE_SYSTEM_MESSAGE`,
+        A list of functions, including `UpdateSystemMessage`,
         called to update the agent's state before it replies. Each function
         is called when the agent is selected and before it speaks.
 
@@ -67,10 +67,10 @@ class WaldiezSwarmAgentData(WaldiezAgentData):
             title="Update Agent State Before Reply",
             alias="updateAgentStateBeforeReply",
             description=(
-                "A list of functions, including UPDATE_SYSTEM_MESSAGEs,"
+                "A list of functions, including UpdateSystemMessage,"
                 "called to update the agent's state before it replies. "
                 " Each function is called when the agent is selected "
-                "and before it speaks. If not an UPDATE_SYSTEM_MESSAGE, "
+                "and before it speaks. If not an UpdateSystemMessage, "
                 "it should be a skill id."
             ),
             default_factory=list,
