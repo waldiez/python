@@ -8,7 +8,7 @@ import os
 import site
 import sys
 import warnings
-from typing import Dict, List, Tuple
+from typing import Dict, Generator, List, Tuple
 
 
 def in_virtualenv() -> bool:
@@ -59,9 +59,26 @@ def refresh_environment() -> None:
         # we might get:
         # module 'numpy' has no attribute '_no_nep50_warning'
         # in autogen/agentchat/contrib/captainagent/tool_retriever.py
-        os.environ["NEP50_DISABLE_WARNING"] = "1"
         os.environ["NEP50_DEPRECATION_WARNING"] = "0"
+        os.environ["NEP50_DISABLE_WARNING"] = "1"
         os.environ["NPY_PROMOTION_STATE"] = "weak"
+        import numpy as np
+
+        if not hasattr(np, "_no_pep50_warning"):
+            import contextlib
+
+            @contextlib.contextmanager
+            def _np_no_nep50_warning() -> Generator[None, None, None]:
+                """Dummy function to avoid the warning.
+
+                Yields
+                ------
+                None
+                    Dummy value.
+                """
+                yield
+
+            setattr(np, "_no_pep50_warning", _np_no_nep50_warning)  # noqa
 
 
 def set_env_vars(flow_env_vars: List[Tuple[str, str]]) -> Dict[str, str]:

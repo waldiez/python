@@ -78,6 +78,7 @@ PYLINT_RULES = [
     "missing-function-docstring",
     "missing-param-doc",
     "missing-return-doc",
+    "ungrouped-imports",
 ]
 
 
@@ -181,11 +182,18 @@ os.environ["NPY_PROMOTION_STATE"] = "weak"
 if not hasattr(np, "_no_pep50_warning"):
 
     import contextlib
+    from typing import Generator
 
     @contextlib.contextmanager
-    def _np_no_nep50_warning():
-        """Dummy function to avoid the warning."""
+    def _np_no_nep50_warning() -> Generator[None, None, None]:
+        """Dummy function to avoid the warning.
+
+        Yields
+        ------
+        None
+            Nothing.
+        """
         yield
-    setattr(np, "_no_pep50_warning", _np_no_nep50_warning)  # type: ignore  # noqa
+    setattr(np, "_no_pep50_warning", _np_no_nep50_warning)  # noqa
 '''
     return content
