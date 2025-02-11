@@ -5,6 +5,7 @@ asyncer==0.0.8
 graphviz==0.20.3
 httpx<1
 jupytext
+numpy<2.2.0
 pandas>=2
 parso==0.8.4
 pyautogen==0.7.4b1
