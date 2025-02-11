@@ -91,12 +91,6 @@ def before_run(
     str
         The file name.
     """
-    printer = get_printer()
-    printer(
-        "Requirements installed.\n"
-        "NOTE: If new packages were added and you are using Jupyter, "
-        "you might need to restart the kernel."
-    )
     if not uploads_root:
         uploads_root = Path(tempfile.mkdtemp())
     else:
