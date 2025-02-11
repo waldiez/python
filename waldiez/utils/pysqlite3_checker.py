@@ -211,8 +211,13 @@ def check_pysqlite3() -> None:
         else:
             # Uninstall pysqlite3-binary if it is already installed
             pip_uninstall("pysqlite3", "pysqlite3-binary")
+            cwd = os.getcwd()
+            tmpdir = tempfile.mkdtemp()
+            os.chdir(tmpdir)
             source_path = download_sqlite_amalgamation()
             install_pysqlite3(source_path)
+            os.chdir(cwd)
+            shutil.rmtree(tmpdir)
         site.main()
         # Re-import pysqlite3 as sqlite3
         import pysqlite3  # type: ignore[unused-ignore, import-untyped, import-not-found]  # noqa
