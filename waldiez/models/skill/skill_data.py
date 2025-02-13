@@ -5,16 +5,10 @@
 from typing import Dict
 
 from pydantic import Field
-from typing_extensions import Annotated, Literal
+from typing_extensions import Annotated
 
 from ..common import WaldiezBase
-
-WaldiezSkillType = Literal[
-    "shared",
-    "custom",
-    "langchain",
-    "crewai",
-]
+from .skill_type import WaldiezSkillType
 
 
 class WaldiezSkillData(WaldiezBase):

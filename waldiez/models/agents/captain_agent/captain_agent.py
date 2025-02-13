@@ -22,7 +22,7 @@ class WaldiezCaptainAgent(WaldiezAgent):
     ----------
     agent_type : Literal["captain"]
         The agent type: 'captain' for a captain agent
-    data : WaldiezCaptainData
+    data : WaldiezCaptainAgentData
         The captain agent's data.
     """
 

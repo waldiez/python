@@ -8,6 +8,7 @@ from typing_extensions import Annotated, Literal
 from ...common import WaldiezBase
 
 ReasoningConfigMethod = Literal["beam_search", "mcts", "lats", "dfs"]
+"""Possible reasoning methods."""
 
 
 class WaldiezReasoningAgentReasonConfig(WaldiezBase):

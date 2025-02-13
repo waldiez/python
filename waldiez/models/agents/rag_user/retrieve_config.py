@@ -13,8 +13,11 @@ from ...common import WaldiezBase, check_function, generate_function
 from .vector_db_config import WaldiezRagUserVectorDbConfig
 
 WaldiezRagUserTask = Literal["code", "qa", "default"]
+"""Possible tasks for the retrieve chat."""
 WaldiezRagUserVectorDb = Literal["chroma", "pgvector", "mongodb", "qdrant"]
+"""Possible vector dbs for the retrieve chat."""
 WaldiezRagUserChunkMode = Literal["multi_lines", "one_line"]
+"""Possible chunk modes for the retrieve chat."""
 WaldiezRagUserModels: Dict[WaldiezRagUserVectorDb, str] = {
     "chroma": "all-MiniLM-L6-v2",
     "mongodb": "all-MiniLM-L6-v2",

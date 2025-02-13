@@ -13,6 +13,7 @@ from typing_extensions import Literal
 CommentKey = Literal[
     "agents", "imports", "skills", "models", "nested", "run", "logging"
 ]
+"""Possible keys for comments."""
 
 
 def comment(for_notebook: bool, hashtags: int = 1) -> str:

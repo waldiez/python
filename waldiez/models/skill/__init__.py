@@ -4,7 +4,8 @@
 
 from .extra_requirements import get_skills_extra_requirements
 from .skill import SHARED_SKILL_NAME, WaldiezSkill
-from .skill_data import WaldiezSkillData, WaldiezSkillType
+from .skill_data import WaldiezSkillData
+from .skill_type import WaldiezSkillType
 
 __all__ = [
     "SHARED_SKILL_NAME",

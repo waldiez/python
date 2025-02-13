@@ -12,6 +12,7 @@ from .on_condition_available import WaldiezSwarmOnConditionAvailable
 from .on_condition_target import WaldiezSwarmOnConditionTarget
 
 WaldiezSwarmOnConditionTargetType = Literal["agent", "nested_chat"]
+"""Possible types for the target of the OnCondition."""
 
 
 class WaldiezSwarmOnCondition(WaldiezBase):

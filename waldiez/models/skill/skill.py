@@ -17,7 +17,8 @@ from ..common import (
     now,
     parse_code_string,
 )
-from .skill_data import WaldiezSkillData, WaldiezSkillType
+from .skill_data import WaldiezSkillData
+from .skill_type import WaldiezSkillType
 
 SHARED_SKILL_NAME = "waldiez_shared"
 

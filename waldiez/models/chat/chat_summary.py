@@ -20,6 +20,7 @@ WaldiezChatSummaryMethod = Literal[
     "reflection_with_llm",
     "last_msg",
 ]
+"""Possible methods for the LLM summary."""
 
 
 class WaldiezChatSummary(WaldiezBase):

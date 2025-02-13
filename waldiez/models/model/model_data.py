@@ -23,6 +23,7 @@ WaldiezModelAPIType = Literal[
     "cohere",
     "other",
 ]
+"""Possible API types for the model."""
 
 
 class WaldiezModelPrice(WaldiezBase):

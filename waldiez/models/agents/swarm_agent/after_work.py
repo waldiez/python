@@ -17,9 +17,11 @@ from typing_extensions import Annotated, Literal, Self
 from ...common import WaldiezBase, check_function, generate_function
 
 WaldiezSwarmAfterWorkRecipientType = Literal["agent", "option", "callable"]
+"""The possible AfterWork recipient types."""
 WaldiezSwarmAfterWorkOption = Literal[
     "TERMINATE", "REVERT_TO_USER", "STAY", "SWARM_MANAGER"
 ]
+"""The possible AfterWork options."""
 
 
 CUSTOM_AFTER_WORK = "custom_after_work"

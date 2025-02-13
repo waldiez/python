@@ -9,11 +9,8 @@ from typing_extensions import Annotated, Literal
 
 from ...common import WaldiezBase, now
 from .agent_data import WaldiezAgentData
+from .agent_type import WaldiezAgentType
 from .code_execution import WaldiezAgentCodeExecutionConfig
-
-WaldiezAgentType = Literal[
-    "user", "assistant", "manager", "rag_user", "swarm", "reasoning", "captain"
-]
 
 
 class WaldiezAgent(WaldiezBase):

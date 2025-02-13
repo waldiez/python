@@ -12,6 +12,7 @@ from ...common import WaldiezBase, check_function, generate_function
 WaldiezSwarmOnConditionAvailableCheckType = Literal[
     "string", "callable", "none"
 ]
+"""Possible types for the `available` check."""
 
 CUSTOM_ON_CONDITION_AVAILABLE = "custom_on_condition_available"
 CUSTOM_ON_CONDITION_AVAILABLE_ARGS = ["agent", "message"]

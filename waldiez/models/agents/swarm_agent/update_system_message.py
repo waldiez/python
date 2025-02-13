@@ -10,6 +10,7 @@ from typing_extensions import Annotated, Literal, Self
 from ...common import WaldiezBase, check_function, generate_function
 
 WaldiezSwarmUpdateFunctionType = Literal["string", "callable"]
+"""Possible types for the update function."""
 
 CUSTOM_UPDATE_SYSTEM_MESSAGE = "custom_update_system_message"
 CUSTOM_UPDATE_SYSTEM_MESSAGE_ARGS = ["agent", "messages"]

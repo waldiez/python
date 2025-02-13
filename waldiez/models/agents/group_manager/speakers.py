@@ -16,8 +16,11 @@ WaldiezGroupManagerSpeakersSelectionMethod = Literal[
     "round_robin",
     "custom",
 ]
+"""Possible methods for the speaker selection."""
 WaldiezGroupManagerSpeakersSelectionMode = Literal["repeat", "transition"]
+"""Possible selection modes: repeat, transition."""
 WaldiezGroupManagerSpeakersTransitionsType = Literal["allowed", "disallowed"]
+"""Possible transitions types: allowed, disallowed."""
 
 CUSTOM_SPEAKER_SELECTION = "custom_speaker_selection"
 CUSTOM_SPEAKER_SELECTION_ARGS = ["last_speaker", "groupchat"]

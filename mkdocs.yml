@@ -89,6 +89,10 @@ plugins:
       handlers:
         python:
           paths: [.]
+          import:
+            - url: https://docs.python.org/3/objects.inv
+              domains: [std, py]
+            - https://typing-extensions.readthedocs.io/en/latest/objects.inv
           options:
             filters:
               - "!^_"
@@ -101,6 +105,7 @@ plugins:
             show_submodules: true
             show_root_heading: false
             show_signature_annotations: true
+            show_signature: true
             signature_crossrefs: true
             show_source: true
             group_by_category: false
@@ -118,6 +123,7 @@ nav:
               - Agent: models/agents/agent.md
               - Assistant: models/agents/assistant.md
               - UserProxy: models/agents/user_proxy.md
+              - CaptainAgent: models/agents/captain_agent.md
               - GroupManager: models/agents/group_manager.md
               - RagUser: models/agents/rag_user.md
               - SwarmAgent: models/agents/swarm_agent.md

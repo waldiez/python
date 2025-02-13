@@ -12,6 +12,7 @@ from ..common import WaldiezBase, check_function, update_dict
 WaldiezChatMessageType = Literal[
     "string", "method", "rag_message_generator", "none"
 ]
+"""Possible types for the message."""
 
 CALLABLE_MESSAGE = "callable_message"
 CALLABLE_MESSAGE_ARGS = ["sender", "recipient", "context"]
