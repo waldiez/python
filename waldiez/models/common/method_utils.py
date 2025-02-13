@@ -6,6 +6,7 @@ import ast
 import importlib.util
 import sys
 import sysconfig
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 import parso
@@ -40,7 +41,7 @@ def is_standard_library(module_name: str) -> bool:
         return False
     if spec.origin.startswith(sys.prefix) or spec.origin == "frozen":
         return True
-    stdlib_path = sysconfig.get_path("stdlib")
+    stdlib_path = str(Path(sysconfig.get_path("stdlib")).resolve())
     return spec.origin.startswith(stdlib_path)
 
 
