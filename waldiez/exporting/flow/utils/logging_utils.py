@@ -16,11 +16,13 @@ get_sqlite_to_csv_call_string
 """
 
 
-def get_start_logging(tabs: int = 0) -> str:
+def get_start_logging(is_async: bool, tabs: int = 0) -> str:
     """Get the logging start call string.
 
     Parameters
     ----------
+    is_async : bool
+        Whether to use async mode.
     tabs : int, optional
         The number of tabs to use for indentation, by default 0
 
@@ -41,7 +43,8 @@ def get_start_logging(tabs: int = 0) -> str:
         )
     """
     tab = "    " * tabs
-    content = f'''
+    if is_async is False:
+        return f'''
 {tab}def start_logging() -> None:
 {tab}    """Start logging."""
 {tab}    runtime_logging.start(
@@ -49,7 +52,20 @@ def get_start_logging(tabs: int = 0) -> str:
 {tab}        config={{"dbname": "flow.db"}},
 {tab}    )
 '''
-    return content
+    return f'''
+{tab}def start_logging() -> None:
+{tab}    """Start logging."""
+{tab}    # pylint: disable=import-outside-toplevel
+{tab}    from anyio.from_thread import start_blocking_portal
+
+{tab}    with start_blocking_portal(backend="asyncio") as portal:
+{tab}        portal.call(
+{tab}            runtime_logging.start,
+{tab}            None,
+{tab}            "sqlite",
+{tab}            {{"dbname": "flow.db"}},
+{tab}        )
+'''
 
 
 # pylint: disable=differing-param-doc,differing-type-doc
@@ -336,6 +352,11 @@ def get_stop_logging(tabs: int, is_async: bool) -> str:
         content += "async "
     content += "def stop_logging() -> None:\n"
     content += '    """Stop logging."""\n'
-    content += f"{tab}    runtime_logging.stop()\n"
+    if is_async:
+        content += f"{tab}    # pylint: disable=import-outside-toplevel\n"
+        content += f"{tab}    from asyncer import asyncify\n\n"
+        content += f"{tab}    await asyncify(runtime_logging.stop)()\n"
+    else:
+        content += f"{tab}    runtime_logging.stop()\n"
     content += get_sqlite_out_call(tabs + 1, is_async)
     return content

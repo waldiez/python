@@ -127,7 +127,6 @@ def get_the_imports_string(
             "\nimport anyio"
             "\nimport nest_asyncio"
             "\nfrom aiocsv import AsyncDictWriter"
-            "\nfrom asyncer import asyncify"
         )
     if got_import_autogen:
         final_string += "\nimport autogen  # type: ignore\n"

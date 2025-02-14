@@ -113,7 +113,26 @@ def start_logging() -> None:
         config={"dbname": "flow.db"},
     )
 """
-    assert get_start_logging(0) == expected
+    assert get_start_logging(False, 0) == expected
+
+
+def test_get_start_logging_async() -> None:
+    """Test get_start_logging with async."""
+    expected = """
+def start_logging() -> None:
+    \"\"\"Start logging.\"\"\"
+    # pylint: disable=import-outside-toplevel
+    from anyio.from_thread import start_blocking_portal
+
+    with start_blocking_portal(backend="asyncio") as portal:
+        portal.call(
+            runtime_logging.start,
+            None,
+            "sqlite",
+            {"dbname": "flow.db"},
+        )
+"""
+    assert get_start_logging(True, 0) == expected
 
 
 def test_get_stop_logging() -> None:
@@ -139,7 +158,10 @@ def stop_logging() -> None:
     async_expected = """
 async def stop_logging() -> None:
     \"\"\"Stop logging.\"\"\"
-    runtime_logging.stop()
+    # pylint: disable=import-outside-toplevel
+    from asyncer import asyncify
+
+    await asyncify(runtime_logging.stop)()
     if not os.path.exists("logs"):
         os.makedirs("logs")
     for table in [
