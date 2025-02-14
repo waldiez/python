@@ -9,6 +9,7 @@ import pytest
 
 from waldiez.models.model import (
     DEFAULT_BASE_URLS,
+    MODEL_NEEDS_BASE_URL,
     WaldiezModel,
     WaldiezModelAPIType,
     WaldiezModelData,
@@ -243,7 +244,7 @@ def test_waldiez_model_use_default_base_url() -> None:
         )
         # Then
         expected_url = DEFAULT_BASE_URLS.get(api_type, "")
-        if expected_url:
+        if expected_url and MODEL_NEEDS_BASE_URL.get(api_type, False) is True:
             assert model.get_llm_config()["base_url"] == expected_url
     data = WaldiezModelData(  # type: ignore
         api_type="mistral",

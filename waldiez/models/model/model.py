@@ -23,6 +23,22 @@ DEFAULT_BASE_URLS: Dict[WaldiezModelAPIType, str] = {
 }
 
 
+# we can omit the base_url for these models
+MODEL_NEEDS_BASE_URL: Dict[WaldiezModelAPIType, bool] = {
+    "openai": False,
+    "azure": False,
+    "google": False,
+    "anthropic": False,
+    "cohere": False,
+    "other": False,  # falls back to openai
+    "deepseek": True,
+    "mistral": True,
+    "groq": True,
+    "together": True,
+    "nim": True,
+}
+
+
 class WaldiezModel(WaldiezBase):
     """Waldiez Model class.
 
@@ -225,10 +241,13 @@ def set_default_base_url(
     Dict[str, Any]
         The llm config dictionary with the default base url set.
     """
-    if api_type in ("openai", "other", "azure", "cohere"):
-        return llm_config
+    dict_copy = llm_config.copy()
     if "base_url" not in llm_config or not llm_config["base_url"]:
-        dict_copy = llm_config.copy()
-        dict_copy["base_url"] = DEFAULT_BASE_URLS.get(api_type, "")
-        return dict_copy
-    return llm_config
+        if MODEL_NEEDS_BASE_URL.get(api_type, True):
+            dict_copy["base_url"] = DEFAULT_BASE_URLS.get(api_type, "")
+    if (
+        not llm_config.get("base_url", "")
+        and MODEL_NEEDS_BASE_URL.get(api_type, True) is False
+    ):
+        dict_copy.pop("base_url", None)
+    return dict_copy

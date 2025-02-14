@@ -50,7 +50,7 @@ def test_models_exporter(tmp_path: Path) -> None:
         id="wm-3",
         name=model3_name,
         description="model description",
-        data={"apiType": "nim"},  # type: ignore
+        data={"apiType": "google"},  # type: ignore
     )
     model_names = {
         "wm-1": model1_name,
@@ -74,8 +74,7 @@ def test_models_exporter(tmp_path: Path) -> None:
 {model1_name}_llm_config = {{
     "model": "{model1_name}",
     "api_type": "anthropic",
-    "api_key": get_{flow_name}_model_api_key("{model1_name}"),
-    "base_url": "{DEFAULT_BASE_URLS["anthropic"]}"
+    "api_key": get_{flow_name}_model_api_key("{model1_name}")
 }}
 
 {model2_name}_llm_config = {{
@@ -86,8 +85,8 @@ def test_models_exporter(tmp_path: Path) -> None:
 
 {model3_name}_llm_config = {{
     "model": "{model3_name}",
-    "api_key": get_{flow_name}_model_api_key("{model3_name}"),
-    "base_url": "{DEFAULT_BASE_URLS["nim"]}"
+    "api_type": "google",
+    "api_key": get_{flow_name}_model_api_key("{model3_name}")
 }}
 """
     assert generated_string == expected
