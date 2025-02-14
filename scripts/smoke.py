@@ -34,6 +34,7 @@ EXAMPLES = [
     "01 - Standup Comedians/Standup Comedians 2.waldiez",
     "01 - Standup Comedians/Standup Comedians 3.waldiez",
     "02 - On-boarding/On-boarding.waldiez",
+    "02 - On-boarding/On-boarding Async.waldiez",
     "03 - Reflection/Reflection.waldiez",
     "04 - Tools/Tool Use.waldiez",
     "05 - Coding/Coding.waldiez",
@@ -45,6 +46,9 @@ EXAMPLES = [
     "10 - Travel Planning/Travel Planning.waldiez",
     "11 - Swarm/Swarm.waldiez",
     "12 - Reasoning/Chain-of-Thought Reasoning with DFS.waldiez",
+    "13 - Captain/1 - Simple.waldiez",
+    "13 - Captain/2 - With agent lib.waldiez",
+    "13 - Captain/3 - With agent lib and tool lib.waldiez",
 ]
 
 
