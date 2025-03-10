@@ -217,6 +217,7 @@ class WaldiezRunner:
             spec.loader.exec_module(module)
             printer("<Waldiez> - Starting workflow...")
             results = module.main()
+            printer("<Waldiez> - Workflow finished")
             sys.path.pop(0)
             reset_env_vars(old_vars)
         after_run(
