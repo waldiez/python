@@ -263,8 +263,8 @@ def get_skill_secrets_import(flow_name: str, skill: WaldiezSkill) -> str:
         return ""
         # fmt: on
     module_name = f"{flow_name}_{skill.name}"
-    ignore_noqa = "  # type: ignore # noqa"
-    return f"import {module_name}_secrets{ignore_noqa}" + "\n"
+    type_ignore_noqa = "  # type: ignore # noqa"
+    return f"import {module_name}_secrets{type_ignore_noqa}" + "\n"
 
 
 def get_agent_skill_registrations(

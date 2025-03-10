@@ -19,7 +19,7 @@
 - If the flow is async, the `run` function is async.
 """
 
-# flake8: noqa E501
+# flake8: noqa: E501
 # pylint: disable=line-too-long
 
 from functools import partial

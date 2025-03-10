@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
-# flake8: noqa E501
+# flake8: noqa: E501
 # pylint: disable=too-many-locals,too-many-statements,line-too-long
 """Common functions for testing waldiez.exporting.agent.AgentExporter."""
 

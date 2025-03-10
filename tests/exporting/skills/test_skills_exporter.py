@@ -10,7 +10,7 @@ from waldiez.exporting.skills import SkillsExporter
 from waldiez.models import WaldiezAgent, WaldiezSkill
 
 
-# flake8: noqa E501
+# flake8: noqa: E501
 # pylint: disable=too-many-locals,unused-argument,line-too-long,inconsistent-quotes
 def test_skills_exporter(tmp_path: Path) -> None:
     """Test SkillsExporter.

@@ -10,7 +10,7 @@ from .export_position import ExportPosition
 from .import_position import ImportPosition
 
 
-# flake8: noqa E501
+# flake8: noqa: E501
 # pylint: disable=line-too-long
 class ExporterReturnType(TypedDict):
     """Exporter Return Type.

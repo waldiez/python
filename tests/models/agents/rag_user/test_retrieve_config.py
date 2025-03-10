@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
-# flake8: noqa E501
+# flake8: noqa: E501
 """Test waldiez.models.agents.rag_user.retrieve_config.*."""
 
 import os

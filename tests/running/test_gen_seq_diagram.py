@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0.
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: disable=line-too-long
-# flake8: noqa E501
+# flake8: noqa: E501
 """Test waldiez.running.gen_seq_diagram.*."""
 
 import json
