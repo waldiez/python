@@ -71,8 +71,8 @@ dev = [
     'pylint==3.3.5',
     'python-dotenv==1.0.1',
     'ruff==0.9.10',
-    'types-PyYAML==6.0.12',
-    'yamllint==1.35.1',
+    'types-pyyaml==6.0.12.20241230',
+    'yamllint==1.36.0',
     'toml; python_version <= "3.10"',
     'types-toml== 0.10.8.20240310',
 ]
@@ -127,8 +127,8 @@ docs = [
   'mkdocs-macros-plugin==1.3.7',
   'mkdocs-material==9.6.7',
   'mkdocs-minify-html-plugin==0.2.5',
-  'mkdocstrings[crystal,python]==0.28.3',
-  'mkdocstrings-python==1.16.4'
+  'mkdocstrings[crystal,python]==0.29.0',
+  'mkdocstrings-python==1.16.5'
 ]
 
 [project.scripts]
