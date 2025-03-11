@@ -1,10 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## v0.2.2 -
 
-## v0.2.2
-
-- Updated cli actions for the new extras, to default if no action is provided
+- You can find the changes for each release in the integrated [CHANGELOG.md](https://github.com/waldiez/waldiez/blob/main/CHANGELOG.md) file.
 
 ## v0.2.1
 
