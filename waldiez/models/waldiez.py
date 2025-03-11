@@ -239,7 +239,7 @@ class Waldiez:
             self.flow.requirements,
         )
         requirements = set(requirements_list)
-        requirements.add(f"pyautogen=={autogen_version}")
+        requirements.add(f"pyautogen[openai]=={autogen_version}")
         if self.has_rag_agents:
             rag_extras = get_retrievechat_extra_requirements(self.agents)
             requirements.update(rag_extras)
