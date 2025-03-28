@@ -30,27 +30,27 @@ from waldiez.models import (
 # pylint: disable=too-many-locals,too-many-statements
 def test_swarm_chat() -> None:
     """Test ChatsExporter with a swarm chat."""
-    agent1 = WaldiezAgent(  # type: ignore
+    agent1 = WaldiezAgent(
         id="wa-1",
         name="agent1",
         agent_type="user",
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name="agent2",
         agent_type="swarm",
     )
-    agent3 = WaldiezAgent(  # type: ignore
+    agent3 = WaldiezAgent(
         id="wa-3",
         name="agent3",
         agent_type="swarm",
     )
-    agent4 = WaldiezAgent(  # type: ignore
+    agent4 = WaldiezAgent(
         id="wa-4",
         name="agent4",
         agent_type="swarm",
     )
-    agent5 = WaldiezAgent(  # type: ignore
+    agent5 = WaldiezAgent(
         id="wa-5",
         name="agent5",
         agent_type="assistant",

@@ -19,10 +19,10 @@ def test_waldiez_skill_data() -> None:
     assert skill_data.secrets == secrets
 
     # Given
-    skill_data = WaldiezSkillData(content=content)  # type: ignore
+    skill_data = WaldiezSkillData(content=content)
     # Then
     assert skill_data.content == content
     assert not skill_data.secrets
 
     with pytest.raises(ValueError):
-        skill_data = WaldiezSkillData()  # type: ignore
+        skill_data = WaldiezSkillData()

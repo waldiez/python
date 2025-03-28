@@ -39,7 +39,7 @@ def create_agent(
         The agent.
     """
     # fmt: off
-    skill1 = WaldiezSkill(  # type: ignore
+    skill1 = WaldiezSkill(
         id=f"ws-{counter}_1",
         name=f"skill{counter}_1",
         description=f"skill{counter}_1 description",
@@ -51,7 +51,7 @@ def create_agent(
             },
         },
     )
-    skill2 = WaldiezSkill(  # type: ignore
+    skill2 = WaldiezSkill(
         id=f"ws-{counter}_2",
         name=f"skill{counter}_2",
         description=f"skill{counter}_2 description",
@@ -61,13 +61,13 @@ def create_agent(
         },
     )
     # fmt: on
-    model1 = WaldiezModel(  # type: ignore
+    model1 = WaldiezModel(
         id=f"wm-{counter}_1",
         name=f"model{counter}_1",
         description=f"model{counter}_1 description",
         data={"apiType": "anthropic"},  # type: ignore
     )
-    model2 = WaldiezModel(  # type: ignore
+    model2 = WaldiezModel(
         id=f"wm-{counter}_2",
         name=f"model{counter}_2",
         description=f"model{counter}_2 description",
@@ -86,7 +86,7 @@ def create_agent(
         agent_cls = WaldiezSwarmAgent
     if agent_type == "reasoning":
         agent_cls = WaldiezReasoningAgent
-    agent = agent_cls(  # type: ignore
+    agent = agent_cls(
         id=f"wa-{counter}",
         name=f"agent{counter}",
         description=f"agent{counter} description",

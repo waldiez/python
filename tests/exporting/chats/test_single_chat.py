@@ -21,14 +21,14 @@ def test_single_chat() -> None:
     agent1_name = "agent1"
     agent2_name = "agent2"
     chat_name = "chat1"
-    agent1 = WaldiezAgent(  # type: ignore
+    agent1 = WaldiezAgent(
         id="wa-1",
         name=agent1_name,
         agent_type="user",
         description="agent description",
         data={},  # type: ignore
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name=agent2_name,
         agent_type="assistant",
@@ -39,13 +39,9 @@ def test_single_chat() -> None:
 def callable_message(sender, recipient, context):
     return f"Hello to {recipient.name} from {sender.name}"
 """
-    chat = WaldiezChat(  # type: ignore
+    chat = WaldiezChat(
         id="wc-1",
-        name=chat_name,
-        description="A chat between two agents.",
-        tags=["chat", chat_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat1",
             description="A chat between two agents.",
             source="wa-1",
@@ -118,27 +114,23 @@ def test_empty_chat() -> None:
     agent1_name = "agent1"
     agent2_name = "agent2"
     chat_name = "chat1"
-    agent1 = WaldiezAgent(  # type: ignore
+    agent1 = WaldiezAgent(
         id="wa-1",
         name=agent1_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name=agent2_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    chat = WaldiezChat(  # type: ignore
+    chat = WaldiezChat(
         id="wc-1",
-        name=chat_name,
-        description="A chat between two agents.",
-        tags=["chat", chat_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat1",
             description="A chat between two agents.",
             source="wa-1",
@@ -192,27 +184,23 @@ def test_chat_with_rag_and_carryover() -> None:
     agent1_name = "agent1"
     agent2_name = "agent2"
     chat_name = "chat1"
-    agent1 = WaldiezAgent(  # type: ignore
+    agent1 = WaldiezAgent(
         id="wa-1",
         name=agent1_name,
         agent_type="rag_user",
         description="agent description",
         data={},  # type: ignore
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name=agent2_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    chat = WaldiezChat(  # type: ignore
+    chat = WaldiezChat(
         id="wc-1",
-        name=chat_name,
-        description="A chat between two agents.",
-        tags=["chat", chat_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat1",
             description="A chat between two agents.",
             source="wa-1",
@@ -295,27 +283,23 @@ def test_chat_with_rag_no_carryover() -> None:
     agent1_name = "agent1"
     agent2_name = "agent2"
     chat_name = "chat1"
-    agent1 = WaldiezRagUser(  # type: ignore
+    agent1 = WaldiezRagUser(
         id="wa-1",
         name=agent1_name,
         agent_type="rag_user",
         description="agent description",
         data={},  # type: ignore
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name=agent2_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    chat = WaldiezChat(  # type: ignore
+    chat = WaldiezChat(
         id="wc-1",
-        name=chat_name,
-        description="A chat between two agents.",
-        tags=["chat", chat_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat1",
             description="A chat between two agents.",
             source="wa-1",

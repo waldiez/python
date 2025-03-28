@@ -10,7 +10,7 @@ from waldiez.models import WaldiezAgent, WaldiezReasoningAgent
 def test_get_reasoning_agent_extras() -> None:
     """Test get_reasoning_agent_extras."""
     # Given
-    agent: WaldiezAgent = WaldiezAgent(  # type: ignore
+    agent: WaldiezAgent = WaldiezAgent(
         id="wa-1",
         name="agent1",
         agent_type="assistant",
@@ -24,7 +24,7 @@ def test_get_reasoning_agent_extras() -> None:
     assert reasoning_agent_extras == ""
 
     # Given
-    agent = WaldiezReasoningAgent(  # type: ignore
+    agent = WaldiezReasoningAgent(
         id="wa-2",
         name="agent2",
     )
@@ -47,7 +47,7 @@ def test_get_reasoning_agent_extras() -> None:
     )
 
     # Given
-    agent = WaldiezReasoningAgent(  # type: ignore
+    agent = WaldiezReasoningAgent(
         id="wa-3",
         name="agent3",
         data={  # type: ignore

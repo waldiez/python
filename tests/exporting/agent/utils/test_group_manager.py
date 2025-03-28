@@ -19,7 +19,7 @@ from waldiez.models import (
 def test_get_group_manager_extras() -> None:
     """Test get_group_manager_extras()."""
     # Given
-    agent = WaldiezAgent(  # type: ignore
+    agent = WaldiezAgent(
         id="wa-1",
         name="agent_name",
         agent_type="assistant",
@@ -37,7 +37,7 @@ def test_get_group_manager_extras() -> None:
     # Then
     assert output == expected_output
     # Given
-    manager = WaldiezGroupManager(  # type: ignore
+    manager = WaldiezGroupManager(
         id="wa-2",
         name="group_manager",
         agent_type="manager",
@@ -71,11 +71,11 @@ def test_get_group_manager_extras() -> None:
         "def custom_speaker_selection(last_speaker, groupchat):\n"
         "    return last_speaker"
     )
-    manager = WaldiezGroupManager(  # type: ignore
+    manager = WaldiezGroupManager(
         id="wa-2",
         name="group_manager",
         agent_type="manager",
-        data=WaldiezGroupManagerData(  # type: ignore
+        data=WaldiezGroupManagerData(
             speakers=WaldiezGroupManagerSpeakers(
                 selection_method="custom",
                 selection_custom_method=custom_selection_content,
@@ -123,11 +123,11 @@ def test_get_group_manager_extras() -> None:
         "def custom_speaker_selection(last_speaker, groupchat):\n"
         "    return last_speaker"
     )
-    manager = WaldiezGroupManager(  # type: ignore
+    manager = WaldiezGroupManager(
         id="wa-2",
         name="group_manager",
         agent_type="manager",
-        data=WaldiezGroupManagerData(  # type: ignore
+        data=WaldiezGroupManagerData(
             max_round=5,
             admin_name="agent_name",
             speakers=WaldiezGroupManagerSpeakers(
@@ -182,11 +182,11 @@ def test_get_group_manager_extras() -> None:
     # Then
     assert output == expected_output
     # Given
-    manager = WaldiezGroupManager(  # type: ignore
+    manager = WaldiezGroupManager(
         id="wa-2",
         name="group_manager",
         agent_type="manager",
-        data=WaldiezGroupManagerData(  # type: ignore
+        data=WaldiezGroupManagerData(
             speakers=WaldiezGroupManagerSpeakers(
                 selection_method="round_robin",
                 selection_custom_method=None,

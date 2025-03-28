@@ -245,7 +245,7 @@ def waldiez_flow_with_captain_agent() -> WaldiezFlow:
             requirements=[],
             created_at="2021-01-01T00:00:00.000Z",
             updated_at="2021-01-01T00:00:00.000Z",
-            data=WaldiezCaptainAgentData(  # type: ignore
+            data=WaldiezCaptainAgentData(
                 model_ids=["wm-1"],
             ),
         )

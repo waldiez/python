@@ -9,7 +9,7 @@ from waldiez.models.chat.chat_summary import WaldiezChatSummary
 
 def test_waldiez_chat_summary() -> None:
     """Test WaldiezChatSummary."""
-    chat_summary = WaldiezChatSummary(  # type: ignore
+    chat_summary = WaldiezChatSummary(
         prompt="prompt",
     )
     assert chat_summary.prompt == "prompt"

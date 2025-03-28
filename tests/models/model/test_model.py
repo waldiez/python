@@ -93,7 +93,7 @@ def test_waldiez_model_api_key_and_price() -> None:
     os.environ["OPENAI_API_KEY"] = "api_key"
     # Given
     api_type: WaldiezModelAPIType = "openai"
-    data = WaldiezModelData(  # type: ignore
+    data = WaldiezModelData(
         base_url="https://example.com",
         api_type=api_type,
         price=WaldiezModelPrice(
@@ -122,7 +122,7 @@ def test_waldiez_model_api_key_and_price() -> None:
         os.environ.pop("OPENAI_API_KEY", None)
 
     # Given
-    data = WaldiezModelData(  # type: ignore
+    data = WaldiezModelData(
         base_url="https://example.com",
         api_type=api_type,
     )
@@ -149,7 +149,7 @@ def test_waldiez_api_key() -> None:
     os.environ["GOOGLE_GEMINI_API_KEY"] = "GOOGLE_GEMINI_API_KEY"
     # Given
     api_type: WaldiezModelAPIType = "google"
-    data = WaldiezModelData(  # type: ignore
+    data = WaldiezModelData(
         base_url="https://example.com",
         api_type=api_type,
     )
@@ -176,7 +176,7 @@ def test_waldiez_api_key() -> None:
     os.environ["GROQ_API_KEY"] = "groq_api_key"
     # Given
     api_type = "groq"
-    data = WaldiezModelData(  # type: ignore
+    data = WaldiezModelData(
         api_type=api_type,
     )
     # When
@@ -202,7 +202,7 @@ def test_waldiez_api_key() -> None:
 def test_waldiez_invalid_model() -> None:
     """Test invalid WaldiezModel."""
     with pytest.raises(ValueError):
-        WaldiezModel(  # type: ignore
+        WaldiezModel(
             id="wm-1",
             name="model",
             description="description",
@@ -227,7 +227,7 @@ def test_waldiez_model_use_default_base_url() -> None:
         "other",
     ]
     for api_type in api_types:
-        data = WaldiezModelData(  # type: ignore
+        data = WaldiezModelData(
             api_type=api_type,
         )
         # When
@@ -246,7 +246,7 @@ def test_waldiez_model_use_default_base_url() -> None:
         expected_url = DEFAULT_BASE_URLS.get(api_type, "")
         if expected_url and MODEL_NEEDS_BASE_URL.get(api_type, False) is True:
             assert model.get_llm_config()["base_url"] == expected_url
-    data = WaldiezModelData(  # type: ignore
+    data = WaldiezModelData(
         api_type="mistral",
         base_url="https://example.com",
     )

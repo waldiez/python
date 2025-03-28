@@ -19,52 +19,48 @@ def test_sequential_chat() -> None:
     agent3_name = "agent3"
     chat1_name = "chat1"
     chat2_name = "chat2"
-    agent1 = WaldiezAgent(  # type: ignore
+    agent1 = WaldiezAgent(
         id="wa-1",
         name=agent1_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name=agent2_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    agent3 = WaldiezAgent(  # type: ignore
+    agent3 = WaldiezAgent(
         id="wa-3",
         name=agent3_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    chat1 = WaldiezChat(  # type: ignore
+    chat1 = WaldiezChat(
         id="wc-1",
-        tags=["chat", chat1_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             source="wa-1",
             target="wa-2",
             name=chat1_name,
             description="A chat between two agents.",
-            message=WaldiezChatMessage(  # type: ignore
+            message=WaldiezChatMessage(
                 type="string",
                 content="Hello, how are you?",
             ),
         ),
     )
-    chat2 = WaldiezChat(  # type: ignore
+    chat2 = WaldiezChat(
         id="wc-2",
-        tags=["chat", chat2_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             source="wa-2",
             target="wa-3",
             name=chat2_name,
             description="A chat between two agents.",
-            message=WaldiezChatMessage(  # type: ignore
+            message=WaldiezChatMessage(
                 type="string",
                 content="Hello, how are you?",
             ),

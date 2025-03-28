@@ -15,11 +15,11 @@ from waldiez.models import (
 def test_get_agent_code_execution_config() -> None:
     """Test get_agent_code_execution_config."""
     # Given
-    agent = WaldiezAgent(  # type: ignore
+    agent = WaldiezAgent(
         id="wa-1",
         name="agent1",
         agent_type="assistant",
-        data=WaldiezAgentData(  # type: ignore
+        data=WaldiezAgentData(
             code_execution_config=WaldiezAgentCodeExecutionConfig(
                 use_docker=None,
                 work_dir="work_dir",
@@ -51,11 +51,11 @@ def test_get_agent_code_execution_config() -> None:
 def test_get_agent_code_execution_config_no_code_execution() -> None:
     """Test get_agent_code_execution_config with no code execution."""
     # Given
-    agent = WaldiezAgent(  # type: ignore
+    agent = WaldiezAgent(
         id="wa-1",
         name="agent1",
         agent_type="assistant",
-        data=WaldiezAgentData(),  # type: ignore
+        data=WaldiezAgentData(),
     )
     expected_executor = ""
     expected_arg = "False"

@@ -19,7 +19,7 @@ def test_waldiez_reasoning_agent() -> None:
         id="wa-1",
         name="reasoning_agent",
         agent_type="reasoning",
-        data=WaldiezReasoningAgentData(  # type: ignore
+        data=WaldiezReasoningAgentData(
             max_depth=3,
             beam_size=3,
             answer_approach="pool",

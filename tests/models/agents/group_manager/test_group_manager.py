@@ -11,9 +11,7 @@ from waldiez.models.agents.group_manager.group_manager import (
 
 def test_waldiez_group_manager() -> None:
     """Test WaldiezGroupManager."""
-    group_manager = WaldiezGroupManager(  # type: ignore
-        id="wa-1", name="group_manager"
-    )
+    group_manager = WaldiezGroupManager(id="wa-1", name="group_manager")
     assert group_manager.data.human_input_mode == "NEVER"
     assert group_manager.agent_type == "manager"
 

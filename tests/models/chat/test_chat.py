@@ -13,7 +13,7 @@ def test_waldiez_chat() -> None:
     # Given
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -60,7 +60,7 @@ def test_waldiez_chat() -> None:
     # Given
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -78,7 +78,7 @@ def test_waldiez_chat() -> None:
     # Given
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -117,7 +117,7 @@ def test_waldiez_chat_with_rag_user() -> None:
     # Given
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -152,7 +152,7 @@ def test_waldiez_chat_get_message_function() -> None:
     }
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -173,7 +173,7 @@ def test_waldiez_chat_get_message_function() -> None:
     }
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -217,7 +217,7 @@ def test_waldiez_chat_get_nested_chat_message_function() -> None:
     }
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -242,7 +242,7 @@ def test_waldiez_chat_get_nested_chat_message_function() -> None:
     }
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -291,7 +291,7 @@ def test_waldiez_chat_get_nested_chat_reply_function() -> None:
     }
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",
@@ -316,7 +316,7 @@ def test_waldiez_chat_get_nested_chat_reply_function() -> None:
     }
     chat = WaldiezChat(
         id="wc-1",
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat_data",
             description="Chat data",
             source="wa-1",

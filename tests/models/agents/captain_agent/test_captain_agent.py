@@ -7,14 +7,14 @@ from waldiez.models.agents.captain_agent import WaldiezCaptainAgent
 
 def test_waldiez_captain_agent() -> None:
     """Test `WaldiezCaptainAgent`."""
-    agent = WaldiezCaptainAgent(id="wa-1", name="captain_agent")  # type: ignore
+    agent = WaldiezCaptainAgent(id="wa-1", name="captain_agent")
     assert agent.agent_type == "captain"
     assert not agent.data.agent_lib
     assert not agent.data.tool_lib
     assert agent.data.max_round == 10
     assert agent.data.max_turns == 5
 
-    agent = WaldiezCaptainAgent(  # type: ignore
+    agent = WaldiezCaptainAgent(
         id="wa-1",
         name="captain_agent",
         data={  # type: ignore

@@ -24,7 +24,7 @@ def test_models_exporter(tmp_path: Path) -> None:
     model1_name = "model1"
     model2_name = "model2"
     model3_name = "model3"
-    agent = WaldiezAgent(  # type: ignore
+    agent = WaldiezAgent(
         id="wa-1",
         name="agent1",
         agent_type="assistant",
@@ -34,19 +34,19 @@ def test_models_exporter(tmp_path: Path) -> None:
         },
     )
     agent_names = {"wa-1": "agent1"}
-    model1 = WaldiezModel(  # type: ignore
+    model1 = WaldiezModel(
         id="wm-1",
         name=model1_name,
         description="model description",
         data={"apiType": "anthropic"},  # type: ignore
     )
-    model2 = WaldiezModel(  # type: ignore
+    model2 = WaldiezModel(
         id="wm-2",
         name=model2_name,
         description="model description",
         data={"apiType": "nim"},  # type: ignore
     )
-    model3 = WaldiezModel(  # type: ignore
+    model3 = WaldiezModel(
         id="wm-3",
         name=model3_name,
         description="model description",
@@ -127,7 +127,7 @@ def test_models_exporter(tmp_path: Path) -> None:
     assert (tmp_path / f"{flow_name}_api_keys.py").exists()
     shutil.rmtree(output_dir)
 
-    agent = WaldiezAgent(  # type: ignore
+    agent = WaldiezAgent(
         id="wa-1",
         name="agent1",
         agent_type="assistant",
@@ -173,7 +173,7 @@ def test_models_exporter(tmp_path: Path) -> None:
     assert (tmp_path / f"{flow_name}_api_keys.py").exists()
     shutil.rmtree(output_dir)
 
-    agent = WaldiezAgent(  # type: ignore
+    agent = WaldiezAgent(
         id="wa-1",
         name="agent1",
         agent_type="assistant",

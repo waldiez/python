@@ -47,7 +47,7 @@ def skill3():
 
 '''
     # fmt: on
-    skill1 = WaldiezSkill(  # type: ignore
+    skill1 = WaldiezSkill(
         id="ws-1",
         name=skill1_name,
         description=f"{skill1_name} description",
@@ -59,7 +59,7 @@ def skill3():
             },
         },
     )
-    skill2 = WaldiezSkill(  # type: ignore
+    skill2 = WaldiezSkill(
         id="ws-2",
         name=skill2_name,
         description=f"{skill2_name} description",
@@ -68,13 +68,13 @@ def skill3():
             "secrets": {},
         },
     )
-    skill3 = WaldiezSkill(  # type: ignore
+    skill3 = WaldiezSkill(
         id="ws-3",
         name="skill3",
         description="skill3 description",
         data={"content": skill3_content, "secrets": {}},  # type: ignore
     )
-    agent1 = WaldiezAgent(  # type: ignore
+    agent1 = WaldiezAgent(
         id="wa-1",
         name=agent1_name,
         agent_type="assistant",
@@ -96,7 +96,7 @@ def skill3():
             ],
         },
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name=agent2_name,
         agent_type="assistant",
@@ -240,7 +240,7 @@ wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
         "ws-1": skill1_name,
         "ws-2": skill2_name,
     }
-    skill1 = WaldiezSkill(  # type: ignore
+    skill1 = WaldiezSkill(
         id="ws-1",
         name=skill1_name,
         description=f"{skill1_name} description",
@@ -252,7 +252,7 @@ wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
             },
         },
     )
-    skill2 = WaldiezSkill(  # type: ignore
+    skill2 = WaldiezSkill(
         id="ws-2",
         name=skill2_name,
         description=f"{skill2_name} description",
@@ -262,7 +262,7 @@ wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
             "secrets": {},
         },
     )
-    agent1 = WaldiezAgent(  # type: ignore
+    agent1 = WaldiezAgent(
         id="wa-1",
         name=agent1_name,
         agent_type="assistant",
@@ -280,7 +280,7 @@ wiki_tool = WikipediaQueryRun(api_wrapper=api_wrapper)
             ],
         },
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name=agent2_name,
         agent_type="assistant",

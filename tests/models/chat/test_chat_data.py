@@ -97,7 +97,7 @@ def test_waldiez_chat_data() -> None:
 def test_waldiez_chat_data_message() -> None:
     """Test WaldiezChatData message."""
     # Given
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="chat_data",
         description="Chat data",
         source="wa-1",
@@ -111,7 +111,7 @@ def test_waldiez_chat_data_message() -> None:
     assert chat_data.message.type == "string"
     assert chat_data.message.content == "Hello there"
     # Given
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="chat_data",
         description="Chat data",
         source="wa-1",
@@ -126,7 +126,7 @@ def test_waldiez_chat_data_message() -> None:
     assert chat_data.message.content is None
 
     # Given
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="chat_data",
         description="Chat data",
         source="wa-1",
@@ -141,7 +141,7 @@ def test_waldiez_chat_data_message() -> None:
     assert chat_data.message.content == "42"
 
     # Given
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="chat_data",
         description="Chat data",
         source="wa-1",
@@ -154,7 +154,7 @@ def test_waldiez_chat_data_message() -> None:
     assert chat_data.message.type == "none"
 
     # Given
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="chat_data",
         description="Chat data",
         source="wa-1",
@@ -210,7 +210,7 @@ def test_waldiez_chat_data_message() -> None:
 def test_waldiez_chat_summary() -> None:
     """Test WaldiezChatData summary."""
     # Given
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="chat_data",
         description="Chat data",
         source="wa-1",
@@ -225,7 +225,7 @@ def test_waldiez_chat_summary() -> None:
     model_dump = chat_data.model_dump(by_alias=True)
     assert model_dump["summary"]["method"] == "lastMsg"
     # Given
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="chat_data",
         description="Chat data",
         source="wa-1",
@@ -242,7 +242,7 @@ def test_waldiez_chat_summary() -> None:
     model_dump = chat_data.model_dump(by_alias=True)
     assert model_dump["summary"]["method"] == "reflectionWithLlm"
     # Given
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="chat_data",
         description="Chat data",
         source="wa-1",
@@ -267,7 +267,7 @@ def test_waldiez_chat_summary() -> None:
 
 def test_waldiez_chat_get_chat_args() -> None:
     """Test get_chat_args."""
-    chat_data = WaldiezChatData(  # type: ignore
+    chat_data = WaldiezChatData(
         name="Chat data",
         description="Chat data",
         source="wa-1",
@@ -300,7 +300,7 @@ def test_waldiez_chat_get_chat_args() -> None:
 def test_waldiez_chat_invalid_context_variables() -> None:
     """Test invalid context variables."""
     with pytest.raises(ValueError):
-        WaldiezChatData(  # type: ignore
+        WaldiezChatData(
             name="Chat data",
             description="Chat data",
             source="wa-1",
@@ -332,7 +332,7 @@ def test_waldiez_chat_invalid_context_variables() -> None:
 def test_waldiez_chat_invalid_message_method() -> None:
     """Test invalid message method."""
     with pytest.raises(ValueError):
-        WaldiezChatData(  # type: ignore
+        WaldiezChatData(
             name="Chat data",
             description="Chat data",
             source="wa-1",

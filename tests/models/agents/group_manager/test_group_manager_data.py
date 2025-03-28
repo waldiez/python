@@ -9,7 +9,7 @@ from waldiez.models.agents.group_manager.group_manager_data import (
 
 def test_waldiez_group_manager_data() -> None:
     """Test WaldiezGroupManagerData."""
-    group_manager_data = WaldiezGroupManagerData()  # type: ignore
+    group_manager_data = WaldiezGroupManagerData()
     assert group_manager_data.human_input_mode == "NEVER"
     # assert defaults
     assert group_manager_data.speakers.selection_method == "auto"

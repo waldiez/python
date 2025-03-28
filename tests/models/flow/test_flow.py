@@ -370,7 +370,7 @@ def test_waldiez_flow() -> None:
         is_async=False,
     )
     # When
-    flow1 = WaldiezFlow(  # type: ignore
+    flow1 = WaldiezFlow(
         name="flow",
         type="flow",
         description="Flow",

@@ -67,7 +67,7 @@ def test_waldiez_rag_user_retrieve_config_custom_embedding() -> None:
 def custom_embedding_function():
     return list
 """
-    retrieve_config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    retrieve_config = WaldiezRagUserRetrieveConfig(
         use_custom_embedding=True,
         embedding_function=embedding_function,
     )
@@ -77,13 +77,13 @@ def custom_embedding_function():
     assert retrieve_config.token_count_function_string is None
 
     with pytest.raises(ValueError):
-        WaldiezRagUserRetrieveConfig(  # type: ignore
+        WaldiezRagUserRetrieveConfig(
             use_custom_embedding=True,
             embedding_function=None,
         )
 
     with pytest.raises(ValueError):
-        WaldiezRagUserRetrieveConfig(  # type: ignore
+        WaldiezRagUserRetrieveConfig(
             use_custom_embedding=True,
             embedding_function="def something():\n   return list",
         )
@@ -95,7 +95,7 @@ def test_waldiez_rag_user_retrieve_config_custom_token_count() -> None:
 def custom_token_count_function(text, model):
     return 0
 """  # nosemgrep # nosec
-    retrieve_config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    retrieve_config = WaldiezRagUserRetrieveConfig(
         use_custom_token_count=True,
         custom_token_count_function=token_count_function,
     )
@@ -108,13 +108,13 @@ def custom_token_count_function(text, model):
     assert retrieve_config.text_split_function_string is None
 
     with pytest.raises(ValueError):
-        WaldiezRagUserRetrieveConfig(  # type: ignore
+        WaldiezRagUserRetrieveConfig(
             use_custom_token_count=True,
             custom_token_count_function=None,
         )
 
     with pytest.raises(ValueError):
-        WaldiezRagUserRetrieveConfig(  # type: ignore  # nosemgrep # nosec
+        WaldiezRagUserRetrieveConfig(  # nosemgrep # nosec
             use_custom_token_count=True,
             custom_token_count_function="def something():\n    return 0",
         )
@@ -127,7 +127,7 @@ def test_waldiez_rag_user_retrieve_config_custom_text_split() -> None:
 def custom_text_split_function(text, max_tokens, chunk_mode, must_break_at_empty_line, overlap):
     return [text]
 """
-    retrieve_config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    retrieve_config = WaldiezRagUserRetrieveConfig(
         use_custom_text_split=True,
         custom_text_split_function=text_split_function,
     )
@@ -137,13 +137,13 @@ def custom_text_split_function(text, max_tokens, chunk_mode, must_break_at_empty
     assert retrieve_config.token_count_function_string is None
 
     with pytest.raises(ValueError):
-        WaldiezRagUserRetrieveConfig(  # type: ignore
+        WaldiezRagUserRetrieveConfig(
             use_custom_text_split=True,
             custom_text_split_function=None,
         )
 
     with pytest.raises(ValueError):
-        WaldiezRagUserRetrieveConfig(  # type: ignore
+        WaldiezRagUserRetrieveConfig(
             use_custom_text_split=True,
             custom_text_split_function="def something():\n    return []",
         )
@@ -152,7 +152,7 @@ def custom_text_split_function(text, max_tokens, chunk_mode, must_break_at_empty
 def test_not_resolved_path() -> None:
     """Test not resolved path."""
     with pytest.raises(ValueError):
-        WaldiezRagUserRetrieveConfig(  # type: ignore
+        WaldiezRagUserRetrieveConfig(
             task="default",
             vector_db="chroma",
             docs_path="/path/to/not_resolved_path.txt",
@@ -169,7 +169,7 @@ def test_with_file_as_doc_path(tmp_path: Path) -> None:
     """
     docs_file = tmp_path / "test_with_file_as_doc_path.txt"
     docs_file.touch()
-    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    config = WaldiezRagUserRetrieveConfig(
         task="default",
         vector_db="chroma",
         docs_path=[str(docs_file)],
@@ -189,7 +189,7 @@ def test_with_folder_as_doc_path(tmp_path: Path) -> None:
     # not ending with os.sep (we check if is_dir)
     docs_dir = tmp_path / "test_with_folder_as_doc_path"
     docs_dir.mkdir(exist_ok=True)
-    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    config = WaldiezRagUserRetrieveConfig(
         task="default",
         vector_db="chroma",
         docs_path=[str(docs_dir)],
@@ -199,7 +199,7 @@ def test_with_folder_as_doc_path(tmp_path: Path) -> None:
     # ending with os.sep we assume it is a folder
     docs_dir.mkdir(exist_ok=True)
     doc_path = str(docs_dir) + os.path.sep
-    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    config = WaldiezRagUserRetrieveConfig(
         task="default",
         vector_db="chroma",
         docs_path=[doc_path],
@@ -210,7 +210,7 @@ def test_with_folder_as_doc_path(tmp_path: Path) -> None:
 
 def test_get_custom_embedding_function() -> None:
     """Test get_custom_embedding_function."""
-    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    config = WaldiezRagUserRetrieveConfig(
         use_custom_embedding=True,
         embedding_function="def custom_embedding_function():\n    return list",
     )
@@ -233,7 +233,7 @@ def test_get_custom_embedding_function() -> None:
 
 def test_get_custom_token_count_function() -> None:
     """Test get_custom_token_count_function."""
-    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    config = WaldiezRagUserRetrieveConfig(
         use_custom_token_count=True,
         custom_token_count_function=(
             "def custom_token_count_function(text, model):\n    return 0"  # nosemgrep # nosec
@@ -263,7 +263,7 @@ def test_get_custom_token_count_function() -> None:
 
 def test_get_custom_text_split_function() -> None:
     """Test get_custom_text_split_function."""
-    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    config = WaldiezRagUserRetrieveConfig(
         use_custom_text_split=True,
         custom_text_split_function="def custom_text_split_function(text, max_tokens, chunk_mode, must_break_at_empty_line, overlap):\n    return [text]",
     )
@@ -295,7 +295,7 @@ def test_get_custom_text_split_function() -> None:
 def test_validate_docs_path() -> None:
     """Test validate_docs_path."""
     this_file = Path(__file__)
-    config = WaldiezRagUserRetrieveConfig(  # type: ignore
+    config = WaldiezRagUserRetrieveConfig(
         task="default",
         vector_db="chroma",
         docs_path=[

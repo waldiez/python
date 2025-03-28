@@ -94,34 +94,34 @@ def test_waldiez_agent() -> None:
 
 def test_agent_ag2_class() -> None:
     """Test WaldiezAgent.ag2_class."""
-    user_proxy = WaldiezUserProxy(  # type: ignore
+    user_proxy = WaldiezUserProxy(
         id="wa-1",
         name="user_proxy",
     )
-    assistant = WaldiezAssistant(  # type: ignore
+    assistant = WaldiezAssistant(
         id="wa-2",
         name="assistant",
     )
-    group_manager = WaldiezGroupManager(  # type: ignore
+    group_manager = WaldiezGroupManager(
         id="wa-3",
         name="group_manager",
     )
-    rag_user = WaldiezRagUser(  # type: ignore
+    rag_user = WaldiezRagUser(
         id="wa-4",
         name="rag_user",
     )
-    multimodal_agent = WaldiezAssistant(  # type: ignore
+    multimodal_agent = WaldiezAssistant(
         id="wa-5",
         name="multimodal_agent",
-        data=WaldiezAssistantData(  # type: ignore
+        data=WaldiezAssistantData(
             is_multimodal=True,
         ),
     )
-    swarm_agent = WaldiezSwarmAgent(  # type: ignore
+    swarm_agent = WaldiezSwarmAgent(
         id="wa-6",
         name="swarm_agent",
     )
-    reasoning_agent = WaldiezReasoningAgent(  # type: ignore
+    reasoning_agent = WaldiezReasoningAgent(
         id="wa-7",
         name="reasoning_agent",
     )
@@ -136,34 +136,34 @@ def test_agent_ag2_class() -> None:
 
 def test_agent_ag2_imports() -> None:
     """Test WaldiezAgent.ag2_imports."""
-    user_proxy = WaldiezUserProxy(  # type: ignore
+    user_proxy = WaldiezUserProxy(
         id="wa-1",
         name="user_proxy",
     )
-    assistant = WaldiezAssistant(  # type: ignore
+    assistant = WaldiezAssistant(
         id="wa-2",
         name="assistant",
     )
-    group_manager = WaldiezGroupManager(  # type: ignore
+    group_manager = WaldiezGroupManager(
         id="wa-3",
         name="group_manager",
     )
-    rag_user = WaldiezRagUser(  # type: ignore
+    rag_user = WaldiezRagUser(
         id="wa-4",
         name="rag_user",
     )
-    multimodal_agent = WaldiezAssistant(  # type: ignore
+    multimodal_agent = WaldiezAssistant(
         id="wa-5",
         name="multimodal_agent",
-        data=WaldiezAssistantData(  # type: ignore
+        data=WaldiezAssistantData(
             is_multimodal=True,
         ),
     )
-    swarm_agent = WaldiezSwarmAgent(  # type: ignore
+    swarm_agent = WaldiezSwarmAgent(
         id="wa-6",
         name="swarm_agent",
     )
-    reasoning_agent = WaldiezReasoningAgent(  # type: ignore
+    reasoning_agent = WaldiezReasoningAgent(
         id="wa-7",
         name="reasoning_agent",
     )

@@ -24,21 +24,21 @@ def test_single_chat_with_nested() -> None:
     agent3_name = "agent3"
     agent4_name = "agent4"
     chat_name = "chat1"
-    agent1 = WaldiezAgent(  # type: ignore
+    agent1 = WaldiezAgent(
         id="wa-1",
         name=agent1_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    agent2 = WaldiezAgent(  # type: ignore
+    agent2 = WaldiezAgent(
         id="wa-2",
         name=agent2_name,
         agent_type="assistant",
         description="agent description",
         data={},  # type: ignore
     )
-    agent3 = WaldiezAgent(  # type: ignore
+    agent3 = WaldiezAgent(
         id="wa-3",
         name=agent3_name,
         agent_type="assistant",
@@ -52,7 +52,7 @@ def test_single_chat_with_nested() -> None:
             ]
         },
     )
-    agent4 = WaldiezAgent(  # type: ignore
+    agent4 = WaldiezAgent(
         id="wa-4",
         name=agent4_name,
         agent_type="assistant",
@@ -66,13 +66,9 @@ def test_single_chat_with_nested() -> None:
             ]
         },
     )
-    chat1 = WaldiezChat(  # type: ignore
+    chat1 = WaldiezChat(
         id="wc-1",
-        name=chat_name,
-        description="A chat between two agents.",
-        tags=["chat", chat_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat1",
             description="A chat between two agents.",
             source="wa-1",
@@ -88,13 +84,9 @@ def test_single_chat_with_nested() -> None:
             ),
         ),
     )
-    chat2 = WaldiezChat(  # type: ignore
+    chat2 = WaldiezChat(
         id="wc-2",
-        name=chat_name,
-        description="A chat between two agents.",
-        tags=["chat", chat_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat1",
             description="A chat between two agents.",
             source="wa-1",
@@ -126,13 +118,9 @@ def test_single_chat_with_nested() -> None:
 def nested_chat_message(recipient, messages, sender, config):
     return f"Hello to {recipient.name} from {sender.name}"
 """
-    chat3 = WaldiezChat(  # type: ignore
+    chat3 = WaldiezChat(
         id="wc-3",
-        name=chat_name,
-        description="A chat between two agents.",
-        tags=["chat", chat_name],
-        requirements=[],
-        data=WaldiezChatData(  # type: ignore
+        data=WaldiezChatData(
             name="chat1",
             description="A chat between two agents.",
             source="wa-2",

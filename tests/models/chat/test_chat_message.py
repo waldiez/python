@@ -13,7 +13,7 @@ from waldiez.models.chat.chat_message import (
 
 def test_waldiez_chat_message() -> None:
     """Test WaldiezChatMessage."""
-    chat_message = WaldiezChatMessage(  # type: ignore
+    chat_message = WaldiezChatMessage(
         type="string",
         content="content",
         context={"key": "value"},

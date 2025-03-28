@@ -21,7 +21,7 @@ def test_waldiez_skill() -> None:
     description = "description"
     data = {"content": "def skill_name():\n    pass"}
     # When
-    skill = WaldiezSkill(  # type: ignore
+    skill = WaldiezSkill(
         id=skill_id,
         name=name,
         description=description,
@@ -40,7 +40,7 @@ def test_waldiez_skill() -> None:
 def test_invalid_skill() -> None:
     """Test invalid WaldiezSkill."""
     with pytest.raises(ValueError):
-        WaldiezSkill()  # type: ignore
+        WaldiezSkill()
 
     # Given
     skill_id = "ws-1"
@@ -49,7 +49,7 @@ def test_invalid_skill() -> None:
     data = {"content": "def skill_name(4):"}
     # Then
     with pytest.raises(ValueError):
-        WaldiezSkill(  # type: ignore
+        WaldiezSkill(
             id=skill_id,
             name=name,
             description=description,
@@ -63,7 +63,7 @@ def test_invalid_skill() -> None:
     data = {"content": "def not_skill_name():\n    pass"}
     # Then
     with pytest.raises(ValueError):
-        WaldiezSkill(  # type: ignore
+        WaldiezSkill(
             id=skill_id,
             name=name,
             description=description,

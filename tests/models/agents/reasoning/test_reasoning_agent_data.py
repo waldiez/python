@@ -9,7 +9,7 @@ from waldiez.models.agents.reasoning.reasoning_agent_data import (
 
 def test_waldiez_reasoning_agent_data_beam_search() -> None:
     """Test WaldiezReasoningAgentData."""
-    reasoning_agent_data = WaldiezReasoningAgentData(  # type: ignore
+    reasoning_agent_data = WaldiezReasoningAgentData(
         max_depth=3,
         beam_size=3,
         answer_approach="pool",
@@ -39,7 +39,7 @@ def test_waldiez_reasoning_agent_data_beam_search() -> None:
 
 def test_waldiez_reasoning_agent_data_mcts() -> None:
     """Test WaldiezReasoningAgentData."""
-    reasoning_agent_data = WaldiezReasoningAgentData(  # type: ignore
+    reasoning_agent_data = WaldiezReasoningAgentData(
         max_depth=3,
         beam_size=3,
         answer_approach="pool",
@@ -69,7 +69,7 @@ def test_waldiez_reasoning_agent_data_mcts() -> None:
 
 def test_waldiez_reasoning_agent_data_lats() -> None:
     """Test WaldiezReasoningAgentData."""
-    reasoning_agent_data = WaldiezReasoningAgentData(  # type: ignore
+    reasoning_agent_data = WaldiezReasoningAgentData(
         max_depth=3,
         beam_size=3,
         answer_approach="pool",

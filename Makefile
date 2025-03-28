@@ -33,6 +33,7 @@ help:
 	@echo " publish          Publish the python package to PyPI"
 	@echo " image            Generate container image"
 	@echo " all              Almost all of the above"
+	@echo " smoke            Run smoke tests on the package"
 	@echo ""
 
 .PHONY: format
@@ -162,3 +163,8 @@ image:
 
 .PHONY: all
 all: dev image
+
+
+.PHONY: smoke
+smoke:
+	python scripts/smoke.py

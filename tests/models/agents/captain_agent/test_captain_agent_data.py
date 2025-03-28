@@ -14,9 +14,9 @@ from .example_agent_lib import EXAMPLE_AGENT_LIB
 
 def test_waldiez_captain_agent_data() -> None:
     """Test `WaldiezCaptainAgentData`."""
-    data = WaldiezCaptainAgentData(  # type: ignore
-        use_agent_lib=True,
-        use_tool_lib=True,
+    data = WaldiezCaptainAgentData(
+        agent_lib=[],
+        tool_lib=None,
         max_round=20,
     )
     assert not data.agent_lib
@@ -24,7 +24,7 @@ def test_waldiez_captain_agent_data() -> None:
     assert data.max_round == 20
     assert data.max_turns == 5
 
-    data = WaldiezCaptainAgentData(  # type: ignore
+    data = WaldiezCaptainAgentData(
         agent_lib=[
             WaldiezCaptainAgentLibEntry(
                 name="agent1",
@@ -43,7 +43,7 @@ def test_waldiez_captain_agent_data() -> None:
     assert data.max_round == 20
     assert data.max_turns == 10
 
-    data = WaldiezCaptainAgentData(  # type: ignore
+    data = WaldiezCaptainAgentData(
         agent_lib=EXAMPLE_AGENT_LIB,  # type: ignore
         tool_lib="default",
         max_round=20,
