@@ -135,8 +135,8 @@ def get_after_run_content(
     str
         The content to add after the flow is run.
     """
-    # if th eflow has reasoning agents, we add
-    # visualize_tree(agent._root) for each agent
+    # if the flow has a reasoning agents, we add
+    # agent.visualize_tree() for each agent
     content = ""
     tab = "    "
     space = tab * tabs
@@ -146,7 +146,7 @@ def get_after_run_content(
             content += f"""
 {space}# pylint: disable=broad-except,too-many-try-statements
 {space}try:
-{space}{tab}visualize_tree({agent_name}._root)  # pylint: disable=protected-access
+{space}{tab}{agent_name}.visualize_tree()
 {space}{tab}if os.path.exists("tree_of_thoughts.png"):
 {space}{tab}{tab}new_name = "{agent_name}_tree_of_thoughts.png"
 {space}{tab}{tab}os.rename("tree_of_thoughts.png", new_name)

@@ -35,10 +35,7 @@ def test_export_reasoning_agent() -> None:
     assert output["imports"]
     imports = [x[0] for x in output["imports"]]
     # pylint: disable=line-too-long
-    assert (
-        "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent, visualize_tree"
-        in imports
-    )
+    assert "from autogen.agents.experimental import ReasoningAgent" in imports
     content = output["content"]
     assert content == (
         f"{agent.name} = ReasoningAgent(\n"

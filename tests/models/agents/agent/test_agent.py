@@ -194,5 +194,5 @@ def test_agent_ag2_imports() -> None:
     }
     assert reasoning_agent.ag2_imports == {
         "import autogen",
-        "from autogen.agentchat.contrib.reasoning_agent import ReasoningAgent, visualize_tree",  # noqa: E501
+        "from autogen.agents.experimental import ReasoningAgent",
     }

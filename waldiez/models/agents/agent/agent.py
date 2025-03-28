@@ -177,8 +177,7 @@ class WaldiezAgent(WaldiezBase):
             )
         elif agent_class == "ReasoningAgent":
             imports.add(
-                "from autogen.agentchat.contrib.reasoning_agent "
-                "import ReasoningAgent, visualize_tree"
+                "from autogen.agents.experimental import ReasoningAgent"
             )
         elif agent_class == "CaptainAgent":
             imports.add(
