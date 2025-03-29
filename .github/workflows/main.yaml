@@ -33,7 +33,7 @@ jobs:
       - name: pylint
         run: pylint --rcfile=pyproject.toml .
       - name: isort
-        run: isort --check-only .
+        run: isort --check-only --settings pyproject.toml .
       - name: black
         run: black --check --config pyproject.toml .
       - name: mypy

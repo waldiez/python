@@ -2,6 +2,7 @@
 # Copyright (c) 2024 - 2025 Waldiez and contributors.
 # pylint: skip-file
 # isort: skip_file
+# flake8: noqa: E501,E402
 """Waldiez-studio extra typer commands for CLI."""
 
 from typing import Any, Callable
@@ -13,7 +14,7 @@ HAVE_STUDIO = False
 studio_app: Callable[..., Any] | None = None
 
 try:
-    from waldiez_studio.cli import run  # type: ignore[unused-ignore, import-not-found, import-untyped]  # noqa  # flake8: noqa: E501, E402
+    from waldiez_studio.cli import run  # type: ignore[unused-ignore, import-not-found, import-untyped]
 
     studio_app = run
 

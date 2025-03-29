@@ -93,7 +93,7 @@ ag2_extras =[
     'pyautogen[interop-langchain]==0.8.4',
     'pyautogen[neo4j]==0.8.4',
     'pyautogen[websurfer]==0.8.4',
-    'chromadb>=0.6.3',
+    'chromadb>=0.5.10',
     'pgvector>=0.4.0',
     'psycopg[binary]>=3.2.6',
     'protobuf>=4.25.3',
@@ -192,6 +192,12 @@ exclude = [
     'examples',
     'waldiez_out',
 ]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+# with python < 3.13 we get seem to get 'call-arg' errors :(
+# and with python>=3.13 'unused-ignore' : (
+disable_error_code = ["call-arg"]
 
 [tool.pydantic-mypy]
 init_forbid_extra = true

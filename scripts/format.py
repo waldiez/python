@@ -63,7 +63,9 @@ def ensure_command_exists(command: str) -> None:
 def run_isort() -> None:
     """Run isort."""
     ensure_command_exists("isort")
-    run_command([sys.executable, "-m", "isort", "."])
+    run_command(
+        [sys.executable, "-m", "isort", "--settings", "pyproject.toml", "."]
+    )
 
 
 def run_autoflake() -> None:

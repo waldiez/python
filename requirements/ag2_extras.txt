@@ -1,6 +1,6 @@
 -r main.txt
 beautifulsoup4
-chromadb>=0.6.3
+chromadb>=0.5.10
 embedchain
 huggingface-hub
 ipython

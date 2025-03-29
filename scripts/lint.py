@@ -64,7 +64,17 @@ def ensure_command_exists(command: str) -> None:
 def run_isort() -> None:
     """Run isort."""
     ensure_command_exists("isort")
-    run_command([sys.executable, "-m", "isort", "--check-only", "."])
+    run_command(
+        [
+            sys.executable,
+            "-m",
+            "isort",
+            "--settings",
+            "pyproject.toml",
+            "--check-only",
+            ".",
+        ]
+    )
 
 
 def run_black() -> None:
