@@ -53,20 +53,20 @@ exclude = [ "**/example.py" ]
 
 [project.optional-dependencies]
 studio = [
-    "waldiez_studio==0.4.1",
+    'waldiez_studio==0.4.1',
 ]
 jupyter = [
-    "waldiez_jupyter==0.4.1",
-    "jupyterlab>=4.3.0",
+    'waldiez_jupyter==0.4.1',
+    'jupyterlab>=4.3.0',
 ]
 dev = [
     'autoflake==2.3.1',
     'bandit==1.8.3',
     'black[jupyter]==25.1.0',
-    'flake8==7.1.2',
+    'flake8==7.2.0',
     'isort==6.0.1',
     'mypy==1.15.0',
-    "pandas-stubs",
+    'pandas-stubs',
     'pre-commit==4.2.0',
     'pydocstyle==6.3.0',
     'pylint==3.3.6',
@@ -75,7 +75,7 @@ dev = [
     'types-pyyaml==6.0.12.20250326',
     'yamllint==1.37.0',
     'toml; python_version <= "3.10"',
-    'types-toml== 0.10.8.20240310',
+    'types-toml==0.10.8.20240310',
 ]
 ag2_extras =[
     # models
