@@ -9,6 +9,7 @@ Highly recommended to be run in a virtual environment.
 """
 
 import os
+import platform
 import shutil
 import site
 import subprocess
@@ -206,7 +207,9 @@ def check_pysqlite3() -> None:
         import pysqlite3  # type: ignore[unused-ignore, import-untyped, import-not-found]  # noqa
     except ImportError:
         print("pysqlite3 not found or cannot be imported.")
-        if sys.platform.lower() == "linux":
+        # and not arm64
+        is_arm = "arm" in platform.machine().lower()
+        if not is_arm and platform.system() == "Linux":
             pip_install("pysqlite3-binary")
         else:
             # Uninstall pysqlite3-binary if it is already installed
