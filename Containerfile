@@ -13,7 +13,7 @@ RUN pip install --upgrade pip build
 
 WORKDIR /tmp
 COPY requirements/main.txt /tmp/requirements.txt
-RUN pip install -r requirements.txt && \
+RUN pip install -r /tmp/requirements.txt && \
     rm -rf /root/.cache/pip /tmp/requirements.txt
 
 WORKDIR /app
