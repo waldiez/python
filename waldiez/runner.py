@@ -203,7 +203,9 @@ class WaldiezRunner:
             "NOTE: If new packages were added and you are using Jupyter, "
             "you might need to restart the kernel."
         )
-        results: Union["ChatResult", List["ChatResult"]] = []
+        results: Union[
+            "ChatResult", List["ChatResult"], Dict[int, "ChatResult"]
+        ] = []
         with chdir(to=temp_dir):
             self._exporter.export(Path(file_name))
             spec = importlib.util.spec_from_file_location(
@@ -249,7 +251,9 @@ class WaldiezRunner:
             "NOTE: If new packages were added and you are using Jupyter, "
             "you might need to restart the kernel."
         )
-        results: Union["ChatResult", List["ChatResult"]] = []
+        results: Union[
+            "ChatResult", List["ChatResult"], Dict[int, "ChatResult"]
+        ] = []
         async with a_chdir(to=temp_dir):
             self._exporter.export(Path(file_name))
             spec = importlib.util.spec_from_file_location(
@@ -279,7 +283,7 @@ class WaldiezRunner:
         output_path: Optional[Union[str, Path]] = None,
         uploads_root: Optional[Union[str, Path]] = None,
         skip_mmd: bool = False,
-    ) -> Union["ChatResult", List["ChatResult"]]:
+    ) -> Union["ChatResult", List["ChatResult"], Dict[int, "ChatResult"]]:
         """Run the Waldiez workflow.
 
         Parameters
@@ -293,7 +297,7 @@ class WaldiezRunner:
 
         Returns
         -------
-        Union[ChatResult, List[ChatResult]]
+        Union["ChatResult", List["ChatResult"], Dict[int, "ChatResult"]]
             The result(s) of the chat(s).
 
         Raises
