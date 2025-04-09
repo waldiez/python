@@ -102,12 +102,12 @@ def generate_nested_config(
     with open(
         config_file_or_env_path, "w", encoding="utf-8", newline="\n"
     ) as f:
-        json.dump([llm_config], f, ensure_ascii=False, indent=4)
+        json.dump(llm_config, f, ensure_ascii=False, indent=4)
     nested_config = {
         "autobuild_init_config": {
             "config_file_or_env": config_file_or_env_name,
-            "builder_model": llm_config["model"],
-            "agent_model": llm_config["model"],
+            "builder_model": llm_config["config_list"][0]["model"],
+            "agent_model": llm_config["config_list"][0]["model"],
         },
         "autobuild_build_config": get_auto_build_build_config(
             agent, llm_config
@@ -140,20 +140,29 @@ def get_llm_config(
     temperature: Optional[float] = 1
     top_p: Optional[float] = 0.95
     max_tokens: Optional[int] = 2048
+    config_dict: Dict[str, Any] = {}
     if agent.data.model_ids:
         waldiez_model = get_waldiez_model(agent.data.model_ids[0], all_models)
         llm_config = waldiez_model.get_llm_config(skip_price=True)
         for key in ["temperature", "top_p", "max_tokens"]:
             if key not in llm_config:
                 llm_config[key] = None
-        return llm_config
+        temp = llm_config.pop("temperature", None)
+        config_dict = {
+            "config_list": [llm_config],
+        }
+        if temp is not None:
+            config_dict["temperature"] = temp
+            return config_dict
     config_dict = {
         "model": model_name,
-        "temperature": temperature,
         "top_p": top_p,
         "max_tokens": max_tokens,
     }
-    return config_dict
+    return {
+        "config_list": [config_dict],
+        "temperature": temperature,
+    }
 
 
 def get_auto_build_build_config(
@@ -195,8 +204,8 @@ def get_auto_build_build_config(
     return {
         "default_llm_config": {
             "temperature": llm_config["temperature"],
-            "top_p": llm_config["top_p"],
-            "max_tokens": llm_config["max_tokens"],
+            "top_p": llm_config["config_list"][0]["top_p"],
+            "max_tokens": llm_config["config_list"][0]["max_tokens"],
         },
         "code_execution_config": code_execution_config,
         "coding": coding,

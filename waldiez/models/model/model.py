@@ -206,7 +206,7 @@ class WaldiezModel(WaldiezBase):
         for attr, atr_type in [
             ("base_url", str),
             ("max_tokens", int),
-            ("temperature", float),
+            # ("temperature", float),
             ("top_p", float),
             ("api_version", str),
             ("default_headers", dict),

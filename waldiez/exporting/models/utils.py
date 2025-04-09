@@ -92,9 +92,11 @@ def get_agent_llm_config_arg(
     content = f"{tab}llm_config=" + "{\n"
     content += f'{tab}    "config_list": ['
     got_at_least_one_model = False
+    temperature: Optional[float] = None
     for model_id in agent.data.model_ids:
         model = next((m for m in all_models if m.id == model_id), None)
         if model is not None:
+            temperature = model.data.temperature
             model_name = model_names[model_id]
             content += "\n" + f"{tab}        {model_name}_llm_config,"
             got_at_least_one_model = True
@@ -102,6 +104,8 @@ def get_agent_llm_config_arg(
         return f"{tab}llm_config=False," + "\n"
     content += "\n" + f"{tab}    ]," + "\n"
     content += f'{tab}    "cache_seed": {cache_seed},' + "\n"
+    if temperature is not None:
+        content += f'{tab}    "temperature": {temperature},' + "\n"
     content += tab + "},\n"
     return content
 
