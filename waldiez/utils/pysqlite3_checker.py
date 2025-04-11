@@ -122,7 +122,8 @@ def download_sqlite_amalgamation() -> str:
     os.remove(zip_path)
 
     # Return the path to the extracted source code
-    return os.path.join(extract_path, "sqlite-amalgamation-3480000")
+    folder_name = SQLITE_URL.rsplit("/", 1)[-1].split(".")[0]
+    return os.path.join(extract_path, folder_name)
 
 
 def rename_package_name(pysqlite3_dir: str) -> None:
