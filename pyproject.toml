@@ -39,9 +39,10 @@ dependencies =[
 ]
 
 [project.urls]
-homepage = 'https://waldiez.github.io/waldiez/python'
+homepage = 'https://waldiez.io'
 repository = 'https://github.com/waldiez/python.git'
-
+documentation = "https://waldiez.github.io/python/"
+issues = "https://github.com/waldiez/python/issues"
 
 [tool.hatch.build.targets.sdist]
 packages = ["waldiez", "waldiez.*"]
