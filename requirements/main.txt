@@ -5,9 +5,9 @@ asyncer==0.0.8
 graphviz==0.20.3
 httpx<1
 jupytext
-numpy<2.2.0
+numpy<=2.2.4
 pandas>=2
 parso==0.8.4
-pyautogen[openai]==0.8.5
+pyautogen[openai]==0.8.6
 pydantic>=2.10.2,<3
 typer>=0.9,<0.16
