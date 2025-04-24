@@ -4,10 +4,14 @@ chromadb>=0.5.10 ;sys_platform != 'win32'
 chromadb>=0.5.10 ;sys_platform == 'win32' and platform_machine != 'arm64' and platform_machine != 'aarch64' and platform_machine != 'ARM64' and platform_machine != 'AARCH64'
 embedchain ;sys_platform != 'win32'
 embedchain ;sys_platform == 'win32' and platform_machine != 'arm64' and platform_machine != 'aarch64' and platform_machine != 'ARM64' and platform_machine != 'AARCH64'
+google-api-python-client>=2.163.0,<3.0
+google-auth-httplib2>=0.2.0,<0.3
+google-auth-oauthlib>=1.2.1,<2.0
 huggingface-hub
 ipython
 langchain-community>=0.3.12,<1
 markdownify
+mcp>=1.4.0,<1.6
 pgvector>=0.4.0
 pgvector>=0.4.0
 protobuf>=4.25.3
@@ -42,3 +46,4 @@ pysqlite3-binary==0.5.4 ;sys_platform == 'linux' and platform_machine != 'arm64'
 qdrant-client[fastembed] ;sys_platform != 'win32'
 qdrant-client[fastembed] ;sys_platform == 'win32' and platform_machine != 'arm64' and platform_machine != 'aarch64' and platform_machine != 'ARM64' and platform_machine != 'AARCH64'
 sentence-transformers ;sys_platform == 'linux'
+wikipedia-api>=0.8.1, <1.0
