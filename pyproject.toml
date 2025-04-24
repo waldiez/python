@@ -1,6 +1,6 @@
 [project]
 name = "waldiez"
-description = 'waldiez'
+description = 'Make AI Agents Collaborate: Drag, Drop, and Orchestrate with Waldiez.'
 authors = [
   { name = 'Panagiotis Kasnesis', email = 'pkasnesis@waldiez.io' },
   { name= 'Lazaros Toumanidis', email= 'laztoum@waldiez.io' },
@@ -62,10 +62,13 @@ exclude = [ "**/example.py" ]
 
 [project.optional-dependencies]
 studio = [
-    "waldiez_studio==0.4.3",
+    "waldiez_studio==0.4.4",
+]
+runner = [
+    "waldiez_runner==0.4.4",
 ]
 jupyter = [
-    "waldiez_jupyter==0.4.3",
+    "waldiez_jupyter==0.4.4",
     'jupyterlab>=4.3.0',
 ]
 dev = [
