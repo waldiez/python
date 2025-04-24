@@ -18,6 +18,7 @@ ROOT_DIR = Path(__file__).parent.parent
 EXCLUDED_EXTRAS = [
     "studio",
     "jupyter",
+    "runner",
 ]
 EXCLUDED_PACKAGES: List[str] = []
 
