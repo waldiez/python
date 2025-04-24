@@ -3,7 +3,7 @@
 # pylint: disable=import-outside-toplevel,reimported
 """Environment related utilities."""
 
-import importlib.util
+import importlib
 import os
 import site
 import sys
@@ -20,7 +20,8 @@ def in_virtualenv() -> bool:
         True if inside a virtualenv, False otherwise.
     """
     return hasattr(sys, "real_prefix") or (
-        hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
+        hasattr(sys, "base_prefix")
+        and os.path.realpath(sys.base_prefix) != os.path.realpath(sys.prefix)
     )
 
 

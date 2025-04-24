@@ -120,20 +120,34 @@ def install_requirements(
     requirements_string = ", ".join(extra_requirements)
     printer(f"Installing requirements: {requirements_string}")
     pip_install = [sys.executable, "-m", "pip", "install"]
-    if not in_virtualenv():
+    if not in_virtualenv():  # it should
+        # if not, let's try to install as user
+        # not sure if --break-system-packages is safe
+        # but it might fail if we don't
+        break_system_packages = os.environ.get("PIP_BREAK_SYSTEM_PACKAGES", "")
+        os.environ["PIP_BREAK_SYSTEM_PACKAGES"] = "1"
         pip_install.append("--user")
     pip_install.extend(extra_requirements)
-    with subprocess.Popen(
-        pip_install,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    ) as proc:
-        if proc.stdout:
-            for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):
-                printer(line.strip())
-        if proc.stderr:
-            for line in io.TextIOWrapper(proc.stderr, encoding="utf-8"):
-                printer(line.strip())
+    # pylint: disable=too-many-try-statements
+    try:
+        with subprocess.Popen(
+            pip_install,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        ) as proc:
+            if proc.stdout:
+                for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):
+                    printer(line.strip())
+            if proc.stderr:
+                for line in io.TextIOWrapper(proc.stderr, encoding="utf-8"):
+                    printer(line.strip())
+    finally:
+        if not in_virtualenv():
+            # restore the old env var
+            if break_system_packages:
+                os.environ["PIP_BREAK_SYSTEM_PACKAGES"] = break_system_packages
+            else:
+                del os.environ["PIP_BREAK_SYSTEM_PACKAGES"]
 
 
 async def a_install_requirements(
@@ -152,19 +166,29 @@ async def a_install_requirements(
     printer(f"Installing requirements: {requirements_string}")
     pip_install = [sys.executable, "-m", "pip", "install"]
     if not in_virtualenv():
-        pip_install.extend(["--user", "--break-system-packages"])
+        break_system_packages = os.environ.get("PIP_BREAK_SYSTEM_PACKAGES", "")
+        os.environ["PIP_BREAK_SYSTEM_PACKAGES"] = "1"
+        pip_install.extend(["--user"])
     pip_install.extend(extra_requirements)
-    proc = await asyncio.create_subprocess_exec(
-        *pip_install,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-    )
-    if proc.stdout:
-        async for line in proc.stdout:
-            printer(line.decode().strip())
-    if proc.stderr:
-        async for line in proc.stderr:
-            printer(line.decode().strip())
+    # pylint: disable=too-many-try-statements
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *pip_install,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        if proc.stdout:
+            async for line in proc.stdout:
+                printer(line.decode().strip())
+        if proc.stderr:
+            async for line in proc.stderr:
+                printer(line.decode().strip())
+    finally:
+        if not in_virtualenv():
+            if break_system_packages:
+                os.environ["PIP_BREAK_SYSTEM_PACKAGES"] = break_system_packages
+            else:
+                del os.environ["PIP_BREAK_SYSTEM_PACKAGES"]
 
 
 def after_run(
