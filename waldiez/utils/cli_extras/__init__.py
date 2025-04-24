@@ -7,6 +7,7 @@
 import typer
 
 from .jupyter import add_jupyter_cli
+from .runner import add_runner_cli
 from .studio import add_studio_cli
 
 
@@ -24,6 +25,7 @@ def add_cli_extras(app: typer.Typer) -> None:
         The app with the extra commands added
     """
     add_jupyter_cli(app)
+    add_runner_cli(app)
     add_studio_cli(app)
 
 
