@@ -70,12 +70,15 @@ runner = [
 jupyter = [
     "waldiez_jupyter==0.4.4",
     'jupyterlab>=4.3.0',
+    "jupyter_server==2.15.0",
 ]
 dev = [
     'autoflake==2.3.1',
     'bandit==1.8.3',
     'black[jupyter]==25.1.0',
     'flake8==7.2.0',
+    'jupyterlab>=4.3.0',
+    "jupyter_server==2.15.0",
     'isort==6.0.1',
     'mypy==1.15.0',
     'pandas-stubs==2.2.3.250308',
