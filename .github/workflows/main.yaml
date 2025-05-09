@@ -1,0 +1,17 @@
+---
+name: Main
+
+# tmp, till we have a new release with the ci link updated.
+# yamllint disable rule:truthy
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+    # https://github.com/marketplace/actions/alls-green#why
+  alls-green:  # This job does nothing and is only used for the branch protection
+    name: All Good
+    if: always()
+    runs-on: ubuntu-latest
