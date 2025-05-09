@@ -10,8 +10,12 @@ on:
   workflow_dispatch:
 
 jobs:
-    # https://github.com/marketplace/actions/alls-green#why
+  # https://github.com/marketplace/actions/alls-green#why
   alls-green:  # This job does nothing and is only used for the branch protection
     name: All Good
     if: always()
     runs-on: ubuntu-latest
+    steps:
+      - name: Alls Green
+        run: echo "Alls Green"
+        continue-on-error: true
